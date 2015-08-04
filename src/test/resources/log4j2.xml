@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn" name="1pAutomation" packages="">
+	<Appenders>
+		<Console name="STDOUT" target="SYSTEM_OUT">
+			<PatternLayout pattern="%m%n" />
+		</Console>
+		<File name="MyFile" fileName="logs/1p-api-automation.log">
+			<PatternLayout>
+				<Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
+			</PatternLayout>
+		</File>
+	</Appenders>
+	<Loggers>
+		<Root level="debug">
+			<AppenderRef ref="STDOUT" />
+			<AppenderRef ref="MyFile" />
+		</Root>
+	</Loggers>
+</Configuration>
