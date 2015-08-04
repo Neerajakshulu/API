@@ -92,7 +92,7 @@ public class ProfileTest extends AbstractBase {
 
 		logger.info("profilesTest entered");
 
-		String hostName = "http://md5.jsontest.com";
+		String hostName = "http://restcountries.eu/rest/v1/alpha";
 		String port = "";
 
 		XSSFWorkbook workBook = null;
