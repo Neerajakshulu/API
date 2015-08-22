@@ -163,7 +163,7 @@ public abstract class AbstractBase {
 					event = eventReader.nextEvent();
 					vipAddress = event.asCharacters().getData();
 					if (vipAddress.endsWith(env))
-						appHosts.put(appName, hostName + ":" + port);
+						appHosts.put(appName, "http://" + hostName + ":" + port + "/");
 				}
 
 			}
