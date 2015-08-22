@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
@@ -44,6 +46,9 @@ public abstract class AbstractBase {
 	public static ExtentReports extent = null;
 	public static ExtentTest test = null;
 
+	String eurekaURL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
+	protected Map<String, String> appHosts = new HashMap<String, String>();
+	
 	public void setUp() throws Exception {
 
 		RestAssured.baseURI = "http://" + System.getProperty("rest.server", "localhost");
@@ -70,7 +75,7 @@ public abstract class AbstractBase {
 		String port = null;
 		boolean appFound = false;
 
-		URL url = new URL("http://eureka-integration-3-577874018.us-west-2.elb.amazonaws.com/v2/apps");
+		URL url = new URL("http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps");
 		URLConnection conn = url.openConnection();
 
 		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn.getInputStream());
@@ -91,8 +96,7 @@ public abstract class AbstractBase {
 					}
 				}
 
-				// when appFound is true then get host name and port of that
-				// app.
+				// when appFound is true then get host name and port of that app.
 				if (appFound == true) {
 					if (startElement.getName().getLocalPart().equals("hostName")) {
 						event = eventReader.nextEvent();
@@ -113,6 +117,59 @@ public abstract class AbstractBase {
 
 	}
 
+	public void getAllAppHostsForGivenEnv(String env) throws Exception {
+		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
+
+		String appName = null;
+		String hostName = null;
+		String port = null;
+		String vipAddress = null;
+
+		URL url = new URL(eurekaURL);
+		URLConnection conn = url.openConnection();
+
+		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn
+				.getInputStream());
+
+		while (eventReader.hasNext()) {
+			XMLEvent event = eventReader.nextEvent();
+
+			// reach the start of an item
+			if (event.isStartElement()) {
+
+				StartElement startElement = event.asStartElement();
+
+				// Get app name
+				if (startElement.getName().getLocalPart().equals("name")) {
+					event = eventReader.nextEvent();
+					if (!event.asCharacters().getData().equalsIgnoreCase("Amazon"))
+						appName = event.asCharacters().getData();
+				}
+
+				// Get host name
+				if (startElement.getName().getLocalPart().equals("hostName")) {
+					event = eventReader.nextEvent();
+					hostName = event.asCharacters().getData();
+				}
+
+				// Get port
+				if (startElement.getName().getLocalPart().equals("port")) {
+					event = eventReader.nextEvent();
+					port = event.asCharacters().getData();
+				}
+
+				// Get vip address
+				if (startElement.getName().getLocalPart().equals("vipAddress")) {
+					event = eventReader.nextEvent();
+					vipAddress = event.asCharacters().getData();
+					if (vipAddress.endsWith(env))
+						appHosts.put(appName, "http://" + hostName + ":" + port + "/");
+				}
+
+			}
+		}
+	}
+	
 	public String[] getRowAsArray(String testCaseName,
 			int sheetNo) throws Exception {
 
