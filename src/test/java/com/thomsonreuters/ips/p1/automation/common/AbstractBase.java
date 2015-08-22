@@ -47,7 +47,7 @@ public abstract class AbstractBase {
 	public static ExtentTest test = null;
 
 	String eurekaURL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
-	Map<String, String> appHosts = new HashMap<String, String>();
+	protected Map<String, String> appHosts = new HashMap<String, String>();
 	
 	public void setUp() throws Exception {
 
@@ -163,7 +163,7 @@ public abstract class AbstractBase {
 					event = eventReader.nextEvent();
 					vipAddress = event.asCharacters().getData();
 					if (vipAddress.endsWith(env))
-						appHosts.put(appName, hostName + ":" + port);
+						appHosts.put(appName, "http://" + hostName + ":" + port + "/");
 				}
 
 			}
