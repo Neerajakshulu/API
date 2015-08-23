@@ -31,7 +31,7 @@ import org.testng.annotations.Test;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.specification.RequestSpecification;
-import com.thomsonreuters.ips.p1.automation.common.AbstractBase;
+import com.thomsonreuters.ips.p1.automation.common.AbstractBase2;
 
 /***
  * Tests the Watchlist API
@@ -39,7 +39,7 @@ import com.thomsonreuters.ips.p1.automation.common.AbstractBase;
  * 
  * 
  */
-public class WatchlistTest extends AbstractBase {
+public class WatchlistTest extends AbstractBase2 {
 
 	private static final Logger logger = LogManager.getLogger();
 

@@ -1,28 +1,40 @@
 package com.thomsonreuters.ips.p1.automation.common;
 
+import static com.jayway.restassured.RestAssured.given;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.response.Header;
-import com.relevantcodes.extentreports.ExtentReports;
-import com.relevantcodes.extentreports.ExtentTest;
+import com.jayway.restassured.path.json.JsonPath;
+import com.jayway.restassured.response.Response;
+import com.jayway.restassured.specification.RequestSpecification;
 
 /**
  * Common setup class for all the tests
@@ -31,51 +43,419 @@ public abstract class AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	protected static final String APPLICATION_JSON = "application/json";
-	protected static final String WRAPPED_JSON = "application/vnd.rhq.wrapped+json";
-	protected static final String APPLICATION_XML = "application/xml";
-	protected static final String TEXT_CSV = "text/csv";
-	protected static final String TEXT_HTML = "text/html";
+	// TODO - Get this from property file
+	private static final String EUREKA_URL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
 
-	protected static final Header acceptJson = new Header("Accept", APPLICATION_JSON);
-	protected static final Header acceptWrappedJson = new Header("Accept", WRAPPED_JSON);
-	protected static final Header acceptXml = new Header("Accept", APPLICATION_XML);
-	protected static final Header acceptCsv = new Header("Accept", TEXT_CSV);
-	protected static final Header acceptHtml = new Header("Accept", TEXT_HTML);
+	private static final String EUREKA_APP_NAME = "name";
+	private static final String EUREKA_HOST_NAME = "hostName";
+	private static final String EUREKA_HOST_PORT = "port";
+	private static final String EUREKA_VIP_ADDRESS = "vipAddress";
+	private static final String EUREKA_DC_NAME = "Amazon";
 
-	public static ExtentReports extent = null;
-	public static ExtentTest test = null;
+	private static final int TESTDATA_COLUMN_COUNT = 12;
 
-	String eurekaURL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
-	protected Map<String, String> appHosts = new HashMap<String, String>();
-	
+	private static final String GET = "GET";
+	private static final String POST = "POST";
+	private static final String PUT = "PUT";
+	private static final String DELETE = "DELETE";
+	private static final String PASS = "PASS";
+	private static final String FAIL = "FAIL";
+	private static final String DEPENDENCY_FAIL = "DEPFAIL";
+
+	private static final String EMPTY_STRING = "";
+	private static final String TOKENIZER_DOUBLE_PIPE = "||";
+	private static final String TOKENIZER_EQUALTO = "=";
+	private static final String UNDERSCORE = "_";
+	private static final String COLON = ":";
+	private static final String FORWARD_SLASH = "/";
+	private static final String PLACEHOLDER_MATCHER_PATTERN = "\\{(.*?)\\}";
+
+	private static final String HTTP = "http://";
+	private static final String UTF8_ENCODING = "utf-8";
+	private static final String TEXTFILE_EXT = ".txt";
+	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-output";
+
+	private Map<String, String> appHosts = new HashMap<String, String>();
+	private Map<String, String> dataStore = new HashMap<String, String>();
+	private Map<String, String> testStatus = new HashMap<String, String>();
+
+	protected static final String TESTOUTPUT_FOLDER_DATEFORMAT = "ddMMMyyyy_HHmmss";
+	// TODO - move this to properties file and get it from there
+	protected static final String ENV = "stable.dev";
+	protected String strDateTime = null;
+	protected String testDataExcelPath = null;
+	protected String appName = null;
+
 	public void setUp() throws Exception {
-
-		RestAssured.baseURI = "http://" + System.getProperty("rest.server", "localhost");
-		RestAssured.port = 7080;
-		RestAssured.basePath = "/rest/";
 	}
 
-	public static ExtentReports getInstance() {
-		if (extent == null) {
-			// extent = new ExtentReports(System.getProperty("user.dir")+"\\testReports\\test_report.html", true);
-			extent = new ExtentReports("src/test/test-reports/test_report.html", true);
+	protected void process() throws Exception {
+		logger.info("Entered the process method...");
 
-			// optional
-			extent.config().documentTitle("1P API Automation Report").reportName("Regression")
-					.reportHeadline("1-P PLATFORM QA");
+		XSSFWorkbook workBook = null;
+		FileInputStream inputStream = null;
+
+		try {
+			int sheetRowCount;
+			XSSFSheet sheet = null;
+			XSSFRow row = null;
+			RowData rowData = null;
+			Response response = null;
+			String sheetName = null;
+			String apiPath = null;
+			String headers = null;
+			String queryString = null;
+			String url = null;
+			String responseJson = null;
+			String statusCode = null;
+			boolean testSuccess = false;
+
+			// Read Excel file
+			File myxl = new File(testDataExcelPath);
+			inputStream = new FileInputStream(myxl);
+			workBook = new XSSFWorkbook(inputStream);
+			int totalSheets = workBook.getNumberOfSheets();
+
+			// Loop through each sheet in the Excel
+			for (int currentSheet = 0; currentSheet < totalSheets; currentSheet++) {
+
+				logger.info("========================================================================");
+				logger.info("Started executing tests from sheet " + (currentSheet + 1));
+
+				// Get current sheet information
+				sheet = workBook.getSheetAt(currentSheet);
+				sheetName = workBook.getSheetName(currentSheet);
+				sheetRowCount = sheet.getLastRowNum();
+
+				logger.debug("total number of rows:" + sheetRowCount);
+
+				// Loop through all test case records of current sheet, start with 1 to leave header.
+				for (int i = 1; i <= sheetRowCount; i++) {
+
+					// Get current row information
+					row = sheet.getRow(i);
+					rowData = getRowData(row);
+
+					logger.debug("row data=" + rowData.toString());
+
+					logger.debug("Real host=" + appHosts.get(rowData.getHost()));
+
+					/*
+					 * If mandatory information like test case name, host, api path and valid http method are not
+					 * provided then skip those tests and update the status as fail.
+					 */
+					if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
+							&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
+
+						// If any of the dependency test failed then don't proceed.
+						if (isDependencyTestsPassed(rowData.getDependencyTests())) {
+
+							logger.info("-----------------------------------------------------------------------");
+							logger.info("Starting test:" + rowData.getTestName());
+
+							apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
+							headers = replaceDynamicPlaceHolders(rowData.getHeaders());
+							queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
+
+							url = appHosts.get(rowData.getHost()) + apiPath + queryString;
+							logger.debug("URL=" + url);
+
+							RequestSpecification reqSpec = given();
+
+							// Get and set headers to request
+							if (StringUtils.isNotBlank(rowData.getHeaders())) {
+								Map<String, String> headersMap = getHeaders(headers);
+								reqSpec.headers(headersMap);
+							}
+
+							// Set body to request if the http method is not GET.
+							if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(rowData.getBody())) {
+								reqSpec.body(rowData.getBody());
+							}
+
+							if (rowData.getMethod().equalsIgnoreCase(GET)) {
+								logger.debug("Entered into GET Method");
+
+								// Call the Rest API and get the response
+								response = reqSpec.when().get(url);
+
+							} else if (rowData.getMethod().equalsIgnoreCase(PUT)) {
+								logger.debug("Entered into PUT Method");
+
+								// Call the Rest API and get the response
+								response = reqSpec.when().put(url);
+
+							} else if (rowData.getMethod().equalsIgnoreCase(POST)) {
+								logger.debug("Entered into POST Method");
+
+								// Call the Rest API and get the response
+								response = reqSpec.when().post(url);
+
+							} else if (rowData.getMethod().equalsIgnoreCase(DELETE)) {
+								logger.debug("Entered into DELETE Method");
+
+								// Call the Rest API and get the response
+								response = reqSpec.when().delete(url);
+							}
+
+							response.then().log().all();
+							responseJson = response.asString();
+							statusCode = String.valueOf(response.getStatusCode());
+
+							// Validate the response with expected data
+							testSuccess = validateResponse(rowData.getValidations(), responseJson, statusCode);
+
+							// Update the excel file with Test PASS / FAIL status
+							updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
+
+							// Save API response to file
+							saveAPIResponse(responseJson, sheetName, rowData.getTestName());
+
+							if (testSuccess) {
+								// Store the data which is required for subsequent test cases.
+								storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+							}
+
+							logger.info("End execution of test:" + rowData.getTestName());
+							logger.info("-----------------------------------------------------------------------");
+
+						} else {
+							logger.debug("Dependency tests failed hence skipping this test.");
+							updateTestStatus(rowData.getTestName(), row, DEPENDENCY_FAIL);
+						}
+					} else {
+						logger.debug("Mandatory information like test name, host, api path or http method not provided.");
+						updateTestStatus(rowData.getTestName(), row, FAIL);
+					}
+				}
+				logger.info("End executing tests from sheet " + (currentSheet + 1));
+				logger.info("========================================================================");
+			}
+
+		} catch (Exception e) {
+			logger.error("Exception while executing the tests:" + e);
+			e.printStackTrace();
+		} finally {
+			inputStream.close();
 		}
-		return extent;
+
+		// Write updates to excel
+		writeUpdatestoExcel(workBook);
+
+		logger.info("End of processs method...");
 	}
 
-	public void getAppDetails(String appName) throws Exception {
+	protected boolean isDependencyTestsPassed(String dependencyTests) {
+		if (StringUtils.isNotBlank(dependencyTests)) {
+			StringTokenizer dependencyTestsTokenizer = new StringTokenizer(dependencyTests, TOKENIZER_DOUBLE_PIPE);
+			String testCaseName = null;
+			while (dependencyTestsTokenizer.hasMoreTokens()) {
+				testCaseName = dependencyTestsTokenizer.nextToken();
+				if (testStatus.get(testCaseName) == null || !testStatus.get(testCaseName).equals(PASS)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	protected boolean isSupportedMethod(String method) {
+		if (method.equalsIgnoreCase(GET) || method.equalsIgnoreCase(PUT) || method.equalsIgnoreCase(POST)
+				|| method.equalsIgnoreCase(DELETE))
+			return true;
+		else
+			return false;
+	}
+
+	protected String replaceDynamicPlaceHolders(String stringToFormat) {
+
+		logger.debug("Before replace=" + stringToFormat);
+
+		StringBuffer sb = new StringBuffer();
+		String toReplace = null;
+
+		if (StringUtils.isNotBlank(stringToFormat)) {
+
+			Matcher matcher = Pattern.compile(PLACEHOLDER_MATCHER_PATTERN).matcher(stringToFormat);
+
+			while (matcher.find()) {
+
+				// What to replace
+				toReplace = matcher.group(1);
+
+				logger.debug("toReplace=" + toReplace);
+
+				// Append replaced match.
+				matcher.appendReplacement(sb, dataStore.get(toReplace));
+			}
+			matcher.appendTail(sb);
+		}
+
+		logger.debug("After replace=" + sb);
+
+		return sb.toString();
+	}
+
+	protected void storeDependentTestsData(String json, String jsonNameKeys, String testName) {
+		if (StringUtils.isNotBlank(jsonNameKeys)) {
+			StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
+			JsonPath jsonPath = new JsonPath(json);
+			String jsonNameKey = null;
+			while (jsonNameKeysTokenizer.hasMoreTokens()) {
+				jsonNameKey = jsonNameKeysTokenizer.nextToken();
+				dataStore.put(testName + UNDERSCORE + jsonNameKey, jsonPath.getString(jsonNameKey));
+			}
+		}
+	}
+
+	protected Map<String, String> getHeaders(final String header) {
+		Map<String, String> headersMap = new HashMap<>();
+
+		StringTokenizer firstTokenizer = new StringTokenizer(header, TOKENIZER_DOUBLE_PIPE);
+		String headerToken;
+		String key;
+
+		while (firstTokenizer.hasMoreTokens()) {
+			headerToken = firstTokenizer.nextToken();
+			StringTokenizer secondTokenizer = new StringTokenizer(headerToken, TOKENIZER_EQUALTO);
+			while (secondTokenizer.hasMoreTokens()) {
+				key = secondTokenizer.nextToken();
+
+				// Get next token to get value
+				if (secondTokenizer.hasMoreTokens()) {
+					// Add header key and value to map.
+					headersMap.put(key, secondTokenizer.nextToken());
+				}
+			}
+		}
+
+		return headersMap;
+	}
+
+	protected String getStatus(final boolean isSuccess) {
+		String status = isSuccess ? PASS : FAIL;
+		return status;
+	}
+
+	protected void updateTestStatus(final String testName, final XSSFRow row, final String status) throws Exception {
+
+		// Maintain test status in this map, so that dependent tests will use this data to run or not.
+		testStatus.put(testName, status);
+
+		// If cell is null then get it as blank cell
+		XSSFCell cell = row.getCell(TESTDATA_COLUMN_COUNT - 1, Row.CREATE_NULL_AS_BLANK);
+
+		// Update the cell with test status
+		if (cell.getCellType() == Cell.CELL_TYPE_BLANK) {
+			cell = row.createCell(TESTDATA_COLUMN_COUNT - 1);
+			cell.setCellType(Cell.CELL_TYPE_STRING);
+			cell.setCellValue(status);
+		} else {
+			cell.setCellValue(status);
+		}
+	}
+
+	protected void writeUpdatestoExcel(XSSFWorkbook workBook) throws Exception {
+		FileOutputStream fos = new FileOutputStream(new File(testDataExcelPath));
+		workBook.write(fos);
+		fos.close();
+		workBook.close();
+	}
+
+	protected void saveAPIResponse(final String json, final String currentSheetName, final String testName)
+			throws Exception {
+
+		Path newDirectoryPath = Paths.get(TEST_OUTPUT_FOLDER_PATH, strDateTime, appName, currentSheetName);
+		Files.createDirectories(newDirectoryPath);
+
+		String fileName = newDirectoryPath.toAbsolutePath() + FORWARD_SLASH + testName + TEXTFILE_EXT;
+
+		logger.debug("fileName=" + fileName);
+
+		File file = new File(fileName);
+		java.nio.file.Files.write(Paths.get(file.toURI()), json.getBytes(UTF8_ENCODING), StandardOpenOption.CREATE,
+				StandardOpenOption.TRUNCATE_EXISTING);
+	}
+
+	protected boolean validateResponse(final String validations, final String json, final String statusCode)
+			throws Exception {
+
+		JsonPath jsonPath = new JsonPath(json);
+		boolean success = true;
+
+		String validationsToken = null;
+		String jsonNameKey = null;
+		String expectedValue = null;
+		String actualValue = null;
+
+		if (StringUtils.isNotBlank(validations)) {
+			StringTokenizer validationsTokenizer = new StringTokenizer(validations, TOKENIZER_DOUBLE_PIPE);
+
+			while (validationsTokenizer.hasMoreTokens()) {
+				if (success == false)
+					break;
+				validationsToken = validationsTokenizer.nextToken();
+				StringTokenizer validationTokenizer = new StringTokenizer(validationsToken, TOKENIZER_EQUALTO);
+				while (validationTokenizer.hasMoreTokens()) {
+					jsonNameKey = validationTokenizer.nextToken();
+
+					// Get next token to get value
+					if (validationTokenizer.hasMoreTokens()) {
+						expectedValue = validationTokenizer.nextToken();
+
+						if (jsonNameKey.equalsIgnoreCase("status")) {
+							if (StringUtils.isBlank(expectedValue) || !expectedValue.equals(statusCode)) {
+
+								logger.info("Actual status code: " + statusCode
+										+ "is not matching expected status code value: " + expectedValue);
+								success = false;
+								break;
+							}
+						} else if (expectedValue.equalsIgnoreCase("NOTEMPTY")) {
+							// Get actual value for the key from json string
+							actualValue = jsonPath.getString(jsonNameKey);
+
+							if (StringUtils.isBlank(actualValue)) {
+
+								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is not matching expected value:" + expectedValue);
+
+								success = false;
+								break;
+							}
+						} else {
+							// Get actual value for the key from json string
+							actualValue = jsonPath.getString(jsonNameKey);
+
+							// Compare whether actual value is matching with expected value or not
+							if (actualValue == null || !expectedValue.equals(actualValue)) {
+								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is not matching expected value:" + expectedValue);
+								success = false;
+								break;
+							} else {
+								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is matching expected value:" + expectedValue);
+							}
+
+						}
+					}
+				}
+			}
+		}
+
+		return success;
+	}
+
+	protected void getSpecificAppHostForGivenEnv(String appName, String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String hostName = null;
 		String port = null;
+		String vipAddress = null;
 		boolean appFound = false;
 
-		URL url = new URL("http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps");
+		URL url = new URL(EUREKA_URL);
 		URLConnection conn = url.openConnection();
 
 		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn.getInputStream());
@@ -89,7 +469,7 @@ public abstract class AbstractBase {
 				StartElement startElement = event.asStartElement();
 
 				// if provided app name encountered then make appFound as true
-				if (startElement.getName().getLocalPart().equals("name")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_APP_NAME)) {
 					event = eventReader.nextEvent();
 					if (event.asCharacters().getData().equals(appName)) {
 						appFound = true;
@@ -98,38 +478,44 @@ public abstract class AbstractBase {
 
 				// when appFound is true then get host name and port of that app.
 				if (appFound == true) {
-					if (startElement.getName().getLocalPart().equals("hostName")) {
+					if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME)) {
 						event = eventReader.nextEvent();
 						hostName = event.asCharacters().getData();
-						System.out.println("hostName=" + hostName);
+						logger.debug("hostName=" + hostName);
 					}
 
-					if (startElement.getName().getLocalPart().equals("port")) {
+					if (startElement.getName().getLocalPart().equals(EUREKA_HOST_PORT)) {
 						event = eventReader.nextEvent();
 						port = event.asCharacters().getData();
-						System.out.println("port=" + port);
-						break;
+						logger.debug("port=" + port);
+					}
+
+					if (startElement.getName().getLocalPart().equals(EUREKA_VIP_ADDRESS)) {
+						event = eventReader.nextEvent();
+						vipAddress = event.asCharacters().getData();
+						if (vipAddress.endsWith(env))
+							break;
 					}
 				}
 
 			}
 		}
 
+		logger.debug("hostName=" + hostName + " port=" + port);
+
 	}
 
-	public void getAllAppHostsForGivenEnv(String env) throws Exception {
+	protected void getAllAppHostsForGivenEnv(String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String appName = null;
 		String hostName = null;
 		String port = null;
-		String vipAddress = null;
 
-		URL url = new URL(eurekaURL);
+		URL url = new URL(EUREKA_URL);
 		URLConnection conn = url.openConnection();
 
-		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn
-				.getInputStream());
+		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn.getInputStream());
 
 		while (eventReader.hasNext()) {
 			XMLEvent event = eventReader.nextEvent();
@@ -140,108 +526,100 @@ public abstract class AbstractBase {
 				StartElement startElement = event.asStartElement();
 
 				// Get app name
-				if (startElement.getName().getLocalPart().equals("name")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_APP_NAME)) {
 					event = eventReader.nextEvent();
-					if (!event.asCharacters().getData().equalsIgnoreCase("Amazon"))
+					if (!event.asCharacters().getData().equalsIgnoreCase(EUREKA_DC_NAME))
 						appName = event.asCharacters().getData();
 				}
 
 				// Get host name
-				if (startElement.getName().getLocalPart().equals("hostName")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME)) {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}
 
 				// Get port
-				if (startElement.getName().getLocalPart().equals("port")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_PORT)) {
 					event = eventReader.nextEvent();
 					port = event.asCharacters().getData();
 				}
 
 				// Get vip address
-				if (startElement.getName().getLocalPart().equals("vipAddress")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_VIP_ADDRESS)) {
 					event = eventReader.nextEvent();
-					vipAddress = event.asCharacters().getData();
-					if (vipAddress.endsWith(env))
-						appHosts.put(appName, "http://" + hostName + ":" + port + "/");
+					if (event.asCharacters().getData().endsWith(env))
+						appHosts.put(appName, HTTP + hostName + COLON + port);
 				}
 
 			}
 		}
 	}
-	
-	public String[] getRowAsArray(String testCaseName,
-			int sheetNo) throws Exception {
 
-		XSSFWorkbook myWB = null;
-		String[] rowData = null;
+	protected RowData getRowData(XSSFRow row) throws Exception {
 
-		try {
-			int rowCount;
-			int colCount;
-			String excelPath = "src/test/test-data/TestData.xlsx";
+		RowData rowData = new RowData();
+		String currentCellData = null;
 
-			File myxl = new File(excelPath);
-			FileInputStream myStream = new FileInputStream(myxl);
+		for (int currentCell = 0; currentCell < TESTDATA_COLUMN_COUNT; currentCell++) {
 
-			myWB = new XSSFWorkbook(myStream);
-			XSSFSheet mySheet = myWB.getSheetAt(sheetNo - 1); // Sheet 1 means zero
+			currentCellData = getCellData(row.getCell(currentCell, Row.CREATE_NULL_AS_BLANK));
 
-			rowCount = mySheet.getLastRowNum() + 1;
-			logger.info(rowCount);
-			colCount = mySheet.getRow(0).getLastCellNum();
-			logger.info(colCount);
-
-			rowData = new String[colCount];
-
-			for (int i = 0; i < rowCount; i++) {
-				XSSFRow row = mySheet.getRow(i);
-				String value = getCellData(row.getCell(0));
-
-				if (value.equalsIgnoreCase(testCaseName)) {
-					for (int j = 0; j < colCount; j++) {
-						XSSFCell cell = row.getCell(j);
-						rowData[j] = getCellData(cell);
-					}
-				}
-
+			switch (currentCell) {
+				case 0:
+					rowData.setTestName(currentCellData);
+				case 1:
+					rowData.setDescription(currentCellData);
+				case 2:
+					rowData.setHost(currentCellData);
+				case 3:
+					rowData.setApiPath(currentCellData);
+				case 4:
+					rowData.setMethod(currentCellData);
+				case 5:
+					rowData.setHeaders(currentCellData);
+				case 6:
+					rowData.setQueryString(currentCellData);
+				case 7:
+					rowData.setBody(currentCellData);
+				case 8:
+					rowData.setDependencyTests(currentCellData);
+				case 9:
+					rowData.setValidations(currentCellData);
+				case 10:
+					rowData.setStore(currentCellData);
+				case 11:
+					rowData.setStatus(currentCellData);
 			}
-
-		} catch (Exception e) {
-			System.out.println("Exception in reading the excel file:" + e);
-		} finally {
-			myWB.close();
 		}
+
 		return rowData;
 	}
 
-	public String getCellData(XSSFCell cell) {
-		// This function will convert an object of type excel cell to a string value
+	// This function will convert an object of type excel cell to a string value
+	protected String getCellData(XSSFCell cell) {
 		int type = cell.getCellType();
 		Object result;
 		switch (type) {
-			case XSSFCell.CELL_TYPE_NUMERIC: // 0
-				result = cell.getNumericCellValue();
-				break;
-			case XSSFCell.CELL_TYPE_STRING: // 1
+			case XSSFCell.CELL_TYPE_STRING:
 				result = cell.getStringCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_FORMULA: // 2
-				throw new RuntimeException("We can't evaluate formulas in Java");
-			case XSSFCell.CELL_TYPE_BLANK: // 3
-				result = "";
+			case XSSFCell.CELL_TYPE_NUMERIC:
+				result = cell.getNumericCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_BOOLEAN: // 4
+			case XSSFCell.CELL_TYPE_FORMULA:
+				throw new RuntimeException("We can't evaluate formulas in Java");
+			case XSSFCell.CELL_TYPE_BLANK:
+				result = EMPTY_STRING;
+				break;
+			case XSSFCell.CELL_TYPE_BOOLEAN:
 				result = cell.getBooleanCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_ERROR: // 5
+			case XSSFCell.CELL_TYPE_ERROR:
 				throw new RuntimeException("This cell has an error");
 			default:
 				throw new RuntimeException("We don't support this cell type: " + type);
 		}
 		return result.toString();
 	}
-	
-	
 
 }
