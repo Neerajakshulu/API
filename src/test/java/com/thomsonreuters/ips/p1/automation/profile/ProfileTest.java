@@ -28,7 +28,7 @@ public class ProfileTest extends AbstractBase {
 
 	@Test
 	public void profileTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/ProfileNewTestData.xlsx";
+		testDataExcelPath = "src/test/test-data/ProfileTestData.xlsx";
 		appName = "1PPROFILE";
 		process();
 	}
