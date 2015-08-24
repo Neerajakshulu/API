@@ -75,7 +75,7 @@ public abstract class AbstractBase {
 	private static final String HTTP = "http://";
 	private static final String UTF8_ENCODING = "utf-8";
 	private static final String TEXTFILE_EXT = ".txt";
-	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-output";
+	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-responses";
 
 	private Map<String, String> appHosts = new HashMap<String, String>();
 	private Map<String, String> dataStore = new HashMap<String, String>();
