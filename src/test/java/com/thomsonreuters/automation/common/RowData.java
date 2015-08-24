@@ -1,4 +1,4 @@
-package com.thomsonreuters.ips.p1.automation.common;
+package com.thomsonreuters.automation.common;
 
 
 public class RowData {

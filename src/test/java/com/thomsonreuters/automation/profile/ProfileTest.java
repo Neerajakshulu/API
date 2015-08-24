@@ -1,4 +1,4 @@
-package com.thomsonreuters.ips.p1.automation.profile;
+package com.thomsonreuters.automation.profile;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -8,7 +8,7 @@ import org.apache.logging.log4j.Logger;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
 
-import com.thomsonreuters.ips.p1.automation.common.AbstractBase;
+import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
  * Tests the Profile API
