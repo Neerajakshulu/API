@@ -1,4 +1,4 @@
-package com.thomsonreuters.automation.profile;
+package com.thomsonreuters.automation.iam;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,7 +13,7 @@ import com.thomsonreuters.automation.common.AbstractBase;
 /**
  * Tests the Profile API
  */
-public class ProfileTest extends AbstractBase {
+public class IamTest extends AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();
 
@@ -28,8 +28,8 @@ public class ProfileTest extends AbstractBase {
 
 	@Test
 	public void profileTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/ProfileTestData.xlsx";
-		appName = "1PPROFILE";
+		testDataExcelPath = "src/test/test-data/IAMTestData.xlsx";
+		appName = "1PAUTH";
 		runTests();
 	}
 }

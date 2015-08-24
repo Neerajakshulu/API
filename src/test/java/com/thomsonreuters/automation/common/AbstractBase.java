@@ -11,7 +11,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -76,6 +75,8 @@ public abstract class AbstractBase {
 	private static final String UTF8_ENCODING = "utf-8";
 	private static final String TEXTFILE_EXT = ".txt";
 	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-responses";
+	private static final String STATUS = "status";
+	private static final String NOT_EMPTY = "NOTEMPTY";
 
 	private Map<String, String> appHosts = new HashMap<String, String>();
 	private Map<String, String> dataStore = new HashMap<String, String>();
@@ -91,7 +92,12 @@ public abstract class AbstractBase {
 	public void setUp() throws Exception {
 	}
 
-	protected void process() throws Exception {
+	/**
+	 * Execute all the test cases defined in the excel file.
+	 * 
+	 * @throws Exception
+	 */
+	protected void runTests() throws Exception {
 		logger.info("Entered the process method...");
 
 		XSSFWorkbook workBook = null;
@@ -247,6 +253,12 @@ public abstract class AbstractBase {
 		logger.info("End of processs method...");
 	}
 
+	/**
+	 * Checks whether current test dependency tests passed or not.
+	 * 
+	 * @param dependencyTests dependency tests
+	 * @return true if all the dependency tests passed else false
+	 */
 	protected boolean isDependencyTestsPassed(String dependencyTests) {
 		if (StringUtils.isNotBlank(dependencyTests)) {
 			StringTokenizer dependencyTestsTokenizer = new StringTokenizer(dependencyTests, TOKENIZER_DOUBLE_PIPE);
@@ -261,6 +273,12 @@ public abstract class AbstractBase {
 		return true;
 	}
 
+	/**
+	 * Checks for valid / supported methods.
+	 * 
+	 * @param method the method as configured in the test case
+	 * @return true means valid else invalid method
+	 */
 	protected boolean isSupportedMethod(String method) {
 		if (method.equalsIgnoreCase(GET) || method.equalsIgnoreCase(PUT) || method.equalsIgnoreCase(POST)
 				|| method.equalsIgnoreCase(DELETE))
@@ -269,6 +287,13 @@ public abstract class AbstractBase {
 			return false;
 	}
 
+	/**
+	 * This method replace the place holders in path, headers, query string and body with respective values captured
+	 * from the previous tests.
+	 * 
+	 * @param stringToFormat string with place holders
+	 * @return string after replacing the place holders
+	 */
 	protected String replaceDynamicPlaceHolders(String stringToFormat) {
 
 		logger.debug("Before replace=" + stringToFormat);
@@ -298,12 +323,19 @@ public abstract class AbstractBase {
 		return sb.toString();
 	}
 
+	/**
+	 * As configured in the excel, this method stores required data from current test response
+	 * 
+	 * @param json current test response body
+	 * @param jsonNameKeys json elements for which data to be stored
+	 * @param testName current test name
+	 */
 	protected void storeDependentTestsData(String json, String jsonNameKeys, String testName) {
 		if (StringUtils.isNotBlank(jsonNameKeys)) {
 			StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
 			JsonPath jsonPath = new JsonPath(json);
 			String jsonNameKey = null;
-			
+
 			while (jsonNameKeysTokenizer.hasMoreTokens()) {
 				jsonNameKey = jsonNameKeysTokenizer.nextToken();
 				String value = jsonPath.getString(jsonNameKey).replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
@@ -313,6 +345,12 @@ public abstract class AbstractBase {
 		logger.debug("DataStore:" + dataStore);
 	}
 
+	/**
+	 * Get configured header from excel and load to a map.
+	 * 
+	 * @param header as configured in excel
+	 * @return map of headers
+	 */
 	protected Map<String, String> getHeaders(final String header) {
 		Map<String, String> headersMap = new HashMap<>();
 
@@ -337,11 +375,25 @@ public abstract class AbstractBase {
 		return headersMap;
 	}
 
+	/**
+	 * Utility method which return pass / fail based on boolean.
+	 * 
+	 * @param isSuccess true means test pass else fail.
+	 * @return pass / fail
+	 */
 	protected String getStatus(final boolean isSuccess) {
 		String status = isSuccess ? PASS : FAIL;
 		return status;
 	}
 
+	/**
+	 * Updates the current test case status.
+	 * 
+	 * @param testName test case name
+	 * @param row current test case row
+	 * @param status test fail/pass status
+	 * @throws Exception
+	 */
 	protected void updateTestStatus(final String testName, final XSSFRow row, final String status) throws Exception {
 
 		// Maintain test status in this map, so that dependent tests will use this data to run or not.
@@ -360,6 +412,12 @@ public abstract class AbstractBase {
 		}
 	}
 
+	/**
+	 * Write and commit the changes to excel file.
+	 * 
+	 * @param workBook current excel from where tests run
+	 * @throws Exception
+	 */
 	protected void writeUpdatestoExcel(XSSFWorkbook workBook) throws Exception {
 		FileOutputStream fos = new FileOutputStream(new File(testDataExcelPath));
 		workBook.write(fos);
@@ -367,6 +425,14 @@ public abstract class AbstractBase {
 		workBook.close();
 	}
 
+	/**
+	 * Saves the response from each test/api call to a file.
+	 * 
+	 * @param json response body
+	 * @param currentSheetName current sheet from where test ran
+	 * @param testName current test case name
+	 * @throws Exception
+	 */
 	protected void saveAPIResponse(final String json, final String currentSheetName, final String testName)
 			throws Exception {
 
@@ -382,6 +448,15 @@ public abstract class AbstractBase {
 				StandardOpenOption.TRUNCATE_EXISTING);
 	}
 
+	/**
+	 * Validates the expected data provided in validations string with actual json data.
+	 * 
+	 * @param validations expected data
+	 * @param json response body
+	 * @param statusCode status code expecting
+	 * @return validation success or failure
+	 * @throws Exception
+	 */
 	protected boolean validateResponse(final String validations, final String json, final String statusCode)
 			throws Exception {
 
@@ -408,7 +483,7 @@ public abstract class AbstractBase {
 					if (validationTokenizer.hasMoreTokens()) {
 						expectedValue = validationTokenizer.nextToken();
 
-						if (jsonNameKey.equalsIgnoreCase("status")) {
+						if (jsonNameKey.equalsIgnoreCase(STATUS)) {
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equals(statusCode)) {
 
 								logger.info("Actual status code: " + statusCode
@@ -416,7 +491,7 @@ public abstract class AbstractBase {
 								success = false;
 								break;
 							}
-						} else if (expectedValue.equalsIgnoreCase("NOTEMPTY")) {
+						} else if (expectedValue.equalsIgnoreCase(NOT_EMPTY)) {
 							// Get actual value for the key from json string
 							actualValue = jsonPath.getString(jsonNameKey);
 
@@ -452,6 +527,13 @@ public abstract class AbstractBase {
 		return success;
 	}
 
+	/**
+	 * Reads host name for the given application and environment
+	 * 
+	 * @param appName specific application name
+	 * @param env environment for which the tests connect
+	 * @throws Exception
+	 */
 	protected void getSpecificAppHostForGivenEnv(String appName, String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
@@ -510,6 +592,12 @@ public abstract class AbstractBase {
 
 	}
 
+	/**
+	 * Read host names across all applications for the given environment and load them to map.
+	 * 
+	 * @param env environment for which the tests connect
+	 * @throws Exception
+	 */
 	protected void getAllAppHostsForGivenEnv(String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
@@ -560,6 +648,13 @@ public abstract class AbstractBase {
 		}
 	}
 
+	/**
+	 * Capture current excel row data in an object and return
+	 * 
+	 * @param excel row
+	 * @return RowData object contains excel row data
+	 * @throws Exception
+	 */
 	protected RowData getRowData(XSSFRow row) throws Exception {
 
 		RowData rowData = new RowData();
@@ -600,7 +695,12 @@ public abstract class AbstractBase {
 		return rowData;
 	}
 
-	// This function will convert an object of type excel cell to a string value
+	/**
+	 * This function will convert an object of type excel cell to a string value
+	 * 
+	 * @param cell excel cell
+	 * @return the cell value
+	 */
 	protected String getCellData(XSSFCell cell) {
 		int type = cell.getCellType();
 		Object result;

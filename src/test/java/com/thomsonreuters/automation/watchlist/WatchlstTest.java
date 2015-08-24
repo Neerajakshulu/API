@@ -28,6 +28,6 @@ public class WatchlstTest extends AbstractBase {
 	public void profileTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/WatchlistTestData.xlsx";
 		appName = "1PCITATIONS";
-		process();
+		runTests();
 	}
 }
