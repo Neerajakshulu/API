@@ -22,8 +22,18 @@ public class AuthoringTest extends AbstractBase {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
 		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
 
+		String eurekaURL = System.getProperty("eurekaUrl");
+		
+		String envSuffix = System.getProperty("envSuffix");
+		
+		logger.info("eurekaURL = "+ eurekaURL);
+		
+		logger.info("envSuffix = "+ envSuffix);
+		
+		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
+
 		// This method get all the application host names for the given environment
-		getAllAppHostsForGivenEnv(ENV);
+		getAllAppHostsForGivenEnv(eurekaURL, envSuffix);
 	}
 
 	@Test

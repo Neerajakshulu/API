@@ -12,7 +12,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -44,8 +43,7 @@ public abstract class AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	// TODO - Get this from property file
-	private static final String EUREKA_URL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
+	// private static final String EUREKA_URL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
 
 	private static final String EUREKA_APP_NAME = "name";
 	private static final String EUREKA_HOST_NAME = "hostName";
@@ -84,8 +82,7 @@ public abstract class AbstractBase {
 	private Map<String, String> testStatus = new HashMap<String, String>();
 
 	protected static final String TESTOUTPUT_FOLDER_DATEFORMAT = "ddMMMyyyy_HHmmss";
-	// TODO - move this to properties file and get it from there
-	protected static final String ENV = "stable.dev";
+	// protected static final String ENV = "stable.dev";
 	protected String strDateTime = null;
 	protected String testDataExcelPath = null;
 	protected String appName = null;
@@ -468,7 +465,7 @@ public abstract class AbstractBase {
 		String jsonNameKey = null;
 		String expectedValue = null;
 		String actualValue = null;
-		
+
 		if (StringUtils.isNotBlank(validations)) {
 			StringTokenizer validationsTokenizer = new StringTokenizer(validations, TOKENIZER_DOUBLE_PIPE);
 
@@ -506,7 +503,7 @@ public abstract class AbstractBase {
 						} else {
 							// Get actual value for the key from json string
 							actualValue = jsonPath.getString(jsonNameKey);
-							
+
 							// Compare whether actual value is matching with expected value or not
 							if (actualValue == null) {
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
@@ -514,14 +511,14 @@ public abstract class AbstractBase {
 								success = false;
 								break;
 							} else if (actualValue.startsWith("[") && actualValue.contains(expectedValue)) {
-								//This scenario is when json value for the key contains array of values
-								
+								// This scenario is when json value for the key contains array of values
+
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
 							} else if (expectedValue.equals(actualValue)) {
-								
+
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								success = true;
@@ -548,7 +545,7 @@ public abstract class AbstractBase {
 	 * @param env environment for which the tests connect
 	 * @throws Exception
 	 */
-	protected void getSpecificAppHostForGivenEnv(String appName, String env) throws Exception {
+	protected void getSpecificAppHostForGivenEnv(String appName, String eurekaURL, String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String hostName = null;
@@ -556,7 +553,7 @@ public abstract class AbstractBase {
 		String vipAddress = null;
 		boolean appFound = false;
 
-		URL url = new URL(EUREKA_URL);
+		URL url = new URL(eurekaURL);
 		URLConnection conn = url.openConnection();
 
 		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn.getInputStream());
@@ -612,14 +609,14 @@ public abstract class AbstractBase {
 	 * @param env environment for which the tests connect
 	 * @throws Exception
 	 */
-	protected void getAllAppHostsForGivenEnv(String env) throws Exception {
+	protected void getAllAppHostsForGivenEnv(String eurekaURL, String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String appName = null;
 		String hostName = null;
 		String port = null;
 
-		URL url = new URL(EUREKA_URL);
+		URL url = new URL(eurekaURL);
 		URLConnection conn = url.openConnection();
 
 		XMLEventReader eventReader = inputFactory.createXMLEventReader(conn.getInputStream());
