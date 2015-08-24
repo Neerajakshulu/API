@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -68,7 +69,8 @@ public abstract class AbstractBase {
 	private static final String UNDERSCORE = "_";
 	private static final String COLON = ":";
 	private static final String FORWARD_SLASH = "/";
-	private static final String PLACEHOLDER_MATCHER_PATTERN = "\\{(.*?)\\}";
+	private static final String PLACEHOLDER_MATCHER_PATTERN = "\\((.*?)\\)";
+	private static final String REPLACE_SQURE_BRACKETS = "[\\[\\]]";
 
 	private static final String HTTP = "http://";
 	private static final String UTF8_ENCODING = "utf-8";
@@ -301,11 +303,14 @@ public abstract class AbstractBase {
 			StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
 			JsonPath jsonPath = new JsonPath(json);
 			String jsonNameKey = null;
+			
 			while (jsonNameKeysTokenizer.hasMoreTokens()) {
 				jsonNameKey = jsonNameKeysTokenizer.nextToken();
-				dataStore.put(testName + UNDERSCORE + jsonNameKey, jsonPath.getString(jsonNameKey));
+				String value = jsonPath.getString(jsonNameKey).replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
+				dataStore.put(testName + UNDERSCORE + jsonNameKey, value);
 			}
 		}
+		logger.debug("DataStore:" + dataStore);
 	}
 
 	protected Map<String, String> getHeaders(final String header) {
