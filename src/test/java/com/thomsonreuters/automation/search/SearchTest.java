@@ -25,9 +25,9 @@ public class SearchTest extends AbstractBase {
 	}
 
 	@Test
-	public void profileTest() throws Exception {
+	public void searchTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/SearchTestData.xlsx";
-		appName = "1PCITATIONS";
+		appName = "1PSEARCH";
 		runTests();
 	}
 }

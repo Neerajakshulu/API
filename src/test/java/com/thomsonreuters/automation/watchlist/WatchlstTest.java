@@ -25,7 +25,7 @@ public class WatchlstTest extends AbstractBase {
 	}
 
 	@Test
-	public void profileTest() throws Exception {
+	public void wathclistTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/WatchlistTestData.xlsx";
 		appName = "1PCITATIONS";
 		runTests();
