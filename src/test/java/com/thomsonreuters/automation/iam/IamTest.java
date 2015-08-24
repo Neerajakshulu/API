@@ -11,7 +11,7 @@ import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * Tests the Profile API
+ * Test the IAM APIs
  */
 public class IamTest extends AbstractBase {
 
@@ -27,7 +27,7 @@ public class IamTest extends AbstractBase {
 	}
 
 	@Test
-	public void profileTest() throws Exception {
+	public void iamTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/IAMTestData.xlsx";
 		appName = "1PAUTH";
 		runTests();

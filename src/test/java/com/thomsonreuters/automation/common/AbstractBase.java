@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -467,7 +468,7 @@ public abstract class AbstractBase {
 		String jsonNameKey = null;
 		String expectedValue = null;
 		String actualValue = null;
-
+		
 		if (StringUtils.isNotBlank(validations)) {
 			StringTokenizer validationsTokenizer = new StringTokenizer(validations, TOKENIZER_DOUBLE_PIPE);
 
@@ -499,25 +500,38 @@ public abstract class AbstractBase {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-
 								success = false;
 								break;
 							}
 						} else {
 							// Get actual value for the key from json string
 							actualValue = jsonPath.getString(jsonNameKey);
-
+							
 							// Compare whether actual value is matching with expected value or not
-							if (actualValue == null || !expectedValue.equals(actualValue)) {
+							if (actualValue == null) {
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
-							} else {
+							} else if (actualValue.startsWith("[") && actualValue.contains(expectedValue)) {
+								//This scenario is when json value for the key contains array of values
+								
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
+								success = true;
+								break;
+							} else if (expectedValue.equals(actualValue)) {
+								
+								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is matching expected value:" + expectedValue);
+								success = true;
+								break;
+							} else {
+								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is not matching expected value:" + expectedValue);
+								success = false;
+								break;
 							}
-
 						}
 					}
 				}

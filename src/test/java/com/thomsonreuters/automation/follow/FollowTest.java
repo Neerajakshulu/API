@@ -1,4 +1,4 @@
-package com.thomsonreuters.automation.profile;
+package com.thomsonreuters.automation.follow;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,9 +11,9 @@ import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * Test the Profile APIs
+ * Test the Follow APIs
  */
-public class ProfileTest extends AbstractBase {
+public class FollowTest extends AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();
 
@@ -27,9 +27,9 @@ public class ProfileTest extends AbstractBase {
 	}
 
 	@Test
-	public void profileTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/ProfileTestData.xlsx";
-		appName = "1PPROFILE";
+	public void followTest() throws Exception {
+		testDataExcelPath = "src/test/test-data/FollowTestData.xlsx";
+		appName = "1PFOLLOW";
 		runTests();
 	}
 }
