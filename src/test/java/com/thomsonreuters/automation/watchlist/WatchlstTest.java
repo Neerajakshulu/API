@@ -10,7 +10,11 @@ import org.testng.annotations.Test;
 
 import com.thomsonreuters.automation.common.AbstractBase;
 
-
+/**
+ * Test for the Watchlist API's
+ * 
+ * TestData: WatchlistTestData.xlsx
+ */
 public class WatchlstTest extends AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();

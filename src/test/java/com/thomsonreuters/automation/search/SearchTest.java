@@ -11,6 +11,11 @@ import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 
+/**
+ * Tests for the Search API
+ * 
+ * TestData: SearchTestData.xlsx
+ */
 public class SearchTest extends AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();
