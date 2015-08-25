@@ -11,6 +11,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -31,6 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.annotations.BeforeClass;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
@@ -91,6 +94,28 @@ public abstract class AbstractBase {
 	public void setUp() throws Exception {
 	}
 
+	@BeforeClass
+	public void beforeSuite() throws Exception {
+		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
+
+		String eurekaURL = System.getProperty("eurekaUrl");
+
+		String envSuffix = System.getProperty("envSuffix");
+		
+		String IP = System.getProperty("IP");
+
+		logger.info("eurekaURL = " + eurekaURL);
+
+		logger.info("envSuffix = " + envSuffix);
+
+		logger.info("IP = " + IP);
+		
+		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
+
+		// This method get all the application host names for the given environment
+		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
+	}
+	
 	/**
 	 * Execute all the test cases defined in the excel file.
 	 * 
@@ -205,7 +230,7 @@ public abstract class AbstractBase {
 								response = reqSpec.when().delete(url);
 							}
 
-							response.then().log().all();
+							//response.then().log().all();
 							responseJson = response.asString();
 							statusCode = String.valueOf(response.getStatusCode());
 

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="API Automation">
+	<test name="IAM">
+		<classes>
+			<class name="com.thomsonreuters.automation.iam.IamTest" />
+		</classes>
+	</test>
+
+	<test name="Profile">
+		<classes>
+			<class name="com.thomsonreuters.automation.profile.ProfileTest" />
+		</classes>
+	</test>
+
+	<test name="Follow">
+		<classes>
+			<class name="com.thomsonreuters.automation.follow.FollowTest" />
+		</classes>
+	</test>
+
+	<test name="Authoring">
+		<classes>
+			<class name="com.thomsonreuters.automation.authoring.AuthoringTest" />
+		</classes>
+	</test>
+
+	<test name="Search">
+		<classes>
+			<class name="com.thomsonreuters.automation.search.SearchTest" />
+		</classes>
+	</test>
+
+	<test name="Watchlist">
+		<classes>
+			<class name="com.thomsonreuters.automation.watchlist.WatchlistTest" />
+		</classes>
+	</test>
+</suite>
