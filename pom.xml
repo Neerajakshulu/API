@@ -141,6 +141,10 @@
 							<name>envSuffix</name>
 							<value>${envSuffix}</value>
 						</property>
+						<property>
+							<name>IP</name>
+							<value>${IP}</value>
+						</property>
 					</systemProperties>
 				</configuration>
 			</plugin>

@@ -26,14 +26,18 @@ public class IamTest extends AbstractBase {
 		
 		String envSuffix = System.getProperty("envSuffix");
 		
-		logger.info("eurekaURL = "+ eurekaURL);
-		
-		logger.info("envSuffix = "+ envSuffix);
+		String IP = System.getProperty("IP");
+
+		logger.info("eurekaURL = " + eurekaURL);
+
+		logger.info("envSuffix = " + envSuffix);
+
+		logger.info("IP = " + IP);
 		
 		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
 
 		// This method get all the application host names for the given environment
-		getAllAppHostsForGivenEnv(eurekaURL, envSuffix);
+		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
 	}
 
 	@Test

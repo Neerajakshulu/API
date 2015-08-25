@@ -47,6 +47,7 @@ public abstract class AbstractBase {
 
 	private static final String EUREKA_APP_NAME = "name";
 	private static final String EUREKA_HOST_NAME = "hostName";
+	private static final String EUREKA_IP_ADDRESS = "ipAddr";
 	private static final String EUREKA_HOST_PORT = "port";
 	private static final String EUREKA_VIP_ADDRESS = "vipAddress";
 	private static final String EUREKA_DC_NAME = "Amazon";
@@ -609,7 +610,7 @@ public abstract class AbstractBase {
 	 * @param env environment for which the tests connect
 	 * @throws Exception
 	 */
-	protected void getAllAppHostsForGivenEnv(String eurekaURL, String env) throws Exception {
+	protected void getAllAppHostsForGivenEnv(String eurekaURL, String env, String IP) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String appName = null;
@@ -636,8 +637,13 @@ public abstract class AbstractBase {
 						appName = event.asCharacters().getData();
 				}
 
-				// Get host name
-				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME)) {
+				// Get IP Address
+				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME) && IP.equalsIgnoreCase("N")) {
+					event = eventReader.nextEvent();
+					hostName = event.asCharacters().getData();
+				}
+
+				if (startElement.getName().getLocalPart().equals(EUREKA_IP_ADDRESS) && IP.equalsIgnoreCase("Y")) {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}
