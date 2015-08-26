@@ -99,16 +99,18 @@ public abstract class AbstractBase {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
 
 		String eurekaURL = System.getProperty("eurekaUrl");
-
 		String envSuffix = System.getProperty("envSuffix");
-		
 		String IP = System.getProperty("IP");
+		String user1 = System.getProperty("sys_user1");
+		String user2 = System.getProperty("sys_user2");
+		dataStore.put("SYS_USER1", user1);
+		dataStore.put("SYS_USER2", user2);
 
 		logger.info("eurekaURL = " + eurekaURL);
-
 		logger.info("envSuffix = " + envSuffix);
-
 		logger.info("IP = " + IP);
+		logger.info("SYS_USER1 = " + user1);
+		logger.info("SYS_USER2 = " + user2);
 		
 		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
 
