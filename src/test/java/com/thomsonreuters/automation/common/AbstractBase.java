@@ -66,7 +66,8 @@ public abstract class AbstractBase {
 	private static final String DEPENDENCY_FAIL = "DEPFAIL";
 
 	private static final String EMPTY_STRING = "";
-	private static final String TOKENIZER_DOUBLE_PIPE = "||";
+	protected static final String TOKENIZER_DOUBLE_BACK_SLACH = "//";
+	protected static final String TOKENIZER_DOUBLE_PIPE = "||";
 	private static final String TOKENIZER_EQUALTO = "=";
 	private static final String UNDERSCORE = "_";
 	private static final String COLON = ":";

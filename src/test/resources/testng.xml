@@ -37,4 +37,14 @@
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistTest" />
 		</classes>
 	</test>
+	<test name="Profilesearch">
+		<classes>
+			<class name="com.thomsonreuters.automation.profilesearch.ProfileSearchTest" />
+		</classes>
+	</test>
+	<test name="TypeHead">
+		<classes>
+			<class name="com.thomsonreuters.automation.typehead.TypeHeadTest" />
+		</classes>
+	</test>
 </suite>
