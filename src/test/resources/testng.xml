@@ -42,9 +42,9 @@
 			<class name="com.thomsonreuters.automation.profilesearch.ProfileSearchTest" />
 		</classes>
 	</test>
-	<test name="TypeHead">
+	<test name="TypeAhead">
 		<classes>
-			<class name="com.thomsonreuters.automation.typehead.TypeHeadTest" />
+			<class name="com.thomsonreuters.automation.typeahead.TypeAheadTest" />
 		</classes>
 	</test>
 </suite>

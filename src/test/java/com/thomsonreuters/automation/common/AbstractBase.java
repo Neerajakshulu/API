@@ -34,6 +34,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.BeforeSuite;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
@@ -46,7 +47,8 @@ public abstract class AbstractBase {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	// private static final String EUREKA_URL = "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
+	// private static final String EUREKA_URL =
+	// "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
 
 	private static final String EUREKA_APP_NAME = "name";
 	private static final String EUREKA_HOST_NAME = "hostName";
@@ -79,6 +81,7 @@ public abstract class AbstractBase {
 	private static final String UTF8_ENCODING = "utf-8";
 	private static final String TEXTFILE_EXT = ".txt";
 	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-responses";
+	private static Path TEST_OUTPUT_ROOT_FOLDER_PATH = null;
 	private static final String STATUS = "status";
 	private static final String NOT_EMPTY = "NOTEMPTY";
 
@@ -95,8 +98,15 @@ public abstract class AbstractBase {
 	public void setUp() throws Exception {
 	}
 
-	@BeforeClass
+	@BeforeSuite
 	public void beforeSuite() throws Exception {
+		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
+		TEST_OUTPUT_ROOT_FOLDER_PATH = Paths.get(TEST_OUTPUT_FOLDER_PATH, strDateTime);
+		Files.createDirectories(TEST_OUTPUT_ROOT_FOLDER_PATH);
+	}
+
+	@BeforeClass
+	public void beforeClass() throws Exception {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
 
 		String eurekaURL = System.getProperty("eurekaUrl");
@@ -112,13 +122,15 @@ public abstract class AbstractBase {
 		logger.info("IP = " + IP);
 		logger.info("SYS_USER1 = " + user1);
 		logger.info("SYS_USER2 = " + user2);
-		
-		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
 
-		// This method get all the application host names for the given environment
+//		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
+
+		// This method get all the application host names for the given
+		// environment
 		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
+		
 	}
-	
+
 	/**
 	 * Execute all the test cases defined in the excel file.
 	 * 
@@ -140,6 +152,7 @@ public abstract class AbstractBase {
 			String apiPath = null;
 			String headers = null;
 			String queryString = null;
+			String validationString = null;
 			String url = null;
 			String responseJson = null;
 			String statusCode = null;
@@ -164,7 +177,8 @@ public abstract class AbstractBase {
 
 				logger.debug("total number of rows:" + sheetRowCount);
 
-				// Loop through all test case records of current sheet, start with 1 to leave header.
+				// Loop through all test case records of current sheet, start
+				// with 1 to leave header.
 				for (int i = 1; i <= sheetRowCount; i++) {
 
 					// Get current row information
@@ -176,13 +190,15 @@ public abstract class AbstractBase {
 					logger.debug("Real host=" + appHosts.get(rowData.getHost()));
 
 					/*
-					 * If mandatory information like test case name, host, api path and valid http method are not
-					 * provided then skip those tests and update the status as fail.
+					 * If mandatory information like test case name, host, api
+					 * path and valid http method are not provided then skip
+					 * those tests and update the status as fail.
 					 */
 					if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 							&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
 
-						// If any of the dependency test failed then don't proceed.
+						// If any of the dependency test failed then don't
+						// proceed.
 						if (isDependencyTestsPassed(rowData.getDependencyTests())) {
 
 							logger.info("-----------------------------------------------------------------------");
@@ -191,6 +207,7 @@ public abstract class AbstractBase {
 							apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
 							headers = replaceDynamicPlaceHolders(rowData.getHeaders());
 							queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
+							validationString = replaceDynamicPlaceHolders(rowData.getValidations());
 
 							url = appHosts.get(rowData.getHost()) + apiPath + queryString;
 							logger.debug("URL=" + url);
@@ -203,8 +220,10 @@ public abstract class AbstractBase {
 								reqSpec.headers(headersMap);
 							}
 
-							// Set body to request if the http method is not GET.
-							if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(rowData.getBody())) {
+							// Set body to request if the http method is not
+							// GET.
+							if (!rowData.getMethod().equalsIgnoreCase(GET)
+									&& StringUtils.isNotBlank(rowData.getBody())) {
 								reqSpec.body(rowData.getBody());
 							}
 
@@ -233,21 +252,26 @@ public abstract class AbstractBase {
 								response = reqSpec.when().delete(url);
 							}
 
-							//response.then().log().all();
+							// response.then().log().all();
 							responseJson = response.asString();
 							statusCode = String.valueOf(response.getStatusCode());
 
 							// Validate the response with expected data
-							testSuccess = validateResponse(rowData.getValidations(), responseJson, statusCode);
+							// testSuccess =
+							// validateResponse(rowData.getValidations(),
+							// responseJson, statusCode);
+							testSuccess = validateResponse(validationString, responseJson, statusCode);
 
-							// Update the excel file with Test PASS / FAIL status
+							// Update the excel file with Test PASS / FAIL
+							// status
 							updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
 
 							// Save API response to file
 							saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 
 							if (testSuccess) {
-								// Store the data which is required for subsequent test cases.
+								// Store the data which is required for
+								// subsequent test cases.
 								storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
 							}
 
@@ -259,7 +283,8 @@ public abstract class AbstractBase {
 							updateTestStatus(rowData.getTestName(), row, DEPENDENCY_FAIL);
 						}
 					} else {
-						logger.debug("Mandatory information like test name, host, api path or http method not provided.");
+						logger.debug(
+								"Mandatory information like test name, host, api path or http method not provided.");
 						updateTestStatus(rowData.getTestName(), row, FAIL);
 					}
 				}
@@ -283,7 +308,8 @@ public abstract class AbstractBase {
 	/**
 	 * Checks whether current test dependency tests passed or not.
 	 * 
-	 * @param dependencyTests dependency tests
+	 * @param dependencyTests
+	 *            dependency tests
 	 * @return true if all the dependency tests passed else false
 	 */
 	protected boolean isDependencyTestsPassed(String dependencyTests) {
@@ -303,7 +329,8 @@ public abstract class AbstractBase {
 	/**
 	 * Checks for valid / supported methods.
 	 * 
-	 * @param method the method as configured in the test case
+	 * @param method
+	 *            the method as configured in the test case
 	 * @return true means valid else invalid method
 	 */
 	protected boolean isSupportedMethod(String method) {
@@ -315,10 +342,11 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * This method replace the place holders in path, headers, query string and body with respective values captured
-	 * from the previous tests.
+	 * This method replace the place holders in path, headers, query string and
+	 * body with respective values captured from the previous tests.
 	 * 
-	 * @param stringToFormat string with place holders
+	 * @param stringToFormat
+	 *            string with place holders
 	 * @return string after replacing the place holders
 	 */
 	protected String replaceDynamicPlaceHolders(String stringToFormat) {
@@ -351,11 +379,15 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * As configured in the excel, this method stores required data from current test response
+	 * As configured in the excel, this method stores required data from current
+	 * test response
 	 * 
-	 * @param json current test response body
-	 * @param jsonNameKeys json elements for which data to be stored
-	 * @param testName current test name
+	 * @param json
+	 *            current test response body
+	 * @param jsonNameKeys
+	 *            json elements for which data to be stored
+	 * @param testName
+	 *            current test name
 	 */
 	protected void storeDependentTestsData(String json, String jsonNameKeys, String testName) {
 		if (StringUtils.isNotBlank(jsonNameKeys)) {
@@ -375,7 +407,8 @@ public abstract class AbstractBase {
 	/**
 	 * Get configured header from excel and load to a map.
 	 * 
-	 * @param header as configured in excel
+	 * @param header
+	 *            as configured in excel
 	 * @return map of headers
 	 */
 	protected Map<String, String> getHeaders(final String header) {
@@ -405,7 +438,8 @@ public abstract class AbstractBase {
 	/**
 	 * Utility method which return pass / fail based on boolean.
 	 * 
-	 * @param isSuccess true means test pass else fail.
+	 * @param isSuccess
+	 *            true means test pass else fail.
 	 * @return pass / fail
 	 */
 	protected String getStatus(final boolean isSuccess) {
@@ -416,14 +450,18 @@ public abstract class AbstractBase {
 	/**
 	 * Updates the current test case status.
 	 * 
-	 * @param testName test case name
-	 * @param row current test case row
-	 * @param status test fail/pass status
+	 * @param testName
+	 *            test case name
+	 * @param row
+	 *            current test case row
+	 * @param status
+	 *            test fail/pass status
 	 * @throws Exception
 	 */
 	protected void updateTestStatus(final String testName, final XSSFRow row, final String status) throws Exception {
 
-		// Maintain test status in this map, so that dependent tests will use this data to run or not.
+		// Maintain test status in this map, so that dependent tests will use
+		// this data to run or not.
 		testStatus.put(testName, status);
 
 		// If cell is null then get it as blank cell
@@ -442,7 +480,8 @@ public abstract class AbstractBase {
 	/**
 	 * Write and commit the changes to excel file.
 	 * 
-	 * @param workBook current excel from where tests run
+	 * @param workBook
+	 *            current excel from where tests run
 	 * @throws Exception
 	 */
 	protected void writeUpdatestoExcel(XSSFWorkbook workBook) throws Exception {
@@ -455,17 +494,19 @@ public abstract class AbstractBase {
 	/**
 	 * Saves the response from each test/api call to a file.
 	 * 
-	 * @param json response body
-	 * @param currentSheetName current sheet from where test ran
-	 * @param testName current test case name
+	 * @param json
+	 *            response body
+	 * @param currentSheetName
+	 *            current sheet from where test ran
+	 * @param testName
+	 *            current test case name
 	 * @throws Exception
 	 */
 	protected void saveAPIResponse(final String json, final String currentSheetName, final String testName)
 			throws Exception {
-
-		Path newDirectoryPath = Paths.get(TEST_OUTPUT_FOLDER_PATH, strDateTime, appName, currentSheetName);
+//		Path newDirectoryPath = Paths.get(TEST_OUTPUT_FOLDER_PATH,strDateTime, appName, currentSheetName);
+		Path newDirectoryPath = Paths.get(TEST_OUTPUT_ROOT_FOLDER_PATH.toString(), appName, currentSheetName);
 		Files.createDirectories(newDirectoryPath);
-
 		String fileName = newDirectoryPath.toAbsolutePath() + FORWARD_SLASH + testName + TEXTFILE_EXT;
 
 		logger.debug("fileName=" + fileName);
@@ -476,11 +517,15 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * Validates the expected data provided in validations string with actual json data.
+	 * Validates the expected data provided in validations string with actual
+	 * json data.
 	 * 
-	 * @param validations expected data
-	 * @param json response body
-	 * @param statusCode status code expecting
+	 * @param validations
+	 *            expected data
+	 * @param json
+	 *            response body
+	 * @param statusCode
+	 *            status code expecting
 	 * @return validation success or failure
 	 * @throws Exception
 	 */
@@ -533,14 +578,16 @@ public abstract class AbstractBase {
 							// Get actual value for the key from json string
 							actualValue = jsonPath.getString(jsonNameKey);
 
-							// Compare whether actual value is matching with expected value or not
+							// Compare whether actual value is matching with
+							// expected value or not
 							if (actualValue == null) {
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
 							} else if (actualValue.startsWith("[") && actualValue.contains(expectedValue)) {
-								// This scenario is when json value for the key contains array of values
+								// This scenario is when json value for the key
+								// contains array of values
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
@@ -570,8 +617,10 @@ public abstract class AbstractBase {
 	/**
 	 * Reads host name for the given application and environment
 	 * 
-	 * @param appName specific application name
-	 * @param env environment for which the tests connect
+	 * @param appName
+	 *            specific application name
+	 * @param env
+	 *            environment for which the tests connect
 	 * @throws Exception
 	 */
 	protected void getSpecificAppHostForGivenEnv(String appName, String eurekaURL, String env) throws Exception {
@@ -603,7 +652,8 @@ public abstract class AbstractBase {
 					}
 				}
 
-				// when appFound is true then get host name and port of that app.
+				// when appFound is true then get host name and port of that
+				// app.
 				if (appFound == true) {
 					if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME)) {
 						event = eventReader.nextEvent();
@@ -633,9 +683,11 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * Read host names across all applications for the given environment and load them to map.
+	 * Read host names across all applications for the given environment and
+	 * load them to map.
 	 * 
-	 * @param env environment for which the tests connect
+	 * @param env
+	 *            environment for which the tests connect
 	 * @throws Exception
 	 */
 	protected void getAllAppHostsForGivenEnv(String eurekaURL, String env, String IP) throws Exception {
@@ -696,7 +748,8 @@ public abstract class AbstractBase {
 	/**
 	 * Capture current excel row data in an object and return
 	 * 
-	 * @param excel row
+	 * @param excel
+	 *            row
 	 * @return RowData object contains excel row data
 	 * @throws Exception
 	 */
@@ -710,30 +763,30 @@ public abstract class AbstractBase {
 			currentCellData = getCellData(row.getCell(currentCell, Row.CREATE_NULL_AS_BLANK));
 
 			switch (currentCell) {
-				case 0:
-					rowData.setTestName(currentCellData);
-				case 1:
-					rowData.setDescription(currentCellData);
-				case 2:
-					rowData.setHost(currentCellData);
-				case 3:
-					rowData.setApiPath(currentCellData);
-				case 4:
-					rowData.setMethod(currentCellData);
-				case 5:
-					rowData.setHeaders(currentCellData);
-				case 6:
-					rowData.setQueryString(currentCellData);
-				case 7:
-					rowData.setBody(currentCellData);
-				case 8:
-					rowData.setDependencyTests(currentCellData);
-				case 9:
-					rowData.setValidations(currentCellData);
-				case 10:
-					rowData.setStore(currentCellData);
-				case 11:
-					rowData.setStatus(currentCellData);
+			case 0:
+				rowData.setTestName(currentCellData);
+			case 1:
+				rowData.setDescription(currentCellData);
+			case 2:
+				rowData.setHost(currentCellData);
+			case 3:
+				rowData.setApiPath(currentCellData);
+			case 4:
+				rowData.setMethod(currentCellData);
+			case 5:
+				rowData.setHeaders(currentCellData);
+			case 6:
+				rowData.setQueryString(currentCellData);
+			case 7:
+				rowData.setBody(currentCellData);
+			case 8:
+				rowData.setDependencyTests(currentCellData);
+			case 9:
+				rowData.setValidations(currentCellData);
+			case 10:
+				rowData.setStore(currentCellData);
+			case 11:
+				rowData.setStatus(currentCellData);
 			}
 		}
 
@@ -743,31 +796,32 @@ public abstract class AbstractBase {
 	/**
 	 * This function will convert an object of type excel cell to a string value
 	 * 
-	 * @param cell excel cell
+	 * @param cell
+	 *            excel cell
 	 * @return the cell value
 	 */
 	protected String getCellData(XSSFCell cell) {
 		int type = cell.getCellType();
 		Object result;
 		switch (type) {
-			case XSSFCell.CELL_TYPE_STRING:
-				result = cell.getStringCellValue();
-				break;
-			case XSSFCell.CELL_TYPE_NUMERIC:
-				result = cell.getNumericCellValue();
-				break;
-			case XSSFCell.CELL_TYPE_FORMULA:
-				throw new RuntimeException("We can't evaluate formulas in Java");
-			case XSSFCell.CELL_TYPE_BLANK:
-				result = EMPTY_STRING;
-				break;
-			case XSSFCell.CELL_TYPE_BOOLEAN:
-				result = cell.getBooleanCellValue();
-				break;
-			case XSSFCell.CELL_TYPE_ERROR:
-				throw new RuntimeException("This cell has an error");
-			default:
-				throw new RuntimeException("We don't support this cell type: " + type);
+		case XSSFCell.CELL_TYPE_STRING:
+			result = cell.getStringCellValue();
+			break;
+		case XSSFCell.CELL_TYPE_NUMERIC:
+			result = cell.getNumericCellValue();
+			break;
+		case XSSFCell.CELL_TYPE_FORMULA:
+			throw new RuntimeException("We can't evaluate formulas in Java");
+		case XSSFCell.CELL_TYPE_BLANK:
+			result = EMPTY_STRING;
+			break;
+		case XSSFCell.CELL_TYPE_BOOLEAN:
+			result = cell.getBooleanCellValue();
+			break;
+		case XSSFCell.CELL_TYPE_ERROR:
+			throw new RuntimeException("This cell has an error");
+		default:
+			throw new RuntimeException("We don't support this cell type: " + type);
 		}
 		return result.toString();
 	}
