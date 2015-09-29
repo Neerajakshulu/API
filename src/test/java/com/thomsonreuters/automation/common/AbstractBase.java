@@ -45,7 +45,7 @@ import com.jayway.restassured.specification.RequestSpecification;
  */
 public abstract class AbstractBase {
 
-	private static final Logger logger = LogManager.getLogger();
+	protected static final Logger logger = LogManager.getLogger();
 
 	// private static final String EUREKA_URL =
 	// "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
@@ -59,9 +59,9 @@ public abstract class AbstractBase {
 
 	private static final int TESTDATA_COLUMN_COUNT = 12;
 
-	private static final String GET = "GET";
+	protected static final String GET = "GET";
 	private static final String POST = "POST";
-	private static final String PUT = "PUT";
+	protected static final String PUT = "PUT";
 	private static final String DELETE = "DELETE";
 	private static final String PASS = "PASS";
 	private static final String FAIL = "FAIL";
@@ -85,7 +85,7 @@ public abstract class AbstractBase {
 	private static final String STATUS = "status";
 	private static final String NOT_EMPTY = "NOTEMPTY";
 
-	private Map<String, String> appHosts = new HashMap<String, String>();
+	protected Map<String, String> appHosts = new HashMap<String, String>();
 	private Map<String, String> dataStore = new HashMap<String, String>();
 	private Map<String, String> testStatus = new HashMap<String, String>();
 
@@ -94,7 +94,7 @@ public abstract class AbstractBase {
 	protected String strDateTime = null;
 	protected String testDataExcelPath = null;
 	protected String appName = null;
-
+	protected RowData rowData = null;
 	public void setUp() throws Exception {
 	}
 
@@ -146,7 +146,7 @@ public abstract class AbstractBase {
 			int sheetRowCount;
 			XSSFSheet sheet = null;
 			XSSFRow row = null;
-			RowData rowData = null;
+//			RowData rowData = null;
 			Response response = null;
 			String sheetName = null;
 			String apiPath = null;
@@ -825,5 +825,5 @@ public abstract class AbstractBase {
 		}
 		return result.toString();
 	}
-
+	
 }

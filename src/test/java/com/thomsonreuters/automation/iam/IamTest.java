@@ -9,7 +9,7 @@ import com.thomsonreuters.automation.common.AbstractBase;
  */
 public class IamTest extends AbstractBase {
 
-	@Test(enabled = false)
+	@Test
 	public void iamTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/IAMTestData.xlsx";
 		appName = "1PAUTH";
