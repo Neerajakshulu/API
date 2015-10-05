@@ -32,12 +32,12 @@ public class ProfileTest extends AbstractBase {
 		logger.info("Entered Profile testSummaryMaxLength method...");
 		appName = "1PPROFILE";
 		rowData = new RowData();
-		rowData.setTestName("S1_TC_T10");
+		rowData.setTestName("S1_TC_ST1");
 		rowData.setHost("1PPROFILE");
 		rowData.setDescription("Update user profile with summary with Max length");
 		rowData.setApiPath("/users/user/(SYS_USER1)");
 		rowData.setMethod("PUT");
-		rowData.setHeaders("Content-Type=application/json");
+		rowData.setHeaders("X-1P-User=(SYS_USER1)||Content-Type=application/json");
 		rowData.setBody(
 				"{\"summary\":\"Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with   Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length\"}");
 		rowData.setValidations("status=200||hits.hits._source.firstName=Mohana");
