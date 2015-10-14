@@ -7,7 +7,11 @@
 			<class name="com.thomsonreuters.automation.iam.IamTest" />
 		</classes>
 	</test>
-
+	<test name="Notify">
+		<classes>
+			<class name="com.thomsonreuters.automation.notify.NotifyTest" />
+		</classes>
+	</test>
 	<test name="Profile">
 		<classes>
 			<class name="com.thomsonreuters.automation.profile.ProfileTest" />
@@ -47,4 +51,5 @@
 			<class name="com.thomsonreuters.automation.typeahead.TypeAheadTest" />
 		</classes>
 	</test>
+	
 </suite>

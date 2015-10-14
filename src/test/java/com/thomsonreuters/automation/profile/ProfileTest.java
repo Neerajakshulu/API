@@ -18,7 +18,7 @@ import com.thomsonreuters.automation.common.RowData;
  */
 public class ProfileTest extends AbstractBase {
 
-	@Test
+	@Test(priority = 1)
 	public void profileTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/ProfileTestData.xlsx";
 		appName = "1PPROFILE";
@@ -27,7 +27,7 @@ public class ProfileTest extends AbstractBase {
 	
 	
 
-	@Test(priority = 1)
+	@Test
 	public void testSummaryMaxLength() throws Exception {
 		logger.info("Entered Profile testSummaryMaxLength method...");
 		appName = "1PPROFILE";

@@ -60,9 +60,9 @@ public abstract class AbstractBase {
 	private static final int TESTDATA_COLUMN_COUNT = 12;
 
 	protected static final String GET = "GET";
-	private static final String POST = "POST";
+	protected static final String POST = "POST";
 	protected static final String PUT = "PUT";
-	private static final String DELETE = "DELETE";
+	protected static final String DELETE = "DELETE";
 	private static final String PASS = "PASS";
 	private static final String FAIL = "FAIL";
 	private static final String DEPENDENCY_FAIL = "DEPFAIL";
@@ -70,23 +70,25 @@ public abstract class AbstractBase {
 	private static final String EMPTY_STRING = "";
 	protected static final String TOKENIZER_DOUBLE_BACK_SLACH = "//";
 	protected static final String TOKENIZER_DOUBLE_PIPE = "||";
-	private static final String TOKENIZER_EQUALTO = "=";
+	protected static final String TOKENIZER_EQUALTO = "=";
 	private static final String UNDERSCORE = "_";
 	private static final String COLON = ":";
 	private static final String FORWARD_SLASH = "/";
 	private static final String PLACEHOLDER_MATCHER_PATTERN = "\\((.*?)\\)";
 	private static final String REPLACE_SQURE_BRACKETS = "[\\[\\]]";
+	protected static final String TOKENIZER_DOUBLE_AMPERSAND = "&&";
+	protected static final String PLACEHOLDER_MATCHER_PATTERN_VALIDATION = "\\{.*?}";
 
 	private static final String HTTP = "http://";
 	private static final String UTF8_ENCODING = "utf-8";
 	private static final String TEXTFILE_EXT = ".txt";
 	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-responses";
 	private static Path TEST_OUTPUT_ROOT_FOLDER_PATH = null;
-	private static final String STATUS = "status";
-	private static final String NOT_EMPTY = "NOTEMPTY";
+	protected static final String STATUS = "status";
+	protected static final String NOT_EMPTY = "NOTEMPTY";
 
 	protected Map<String, String> appHosts = new HashMap<String, String>();
-	private Map<String, String> dataStore = new HashMap<String, String>();
+	protected Map<String, String> dataStore = new HashMap<String, String>();
 	private Map<String, String> testStatus = new HashMap<String, String>();
 
 	protected static final String TESTOUTPUT_FOLDER_DATEFORMAT = "ddMMMyyyy_HHmmss";
@@ -153,6 +155,7 @@ public abstract class AbstractBase {
 			String headers = null;
 			String queryString = null;
 			String validationString = null;
+			String bodyString = null;
 			String url = null;
 			String responseJson = null;
 			String statusCode = null;
@@ -208,6 +211,8 @@ public abstract class AbstractBase {
 							headers = replaceDynamicPlaceHolders(rowData.getHeaders());
 							queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
 							validationString = replaceDynamicPlaceHolders(rowData.getValidations());
+							
+							bodyString = replaceDynamicPlaceHolders(rowData.getBody());
 
 							url = appHosts.get(rowData.getHost()) + apiPath + queryString;
 							logger.debug("URL=" + url);
@@ -222,9 +227,14 @@ public abstract class AbstractBase {
 
 							// Set body to request if the http method is not
 							// GET.
+//							if (!rowData.getMethod().equalsIgnoreCase(GET)
+//									&& StringUtils.isNotBlank(rowData.getBody())) {
+//								reqSpec.body(rowData.getBody());
+//							}
+							
 							if (!rowData.getMethod().equalsIgnoreCase(GET)
-									&& StringUtils.isNotBlank(rowData.getBody())) {
-								reqSpec.body(rowData.getBody());
+									&& StringUtils.isNotBlank(bodyString)) {
+								reqSpec.body(bodyString);
 							}
 
 							if (rowData.getMethod().equalsIgnoreCase(GET)) {
@@ -585,7 +595,9 @@ public abstract class AbstractBase {
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
-							} else if (actualValue.startsWith("[") && actualValue.contains(expectedValue)) {
+							} 
+//							else if (actualValue.startsWith("[") && (actualValue.contains(expectedValue)||StringUtils.containsIgnoreCase(actualValue, expectedValue))) {
+								else if (actualValue.startsWith("[") && StringUtils.containsIgnoreCase(actualValue, expectedValue)) {
 								// This scenario is when json value for the key
 								// contains array of values
 
@@ -599,7 +611,13 @@ public abstract class AbstractBase {
 										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
-							} else {
+							} else if (StringUtils.containsIgnoreCase(actualValue, expectedValue)) {
+
+								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is matching expected value:" + expectedValue);
+								success = true;
+								break;
+							}else {
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
