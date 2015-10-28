@@ -109,9 +109,6 @@ public class SearchTest extends AbstractBase {
 			Collections.sort(tempList,cmp);
 			status = tempList.equals(actualList);
 		}
-		System.out.println(actualValue);
-		System.out.println(actualList);
-		System.out.println(tempList);
 		return status;
 		
 		

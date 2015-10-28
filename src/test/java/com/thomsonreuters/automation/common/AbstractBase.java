@@ -33,6 +33,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
@@ -97,6 +98,11 @@ public abstract class AbstractBase {
 	protected String testDataExcelPath = null;
 	protected String appName = null;
 	protected RowData rowData = null;
+	
+	protected boolean isTestFail = false; 
+	
+
+	
 	public void setUp() throws Exception {
 	}
 
@@ -283,6 +289,8 @@ public abstract class AbstractBase {
 								// Store the data which is required for
 								// subsequent test cases.
 								storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+							} else {
+								isTestFail = true;
 							}
 
 							logger.info("End execution of test:" + rowData.getTestName());
@@ -311,7 +319,7 @@ public abstract class AbstractBase {
 
 		// Write updates to excel
 		writeUpdatestoExcel(workBook);
-
+		Assert.assertFalse(isTestFail, "One or more tests in "+ rowData.getHost() +" failed");
 		logger.info("End of processs method...");
 	}
 
@@ -843,5 +851,4 @@ public abstract class AbstractBase {
 		}
 		return result.toString();
 	}
-	
 }

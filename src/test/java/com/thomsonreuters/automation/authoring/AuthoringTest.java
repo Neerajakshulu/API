@@ -103,7 +103,7 @@ public class AuthoringTest extends AbstractBase {
 				if(statusCode.equals("200")){
 				JsonPath jsonPath = new JsonPath(responseJson);
 				String content = jsonPath.getString("comments.content");
-				int oldCount = Integer.parseInt(dataStore.get("S1_TC_T32_counterValue"));
+				int oldCount = Integer.parseInt(dataStore.get("S1_TC_T39_counterValue"));
 				int newCount =Integer.parseInt(jsonPath.getString("size"));
 				if ((content.substring(1, content.length()-1)).length() == 2500 && newCount == oldCount+1 ) {
 					logger.info("Comment content was truncated to 2500 characters");
