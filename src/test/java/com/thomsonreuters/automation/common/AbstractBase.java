@@ -199,7 +199,9 @@ public abstract class AbstractBase {
 						logger.debug("row data=" + rowData.toString());
 
 						logger.debug("Real host=" + appHosts.get(rowData.getHost()));
-
+						if("1PNOTIFY".equalsIgnoreCase(rowData.getHost())){
+							Thread.sleep(5000);
+						}
 						/*
 						 * If mandatory information like test case name, host,
 						 * api path and valid http method are not provided then
