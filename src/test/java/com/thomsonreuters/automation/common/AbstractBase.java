@@ -324,7 +324,7 @@ public abstract class AbstractBase {
 
 		// Write updates to excel
 		writeUpdatestoExcel(workBook);
-		Assert.assertFalse(isTestFail, "One or more tests in " + rowData.getHost() + " failed");
+		Assert.assertFalse(isTestFail, "One or more tests in " + appName + " failed");
 		logger.info("End of processs method...");
 	}
 

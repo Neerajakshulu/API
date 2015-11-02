@@ -28,8 +28,9 @@ public class SearchTest extends AbstractBase {
 		runTests();
 	}
 
-	protected boolean validateResponse(final String validations, final String json, final String statusCode)
-			throws Exception {
+	protected boolean validateResponse(final String validations,
+			final String json,
+			final String statusCode) throws Exception {
 		boolean status = true;
 		if (StringUtils.isNotBlank(validations)) {
 
@@ -40,11 +41,13 @@ public class SearchTest extends AbstractBase {
 				if (!status)
 					break;
 			}
-
 		}
 		return status;
 	}
-	public boolean validateSearch(String validations, final String json, final String statusCode) throws Exception {
+
+	public boolean validateSearch(String validations,
+			final String json,
+			final String statusCode) throws Exception {
 		boolean status = true;
 		if (StringUtils.isNotBlank(validations)) {
 			Matcher matcher = Pattern.compile(PLACEHOLDER_MATCHER_PATTERN_VALIDATION).matcher(validations);
@@ -63,55 +66,54 @@ public class SearchTest extends AbstractBase {
 					status = super.validateResponse(validations, json, statusCode);
 				}
 			} else {
-//				if(false){System.out.println("dzfcds");
-				if(rowData.getDescription().contains("sort")){
+				// if(false){System.out.println("dzfcds");
+				if (rowData.getDescription().contains("sort")) {
 					status = super.validateResponse(validations, json, statusCode);
-					if(status){
+					if (status) {
 						JsonPath jsonPath = new JsonPath(json);
 						List<Object> actualValue = null;
-						if(rowData.getDescription().contains("times cited")){
-							actualValue = jsonPath.getList("hits.hits._source.fullrecord.citingsrcscount");
-							status = verifySortorder(actualValue,rowData.getDescription());
-						}else if(rowData.getDescription().contains("score")){
+						// if (rowData.getDescription().contains("times cited")) {
+						// actualValue = jsonPath.getList("hits.hits._source.fullrecord.citingsrcscount");
+						// status = verifySortorder(actualValue, rowData.getDescription());
+						// }
+						if (rowData.getDescription().contains("score")) {
 							actualValue = jsonPath.getList("hits.hits._score");
-							status = verifySortorder(actualValue,rowData.getDescription());
-						}else if(rowData.getDescription().contains("sort on pub date")){
+							status = verifySortorder(actualValue, rowData.getDescription());
+						} else if (rowData.getDescription().contains("sort on pub date")) {
 							actualValue = jsonPath.getList("hits.hits._source.sortdate");
-							status = verifySortorder(actualValue,rowData.getDescription());
+							status = verifySortorder(actualValue, rowData.getDescription());
 						}
-						
 					}
-				}else
-				status = super.validateResponse(validations, json, statusCode);
+				} else
+					status = super.validateResponse(validations, json, statusCode);
 			}
 		}
 
 		return status;
 	}
 
-	private boolean verifySortorder(List<Object> actualValue, String description) {
+	private boolean verifySortorder(List<Object> actualValue,
+			String description) {
 		boolean status = false;
 		List<String> actualList = new ArrayList<String>();
-		for(int i=0;i<actualValue.size();i++){
-			String tmp=String.valueOf(actualValue.get(i));
-			if(tmp.startsWith("[") )
-			actualList.add(tmp.substring(1,tmp.length()-1));
+		for (int i = 0; i < actualValue.size(); i++) {
+			String tmp = String.valueOf(actualValue.get(i));
+			if (tmp.startsWith("["))
+				actualList.add(tmp.substring(1, tmp.length() - 1));
 			else
 				actualList.add(tmp);
 		}
-		
 		List<String> tempList = new ArrayList<String>(actualList);
-		if(StringUtils.containsIgnoreCase(description, "asc")){
+		if (StringUtils.containsIgnoreCase(description, "asc")) {
 			Collections.sort(tempList);
 			status = tempList.equals(actualList);
-		}else{
-			Comparator cmp = Collections.reverseOrder();  
-			Collections.sort(tempList,cmp);
+		} else {
+			Comparator cmp = Collections.reverseOrder();
+			Collections.sort(tempList, cmp);
 			status = tempList.equals(actualList);
 		}
 		return status;
-		
-		
+
 	}
 
 }
