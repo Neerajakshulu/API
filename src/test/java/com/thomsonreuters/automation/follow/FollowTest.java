@@ -25,6 +25,7 @@ public class FollowTest extends AbstractBase {
 		runTests();
 	}
 	
+	// Follow a user and Check Followers count got increased or not
 	@Test(priority=1)
 	public void checkFallowersCount() throws Exception {
 		logger.info("Entered 1PFOLLOW checkFallowersCount method...");
@@ -123,10 +124,8 @@ public class FollowTest extends AbstractBase {
 				if (statusCode.equals("200") && "S1_TC_ST1".equalsIgnoreCase(rowData.getTestName())) {
 					JsonPath jsonPath = new JsonPath(responseJson);
 					//String content = jsonPath.getString("count");
-					int oldCount = Integer.parseInt(dataStore.get("S1_TC_T13_count"));
+					int oldCount = Integer.parseInt(dataStore.get("S1_TC_T23_count"));
 					int newCount = Integer.parseInt(jsonPath.getString("count"));
-					System.out.println("oldCount" +oldCount);
-					System.out.println("newCount" +newCount);
 					if ( newCount == oldCount + 1) {
 						logger.info("Fallowers count was increased ");
 						testSuccess = true;
