@@ -608,7 +608,7 @@ public abstract class AbstractBase {
 							// Compare whether actual value is matching with
 							// expected value or not
 							if (actualValue == null) {
-								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
@@ -627,23 +627,43 @@ public abstract class AbstractBase {
 								break;
 							} else if (expectedValue.equals(actualValue)) {
 
-								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
 							} else if (StringUtils.containsIgnoreCase(actualValue, expectedValue)) {
 
-								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
-							} else {
+							} else if (expectedValue.trim().equalsIgnoreCase("\"\"")||expectedValue.trim().equalsIgnoreCase("\'\'")) {//Added by Janardhan for Empty string in response
+								// Get actual value for the key from json string
+								actualValue = jsonPath.getString(jsonNameKey);
+								System.out.println("Expected value for "+jsonNameKey+" is Empty and Actual value in the response is:"+actualValue);
+								if(actualValue.isEmpty()||actualValue.trim().length()==0){
+									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+											+ " is matching expected value:" + expectedValue);
+									success = true;
+									break;
+								}else{
+									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+											+ " is not matching expected value:" + expectedValue);
+									success = false;
+									break;
+								}
+							}  else {
+								System.out.println("====== Expected value:"+expectedValue);
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
 							}
 						}
+					}else{//Added by Janardhan for Empty string in the expected value
+						logger.info("==== Expected value is empty !! Please provide input for "+jsonNameKey+". For Empty string check, provide \"\" and for null check, provide null ");
+						success = false;
+						break;
 					}
 				}
 			}
