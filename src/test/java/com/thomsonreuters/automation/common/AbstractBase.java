@@ -34,18 +34,28 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.testng.Assert;
+import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.relevantcodes.extentreports.ExtentReports;
+import com.relevantcodes.extentreports.ExtentTest;
+import com.relevantcodes.extentreports.LogStatus;
+import com.thomsonreuters.automation.report.ReportFactory;
 
 /**
  * Common setup class for all the tests
  */
 public abstract class AbstractBase {
 
+	protected ExtentReports reporter = ReportFactory.getReporter();
+	
+	protected ExtentTest testReporter = null; 
+//			reporter.startTest("complexTest001", "This is a simple simpleTest001");
+	
 	protected static final Logger logger = LogManager.getLogger();
 
 	// private static final String EUREKA_URL =
@@ -210,7 +220,8 @@ public abstract class AbstractBase {
 						if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 								&& StringUtils.isNotBlank(rowData.getApiPath())
 								&& isSupportedMethod(rowData.getMethod())) {
-
+							
+							testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 							// If any of the dependency test failed then don't
 							// proceed.
 							if (isDependencyTestsPassed(rowData.getDependencyTests())) {
@@ -290,13 +301,18 @@ public abstract class AbstractBase {
 
 								// Save API response to file
 								saveAPIResponse(responseJson, sheetName, rowData.getTestName());
-
+								
+								
 								if (testSuccess) {
 									// Store the data which is required for
 									// subsequent test cases.
 									storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+									//Report status
+									testReporter.log(LogStatus.PASS, "PASS" );
 								} else {
 									isTestFail = true;
+									//Report status
+									testReporter.log(LogStatus.FAIL, "FAIL");
 								}
 
 								logger.info("End execution of test:" + rowData.getTestName());
@@ -305,12 +321,14 @@ public abstract class AbstractBase {
 							} else {
 								logger.debug("Dependency tests failed hence skipping this test.");
 								updateTestStatus(rowData.getTestName(), row, DEPENDENCY_FAIL);
+								testReporter.log(LogStatus.SKIP, "Dependency tests failed hence skipping this test");
 							}
 						} else {
 							logger.debug(
 									"Mandatory information like test name, host, api path or http method not provided.");
 							updateTestStatus(rowData.getTestName(), row, FAIL);
 						}
+						reporter.endTest(testReporter);
 					}
 				}
 				logger.info("End executing tests from sheet " + (currentSheet + 1));
@@ -587,6 +605,9 @@ public abstract class AbstractBase {
 
 								logger.info("Actual status code: " + statusCode
 										+ "is not matching expected status code value: " + expectedValue);
+								
+								testReporter.log(LogStatus.ERROR, "Actual status code: " + statusCode
+										+ "is not matching expected status code value: " + expectedValue);
 								success = false;
 								break;
 							}
@@ -597,6 +618,8 @@ public abstract class AbstractBase {
 							if (StringUtils.isBlank(actualValue)) {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
@@ -609,6 +632,8 @@ public abstract class AbstractBase {
 							// expected value or not
 							if (actualValue == null) {
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
@@ -623,11 +648,15 @@ public abstract class AbstractBase {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
 							} else if (expectedValue.equals(actualValue)) {
 
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
@@ -635,14 +664,18 @@ public abstract class AbstractBase {
 
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
+										+ " is matching expected value:" + expectedValue);
 								success = true;
 								break;
 							} else if (expectedValue.trim().equalsIgnoreCase("\"\"")||expectedValue.trim().equalsIgnoreCase("\'\'")) {//Added by Janardhan for Empty string in response
 								// Get actual value for the key from json string
 								actualValue = jsonPath.getString(jsonNameKey);
-								System.out.println("Expected value for "+jsonNameKey+" is Empty and Actual value in the response is:"+actualValue);
+//								System.out.println("Expected value for "+jsonNameKey+" is Empty and Actual value in the response is:"+actualValue);
 								if(actualValue.isEmpty()||actualValue.trim().length()==0){
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
+											+ " is matching expected value:" + expectedValue);
+									testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is matching expected value:" + expectedValue);
 									success = true;
 									break;
@@ -661,7 +694,7 @@ public abstract class AbstractBase {
 							}
 						}
 					}else{//Added by Janardhan for Empty string in the expected value
-						logger.info("==== Expected value is empty !! Please provide input for "+jsonNameKey+". For Empty string check, provide \"\" and for null check, provide null ");
+						logger.info("Expected value is empty !! Please provide input for "+jsonNameKey+". For Empty string check, provide \"\" and for null check, provide null ");
 						success = false;
 						break;
 					}
@@ -883,4 +916,18 @@ public abstract class AbstractBase {
 		}
 		return result.toString();
 	}
+	
+	@AfterSuite
+	public void afterSuite()
+	{
+		reporter.close();
+	}
+	
+	 public void addCategory(){
+	        
+
+	}
+
+
+	
 }

@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
@@ -36,7 +37,9 @@ public class FollowTest extends AbstractBase {
 		rowData.setDescription("Check count of my followers");
 		rowData.setApiPath("/follow/user/(SYS_USER1)/count/followers");
 		rowData.setMethod("GET");
+		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
+		reporter.endTest(testReporter);
 		
 		rowData.setTestName("S1_TC_ST2");
 		rowData.setHost("1PFOLLOW");
@@ -128,14 +131,17 @@ public class FollowTest extends AbstractBase {
 					int newCount = Integer.parseInt(jsonPath.getString("count"));
 					if ( newCount == oldCount + 1) {
 						logger.info("Fallowers count was increased ");
+						testReporter.log(LogStatus.INFO, "Fallowers count was increased");
 						testSuccess = true;
 					}
 				}else if (statusCode.equals("200")){
 					testSuccess = true;
 				}
 				if (!testSuccess) {
+					testReporter.log(LogStatus.FAIL, "FAIL");
 					throw new Exception("Validation Failed");
 				} else {
+					testReporter.log(LogStatus.PASS, "PASS" );
 					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
 				}
 

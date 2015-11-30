@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
@@ -42,7 +43,9 @@ public class ProfileTest extends AbstractBase {
 				"{\"summary\":\"Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with   Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length\"}");
 		rowData.setValidations("status=200||hits.hits._source.firstName=Mohana");
 		rowData.setStore("hits.hits._id");
+		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
+		reporter.endTest(testReporter);
 		logger.info("Entered Profile testSummaryMaxLength method...");
 	}
 
@@ -105,6 +108,7 @@ public class ProfileTest extends AbstractBase {
 				String summary = jsonPath.getString("summary");
 				if (summary.length() == 1500) {
 					logger.info("summary text was truncated to 1500 characters");
+					testReporter.log(LogStatus.INFO, "summary text was truncated to 1500 characters");
 					testSuccess = true;
 				}
 				}
@@ -112,7 +116,10 @@ public class ProfileTest extends AbstractBase {
 				saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 
 				if (!testSuccess) {
+					testReporter.log(LogStatus.FAIL, "FAIL");
 					throw new Exception("Validation Failed");
+				}else{
+					testReporter.log(LogStatus.PASS, "PASS" );
 				}
 
 				logger.info("End execution of test:" + rowData.getTestName());

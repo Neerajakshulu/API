@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
+import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
@@ -41,7 +42,9 @@ public class AuthoringTest extends AbstractBase {
 		rowData.setBody(	
 				"{\"targetType\":\"TRRecord\",\"targetId\":\"456539938WOS1\",\"content\":\"Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length\"}");
 		rowData.setStore("comments.id");
+		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
+		reporter.endTest(testReporter);
 		logger.info("Ennding Authoring testCommentMaxLength method...");
 	}
 	
@@ -108,6 +111,8 @@ public class AuthoringTest extends AbstractBase {
 				if ((content.substring(1, content.length()-1)).length() == 2500 && newCount == oldCount+1 ) {
 					logger.info("Comment content was truncated to 2500 characters");
 					logger.info("Comment size was increased ");
+					testReporter.log(LogStatus.INFO, "Comment content was truncated to 2500 characters");
+					testReporter.log(LogStatus.INFO, "Comment size was increased");
 					testSuccess = true;
 				}
 				}
@@ -115,9 +120,11 @@ public class AuthoringTest extends AbstractBase {
 				saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 
 				if (!testSuccess) {
+					testReporter.log(LogStatus.FAIL, "FAIL");
 					throw new Exception("Validation Failed");
 				}else{
 					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+					testReporter.log(LogStatus.PASS, "PASS" );
 				}
 
 				logger.info("End execution of test:" + rowData.getTestName());
