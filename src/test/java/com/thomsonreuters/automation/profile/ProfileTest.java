@@ -35,7 +35,7 @@ public class ProfileTest extends AbstractBase {
 		rowData = new RowData();
 		rowData.setTestName("S1_TC_ST1");
 		rowData.setHost("1PPROFILE");
-		rowData.setDescription("Update user profile with summary with Max length");
+		rowData.setDescription("Verify that update user profile summary with exceeds Max length and verify that API should truncate to 1500 characters");
 		rowData.setApiPath("/users/user/(SYS_USER1)");
 		rowData.setMethod("PUT");
 		rowData.setHeaders("X-1P-User=(SYS_USER1)||Content-Type=application/json");

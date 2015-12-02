@@ -52,10 +52,10 @@ import com.thomsonreuters.automation.report.ReportFactory;
 public abstract class AbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
-	
-	protected ExtentTest testReporter = null; 
-//			reporter.startTest("complexTest001", "This is a simple simpleTest001");
-	
+
+	protected ExtentTest testReporter = null;
+	// reporter.startTest("complexTest001", "This is a simple simpleTest001");
+
 	protected static final Logger logger = LogManager.getLogger();
 
 	// private static final String EUREKA_URL =
@@ -97,7 +97,7 @@ public abstract class AbstractBase {
 	private static Path TEST_OUTPUT_ROOT_FOLDER_PATH = null;
 	protected static final String STATUS = "status";
 	protected static final String NOT_EMPTY = "NOTEMPTY";
-
+	private static final String USER_VAR = "SYS_USER";
 	protected Map<String, String> appHosts = new HashMap<String, String>();
 	protected Map<String, String> dataStore = new HashMap<String, String>();
 	private Map<String, String> testStatus = new HashMap<String, String>();
@@ -128,22 +128,19 @@ public abstract class AbstractBase {
 		String eurekaURL = System.getProperty("eurekaUrl");
 		String envSuffix = System.getProperty("envSuffix");
 		String IP = System.getProperty("IP");
-		String user1 = System.getProperty("sys_user1");
-		String user2 = System.getProperty("sys_user2");
-		dataStore.put("SYS_USER1", user1);
-		dataStore.put("SYS_USER2", user2);
+		String usersList = System.getProperty("sys_users");
+		int i = 1;
+		String user = null;
+		StringTokenizer validationsTokenizer = new StringTokenizer(usersList, TOKENIZER_DOUBLE_PIPE);
+		while (validationsTokenizer.hasMoreTokens()) {
+			user = validationsTokenizer.nextToken();
+			dataStore.put(USER_VAR + String.valueOf(i), user);
+			i++;
+		}
 
-		logger.info("eurekaURL = " + eurekaURL);
 		logger.info("envSuffix = " + envSuffix);
 		logger.info("IP = " + IP);
-		logger.info("SYS_USER1 = " + user1);
-		logger.info("SYS_USER2 = " + user2);
-
-		// strDateTime = new
-		// SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
-
-		// This method get all the application host names for the given
-		// environment
+		logger.info("Users = " + dataStore);
 		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
 
 	}
@@ -209,19 +206,19 @@ public abstract class AbstractBase {
 						logger.debug("row data=" + rowData.toString());
 
 						logger.debug("Real host=" + appHosts.get(rowData.getHost()));
-						if("1PNOTIFY".equalsIgnoreCase(rowData.getHost())){
+						if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())) {
 							Thread.sleep(5000);
 						}
 						/*
-						 * If mandatory information like test case name, host,
-						 * api path and valid http method are not provided then
-						 * skip those tests and update the status as fail.
+						 * If mandatory information like test case name, host, api path and valid http method are not
+						 * provided then skip those tests and update the status as fail.
 						 */
 						if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 								&& StringUtils.isNotBlank(rowData.getApiPath())
 								&& isSupportedMethod(rowData.getMethod())) {
-							
-							testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
+
+							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
+									.assignCategory(appName);
 							// If any of the dependency test failed then don't
 							// proceed.
 							if (isDependencyTestsPassed(rowData.getDependencyTests())) {
@@ -301,17 +298,16 @@ public abstract class AbstractBase {
 
 								// Save API response to file
 								saveAPIResponse(responseJson, sheetName, rowData.getTestName());
-								
-								
+
 								if (testSuccess) {
 									// Store the data which is required for
 									// subsequent test cases.
 									storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
-									//Report status
-									testReporter.log(LogStatus.PASS, "PASS" );
+									// Report status
+									testReporter.log(LogStatus.PASS, "PASS");
 								} else {
 									isTestFail = true;
-									//Report status
+									// Report status
 									testReporter.log(LogStatus.FAIL, "FAIL");
 								}
 
@@ -351,8 +347,7 @@ public abstract class AbstractBase {
 	/**
 	 * Checks whether current test dependency tests passed or not.
 	 * 
-	 * @param dependencyTests
-	 *            dependency tests
+	 * @param dependencyTests dependency tests
 	 * @return true if all the dependency tests passed else false
 	 */
 	protected boolean isDependencyTestsPassed(String dependencyTests) {
@@ -372,8 +367,7 @@ public abstract class AbstractBase {
 	/**
 	 * Checks for valid / supported methods.
 	 * 
-	 * @param method
-	 *            the method as configured in the test case
+	 * @param method the method as configured in the test case
 	 * @return true means valid else invalid method
 	 */
 	protected boolean isSupportedMethod(String method) {
@@ -385,11 +379,10 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * This method replace the place holders in path, headers, query string and
-	 * body with respective values captured from the previous tests.
+	 * This method replace the place holders in path, headers, query string and body with respective values captured
+	 * from the previous tests.
 	 * 
-	 * @param stringToFormat
-	 *            string with place holders
+	 * @param stringToFormat string with place holders
 	 * @return string after replacing the place holders
 	 */
 	protected String replaceDynamicPlaceHolders(String stringToFormat) {
@@ -422,17 +415,15 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * As configured in the excel, this method stores required data from current
-	 * test response
+	 * As configured in the excel, this method stores required data from current test response
 	 * 
-	 * @param json
-	 *            current test response body
-	 * @param jsonNameKeys
-	 *            json elements for which data to be stored
-	 * @param testName
-	 *            current test name
+	 * @param json current test response body
+	 * @param jsonNameKeys json elements for which data to be stored
+	 * @param testName current test name
 	 */
-	protected void storeDependentTestsData(String json, String jsonNameKeys, String testName) {
+	protected void storeDependentTestsData(String json,
+			String jsonNameKeys,
+			String testName) {
 		if (StringUtils.isNotBlank(jsonNameKeys)) {
 			StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
 			JsonPath jsonPath = new JsonPath(json);
@@ -450,8 +441,7 @@ public abstract class AbstractBase {
 	/**
 	 * Get configured header from excel and load to a map.
 	 * 
-	 * @param header
-	 *            as configured in excel
+	 * @param header as configured in excel
 	 * @return map of headers
 	 */
 	protected Map<String, String> getHeaders(final String header) {
@@ -481,8 +471,7 @@ public abstract class AbstractBase {
 	/**
 	 * Utility method which return pass / fail based on boolean.
 	 * 
-	 * @param isSuccess
-	 *            true means test pass else fail.
+	 * @param isSuccess true means test pass else fail.
 	 * @return pass / fail
 	 */
 	protected String getStatus(final boolean isSuccess) {
@@ -493,15 +482,14 @@ public abstract class AbstractBase {
 	/**
 	 * Updates the current test case status.
 	 * 
-	 * @param testName
-	 *            test case name
-	 * @param row
-	 *            current test case row
-	 * @param status
-	 *            test fail/pass status
+	 * @param testName test case name
+	 * @param row current test case row
+	 * @param status test fail/pass status
 	 * @throws Exception
 	 */
-	protected void updateTestStatus(final String testName, final XSSFRow row, final String status) throws Exception {
+	protected void updateTestStatus(final String testName,
+			final XSSFRow row,
+			final String status) throws Exception {
 
 		// Maintain test status in this map, so that dependent tests will use
 		// this data to run or not.
@@ -523,8 +511,7 @@ public abstract class AbstractBase {
 	/**
 	 * Write and commit the changes to excel file.
 	 * 
-	 * @param workBook
-	 *            current excel from where tests run
+	 * @param workBook current excel from where tests run
 	 * @throws Exception
 	 */
 	protected void writeUpdatestoExcel(XSSFWorkbook workBook) throws Exception {
@@ -537,16 +524,14 @@ public abstract class AbstractBase {
 	/**
 	 * Saves the response from each test/api call to a file.
 	 * 
-	 * @param json
-	 *            response body
-	 * @param currentSheetName
-	 *            current sheet from where test ran
-	 * @param testName
-	 *            current test case name
+	 * @param json response body
+	 * @param currentSheetName current sheet from where test ran
+	 * @param testName current test case name
 	 * @throws Exception
 	 */
-	protected void saveAPIResponse(final String json, final String currentSheetName, final String testName)
-			throws Exception {
+	protected void saveAPIResponse(final String json,
+			final String currentSheetName,
+			final String testName) throws Exception {
 		// Path newDirectoryPath =
 		// Paths.get(TEST_OUTPUT_FOLDER_PATH,strDateTime, appName,
 		// currentSheetName);
@@ -562,20 +547,17 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * Validates the expected data provided in validations string with actual
-	 * json data.
+	 * Validates the expected data provided in validations string with actual json data.
 	 * 
-	 * @param validations
-	 *            expected data
-	 * @param json
-	 *            response body
-	 * @param statusCode
-	 *            status code expecting
+	 * @param validations expected data
+	 * @param json response body
+	 * @param statusCode status code expecting
 	 * @return validation success or failure
 	 * @throws Exception
 	 */
-	protected boolean validateResponse(final String validations, final String json, final String statusCode)
-			throws Exception {
+	protected boolean validateResponse(final String validations,
+			final String json,
+			final String statusCode) throws Exception {
 
 		JsonPath jsonPath = new JsonPath(json);
 		boolean success = true;
@@ -605,7 +587,7 @@ public abstract class AbstractBase {
 
 								logger.info("Actual status code: " + statusCode
 										+ "is not matching expected status code value: " + expectedValue);
-								
+
 								testReporter.log(LogStatus.ERROR, "Actual status code: " + statusCode
 										+ "is not matching expected status code value: " + expectedValue);
 								success = false;
@@ -619,8 +601,8 @@ public abstract class AbstractBase {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: " + jsonNameKey
-										+ " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: "
+										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
 							}
@@ -633,8 +615,8 @@ public abstract class AbstractBase {
 							if (actualValue == null) {
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: " + jsonNameKey
-										+ " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: "
+										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
 							}
@@ -648,53 +630,57 @@ public abstract class AbstractBase {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
-										+ " is matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
+										+ jsonNameKey + " is matching expected value:" + expectedValue);
 								success = true;
 								break;
 							} else if (expectedValue.equals(actualValue)) {
 
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
-										+ " is matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
+										+ jsonNameKey + " is matching expected value:" + expectedValue);
 								success = true;
 								break;
 							} else if (StringUtils.containsIgnoreCase(actualValue, expectedValue)) {
 
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
-										+ " is matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
+										+ jsonNameKey + " is matching expected value:" + expectedValue);
 								success = true;
 								break;
-							} else if (expectedValue.trim().equalsIgnoreCase("\"\"")||expectedValue.trim().equalsIgnoreCase("\'\'")) {//Added by Janardhan for Empty string in response
+							} else if (expectedValue.trim().equalsIgnoreCase("\"\"")
+									|| expectedValue.trim().equalsIgnoreCase("\'\'")) {// Added by Janardhan for Empty
+																						// string in response
 								// Get actual value for the key from json string
 								actualValue = jsonPath.getString(jsonNameKey);
-//								System.out.println("Expected value for "+jsonNameKey+" is Empty and Actual value in the response is:"+actualValue);
-								if(actualValue.isEmpty()||actualValue.trim().length()==0){
+								// System.out.println("Expected value for "+jsonNameKey+" is Empty and Actual value in
+								// the response is:"+actualValue);
+								if (actualValue.isEmpty() || actualValue.trim().length() == 0) {
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is matching expected value:" + expectedValue);
-									testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: " + jsonNameKey
-											+ " is matching expected value:" + expectedValue);
+									testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
+											+ jsonNameKey + " is matching expected value:" + expectedValue);
 									success = true;
 									break;
-								}else{
+								} else {
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is not matching expected value:" + expectedValue);
 									success = false;
 									break;
 								}
-							}  else {
-								System.out.println("====== Expected value:"+expectedValue);
+							} else {
+								System.out.println("Expected value:" + expectedValue);
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
 							}
 						}
-					}else{//Added by Janardhan for Empty string in the expected value
-						logger.info("Expected value is empty !! Please provide input for "+jsonNameKey+". For Empty string check, provide \"\" and for null check, provide null ");
+					} else {// Added by Janardhan for Empty string in the expected value
+						logger.info("Expected value is empty !! Please provide input for " + jsonNameKey
+								+ ". For Empty string check, provide \"\" and for null check, provide null ");
 						success = false;
 						break;
 					}
@@ -708,13 +694,13 @@ public abstract class AbstractBase {
 	/**
 	 * Reads host name for the given application and environment
 	 * 
-	 * @param appName
-	 *            specific application name
-	 * @param env
-	 *            environment for which the tests connect
+	 * @param appName specific application name
+	 * @param env environment for which the tests connect
 	 * @throws Exception
 	 */
-	protected void getSpecificAppHostForGivenEnv(String appName, String eurekaURL, String env) throws Exception {
+	protected void getSpecificAppHostForGivenEnv(String appName,
+			String eurekaURL,
+			String env) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String hostName = null;
@@ -774,14 +760,14 @@ public abstract class AbstractBase {
 	}
 
 	/**
-	 * Read host names across all applications for the given environment and
-	 * load them to map.
+	 * Read host names across all applications for the given environment and load them to map.
 	 * 
-	 * @param env
-	 *            environment for which the tests connect
+	 * @param env environment for which the tests connect
 	 * @throws Exception
 	 */
-	protected void getAllAppHostsForGivenEnv(String eurekaURL, String env, String IP) throws Exception {
+	protected void getAllAppHostsForGivenEnv(String eurekaURL,
+			String env,
+			String IP) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String appName = null;
@@ -839,8 +825,7 @@ public abstract class AbstractBase {
 	/**
 	 * Capture current excel row data in an object and return
 	 * 
-	 * @param excel
-	 *            row
+	 * @param excel row
 	 * @return RowData object contains excel row data
 	 * @throws Exception
 	 */
@@ -854,30 +839,30 @@ public abstract class AbstractBase {
 			currentCellData = getCellData(row.getCell(currentCell, Row.CREATE_NULL_AS_BLANK));
 
 			switch (currentCell) {
-			case 0:
-				rowData.setTestName(currentCellData);
-			case 1:
-				rowData.setDescription(currentCellData);
-			case 2:
-				rowData.setHost(currentCellData);
-			case 3:
-				rowData.setApiPath(currentCellData);
-			case 4:
-				rowData.setMethod(currentCellData);
-			case 5:
-				rowData.setHeaders(currentCellData);
-			case 6:
-				rowData.setQueryString(currentCellData);
-			case 7:
-				rowData.setBody(currentCellData);
-			case 8:
-				rowData.setDependencyTests(currentCellData);
-			case 9:
-				rowData.setValidations(currentCellData);
-			case 10:
-				rowData.setStore(currentCellData);
-			case 11:
-				rowData.setStatus(currentCellData);
+				case 0:
+					rowData.setTestName(currentCellData);
+				case 1:
+					rowData.setDescription(currentCellData);
+				case 2:
+					rowData.setHost(currentCellData);
+				case 3:
+					rowData.setApiPath(currentCellData);
+				case 4:
+					rowData.setMethod(currentCellData);
+				case 5:
+					rowData.setHeaders(currentCellData);
+				case 6:
+					rowData.setQueryString(currentCellData);
+				case 7:
+					rowData.setBody(currentCellData);
+				case 8:
+					rowData.setDependencyTests(currentCellData);
+				case 9:
+					rowData.setValidations(currentCellData);
+				case 10:
+					rowData.setStore(currentCellData);
+				case 11:
+					rowData.setStatus(currentCellData);
 			}
 		}
 
@@ -887,47 +872,42 @@ public abstract class AbstractBase {
 	/**
 	 * This function will convert an object of type excel cell to a string value
 	 * 
-	 * @param cell
-	 *            excel cell
+	 * @param cell excel cell
 	 * @return the cell value
 	 */
 	protected String getCellData(XSSFCell cell) {
 		int type = cell.getCellType();
 		Object result;
 		switch (type) {
-		case XSSFCell.CELL_TYPE_STRING:
-			result = cell.getStringCellValue();
-			break;
-		case XSSFCell.CELL_TYPE_NUMERIC:
-			result = cell.getNumericCellValue();
-			break;
-		case XSSFCell.CELL_TYPE_FORMULA:
-			throw new RuntimeException("We can't evaluate formulas in Java");
-		case XSSFCell.CELL_TYPE_BLANK:
-			result = EMPTY_STRING;
-			break;
-		case XSSFCell.CELL_TYPE_BOOLEAN:
-			result = cell.getBooleanCellValue();
-			break;
-		case XSSFCell.CELL_TYPE_ERROR:
-			throw new RuntimeException("This cell has an error");
-		default:
-			throw new RuntimeException("We don't support this cell type: " + type);
+			case XSSFCell.CELL_TYPE_STRING:
+				result = cell.getStringCellValue();
+				break;
+			case XSSFCell.CELL_TYPE_NUMERIC:
+				result = cell.getNumericCellValue();
+				break;
+			case XSSFCell.CELL_TYPE_FORMULA:
+				throw new RuntimeException("We can't evaluate formulas in Java");
+			case XSSFCell.CELL_TYPE_BLANK:
+				result = EMPTY_STRING;
+				break;
+			case XSSFCell.CELL_TYPE_BOOLEAN:
+				result = cell.getBooleanCellValue();
+				break;
+			case XSSFCell.CELL_TYPE_ERROR:
+				throw new RuntimeException("This cell has an error");
+			default:
+				throw new RuntimeException("We don't support this cell type: " + type);
 		}
 		return result.toString();
 	}
-	
+
 	@AfterSuite
-	public void afterSuite()
-	{
+	public void afterSuite() {
 		reporter.close();
 	}
-	
-	 public void addCategory(){
-	        
+
+	public void addCategory() {
 
 	}
 
-
-	
 }

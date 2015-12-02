@@ -35,7 +35,7 @@ public class AuthoringTest extends AbstractBase {
 		rowData = new RowData();
 		rowData.setTestName("S1_TC_ST1");
 		rowData.setHost("1PAUTHORING");
-		rowData.setDescription("Create comment and validate Max length");
+		rowData.setDescription("Verify that create comment with Max length and verify comment count");
 		rowData.setApiPath("/comments");
 		rowData.setMethod("POST");
 		rowData.setHeaders("X-1P-User=(SYS_USER1)||Content-Type=application/json");

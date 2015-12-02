@@ -7,6 +7,11 @@
 			<class name="com.thomsonreuters.automation.iam.IamTest" />
 		</classes>
 	</test>
+	<test name="Groups">
+		<classes>
+			<class name="com.thomsonreuters.automation.groups.GroupsTest" />
+		</classes>
+	</test>
 	<test name="Notify">
 		<classes>
 			<class name="com.thomsonreuters.automation.notify.NotifyTest" />

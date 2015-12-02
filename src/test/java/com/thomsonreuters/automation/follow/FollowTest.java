@@ -25,34 +25,32 @@ public class FollowTest extends AbstractBase {
 		appName = "1PFOLLOW";
 		runTests();
 	}
-	
+
 	// Follow a user and Check Followers count got increased or not
-	@Test(priority=1)
+	@Test(priority = 1)
 	public void checkFallowersCount() throws Exception {
 		logger.info("Entered 1PFOLLOW checkFallowersCount method...");
 		appName = "1PFOLLOW";
 		rowData = new RowData();
 		rowData.setTestName("S1_TC_ST1");
 		rowData.setHost("1PFOLLOW");
-		rowData.setDescription("Check count of my followers");
+		rowData.setDescription("Verify that to check count of my followers");
 		rowData.setApiPath("/follow/user/(SYS_USER1)/count/followers");
 		rowData.setMethod("GET");
-		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
+		testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
 		reporter.endTest(testReporter);
-		
+
 		rowData.setTestName("S1_TC_ST2");
 		rowData.setHost("1PFOLLOW");
 		rowData.setDescription("Stop following a user");
 		rowData.setApiPath("/follow/user/(SYS_USER2)/following/(SYS_USER1)");
 		rowData.setMethod("DELETE");
 		ExecuteTest(rowData);
-		
+
 		logger.info("Ending 1PFOLLOW checkFallowersCount method...");
 	}
-	
-	
-	
+
 	private void ExecuteTest(RowData rowData) throws Exception {
 		Response response = null;
 		String sheetName = "Follow";
@@ -63,7 +61,7 @@ public class FollowTest extends AbstractBase {
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
-		String bodyString=null;
+		String bodyString = null;
 
 		logger.debug("row data=" + rowData.toString());
 		logger.debug("Real host=" + appHosts.get(rowData.getHost()));
@@ -89,7 +87,6 @@ public class FollowTest extends AbstractBase {
 					reqSpec.headers(headersMap);
 				}
 
-				
 				// Set body to request if the http method is not GET.
 				if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) {
 					reqSpec.body(bodyString);
@@ -126,22 +123,22 @@ public class FollowTest extends AbstractBase {
 				saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 				if (statusCode.equals("200") && "S1_TC_ST1".equalsIgnoreCase(rowData.getTestName())) {
 					JsonPath jsonPath = new JsonPath(responseJson);
-					//String content = jsonPath.getString("count");
+					// String content = jsonPath.getString("count");
 					int oldCount = Integer.parseInt(dataStore.get("S1_TC_T23_count"));
 					int newCount = Integer.parseInt(jsonPath.getString("count"));
-					if ( newCount == oldCount + 1) {
+					if (newCount == oldCount + 1) {
 						logger.info("Fallowers count was increased ");
 						testReporter.log(LogStatus.INFO, "Fallowers count was increased");
 						testSuccess = true;
 					}
-				}else if (statusCode.equals("200")){
+				} else if (statusCode.equals("200")) {
 					testSuccess = true;
 				}
 				if (!testSuccess) {
 					testReporter.log(LogStatus.FAIL, "FAIL");
 					throw new Exception("Validation Failed");
 				} else {
-					testReporter.log(LogStatus.PASS, "PASS" );
+					testReporter.log(LogStatus.PASS, "PASS");
 					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
 				}
 
