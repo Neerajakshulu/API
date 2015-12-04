@@ -13,7 +13,7 @@ public class ReportFactory {
 		if (reporter == null) {
 			Date today = new Date();
 			Long time = today.getTime();
-			String date_time=new java.sql.Date(time)+"_"+ today.getHours()+":"+today.getMinutes();
+			String date_time=new java.sql.Date(time)+"_"+ today.getHours()+"-"+today.getMinutes();
 //			reporter = new ExtentReports("Reports/1P-API-AUTOMATION-TEST-REPORT.html", true,
 			reporter = new ExtentReports("Reports/1P-API-AUTOMATION-TEST-REPORT_" +date_time + ".html", true,
 					DisplayOrder.OLDEST_FIRST);
