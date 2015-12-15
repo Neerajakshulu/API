@@ -33,7 +33,7 @@ public class ProfileTest extends AbstractBase {
 		logger.info("Entered Profile testSummaryMaxLength method...");
 		appName = "1PPROFILE";
 		rowData = new RowData();
-		rowData.setTestName("S1_TC_ST1");
+		rowData.setTestName("OPQA-497_1");
 		rowData.setHost("1PPROFILE");
 		rowData.setDescription("Verify that update user profile summary with exceeds Max length and verify that API should truncate to 1500 characters");
 		rowData.setApiPath("/users/user/(SYS_USER1)");
