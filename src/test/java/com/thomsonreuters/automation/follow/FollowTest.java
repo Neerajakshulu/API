@@ -37,6 +37,7 @@ public class FollowTest extends AbstractBase {
 		rowData.setDescription("Verify that to check count of my followers");
 		rowData.setApiPath("/follow/user/(SYS_USER1)/count/followers");
 		rowData.setMethod("GET");
+		rowData.setQueryString("");
 		testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
 		reporter.endTest(testReporter);
@@ -54,14 +55,9 @@ public class FollowTest extends AbstractBase {
 	private void ExecuteTest(RowData rowData) throws Exception {
 		Response response = null;
 		String sheetName = "Follow";
-		String apiPath = null;
-		String headers = null;
-		String queryString = null;
-		String url = null;
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
-		String bodyString = null;
 
 		logger.debug("row data=" + rowData.toString());
 		logger.debug("Real host=" + appHosts.get(rowData.getHost()));
@@ -75,48 +71,7 @@ public class FollowTest extends AbstractBase {
 			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
 				logger.info("-----------------------------------------------------------------------");
 				logger.info("Starting test:" + rowData.getTestName());
-				apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
-				headers = replaceDynamicPlaceHolders(rowData.getHeaders());
-				queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
-				url = appHosts.get(rowData.getHost()) + apiPath + queryString;
-				logger.debug("URL=" + url);
-				RequestSpecification reqSpec = given();
-				// Get and set headers to request
-				if (StringUtils.isNotBlank(rowData.getHeaders())) {
-					Map<String, String> headersMap = getHeaders(headers);
-					reqSpec.headers(headersMap);
-				}
-
-				// Set body to request if the http method is not GET.
-				if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) {
-					reqSpec.body(bodyString);
-				}
-
-				if (rowData.getMethod().equalsIgnoreCase(GET)) {
-					logger.debug("Entered into GET Method");
-
-					// Call the Rest API and get the response
-					response = reqSpec.when().get(url);
-
-				} else if (rowData.getMethod().equalsIgnoreCase(PUT)) {
-					logger.debug("Entered into PUT Method");
-
-					// Call the Rest API and get the response
-					response = reqSpec.when().put(url);
-
-				} else if (rowData.getMethod().equalsIgnoreCase(POST)) {
-					logger.debug("Entered into POST Method");
-
-					// Call the Rest API and get the response
-					response = reqSpec.when().post(url);
-
-				} else if (rowData.getMethod().equalsIgnoreCase(DELETE)) {
-					logger.debug("Entered into DELETE Method");
-
-					// Call the Rest API and get the response
-					response = reqSpec.when().delete(url);
-				}
-
+				response = getAPIResponce();
 				responseJson = response.asString();
 				statusCode = String.valueOf(response.getStatusCode());
 				// Save API response to file

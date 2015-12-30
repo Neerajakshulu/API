@@ -1,15 +1,10 @@
 package com.thomsonreuters.automation.authoring;
 
-import static com.jayway.restassured.RestAssured.given;
-
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
@@ -23,6 +18,7 @@ public class AuthoringTest extends AbstractBase {
 	public void authoringTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/AuthoringTestData.xlsx";
 		appName = "1PAUTHORING";
+		Thread.sleep(20000);
 		runTests();
 	}
 	
@@ -38,6 +34,7 @@ public class AuthoringTest extends AbstractBase {
 		rowData.setDescription("Verify that create comment with Max length and verify comment count");
 		rowData.setApiPath("/comments");
 		rowData.setMethod("POST");
+		rowData.setQueryString("");
 		rowData.setHeaders("X-1P-User=(SYS_USER1)||Content-Type=application/json");
 		rowData.setBody(	
 				"{\"targetType\":\"wos\",\"targetId\":\"468387744WOS1\",\"content\":\"Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length\"}");
@@ -52,10 +49,6 @@ public class AuthoringTest extends AbstractBase {
 	private void ExecuteTest(RowData rowData) throws Exception {
 		Response response = null;
 		String sheetName = "Authoring";
-		String apiPath = null;
-		String headers = null;
-		String queryString = null;
-		String url = null;
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
@@ -71,34 +64,8 @@ public class AuthoringTest extends AbstractBase {
 				&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
 			// If any of the dependency test failed then don't proceed.
 			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
-				logger.info("-----------------------------------------------------------------------");
-				logger.info("Starting test:" + rowData.getTestName());
-				apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
-				headers = replaceDynamicPlaceHolders(rowData.getHeaders());
-				queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
-				url = appHosts.get(rowData.getHost()) + apiPath + queryString;
-				logger.debug("URL=" + url);
-				RequestSpecification reqSpec = given();
-				// Get and set headers to request
-				if (StringUtils.isNotBlank(rowData.getHeaders())) {
-					Map<String, String> headersMap = getHeaders(headers);
-					reqSpec.headers(headersMap);
-				}
-
-				// Set body to request if the http method is not GET.
-				if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(rowData.getBody())) {
-					reqSpec.body(rowData.getBody());
-				}
-
-				if (rowData.getMethod().equalsIgnoreCase(POST)) {
-					logger.debug("Entered into POST Method");
-
-					// Call the Rest API and get the response
-					response = reqSpec.when().post(url);
-
-				}
-
-				// response.then().log().all();
+				response=getAPIResponce();
+				
 				responseJson = response.asString();
 				statusCode = String.valueOf(response.getStatusCode());
 				// Validate the response with expected data

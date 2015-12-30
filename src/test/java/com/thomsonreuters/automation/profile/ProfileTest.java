@@ -43,6 +43,7 @@ public class ProfileTest extends AbstractBase {
 				"{\"summary\":\"Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with   Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length Summary test with max length\"}");
 		rowData.setValidations("status=200||hits.hits._source.firstName=Mohana");
 		rowData.setStore("hits.hits._id");
+		rowData.setQueryString("");
 		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
 		reporter.endTest(testReporter);
@@ -52,10 +53,6 @@ public class ProfileTest extends AbstractBase {
 	private void ExecuteTest(RowData rowData) throws Exception {
 		Response response = null;
 		String sheetName = "Profile";
-		String apiPath = null;
-		String headers = null;
-		String queryString = null;
-		String url = null;
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
@@ -73,32 +70,7 @@ public class ProfileTest extends AbstractBase {
 			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
 				logger.info("-----------------------------------------------------------------------");
 				logger.info("Starting test:" + rowData.getTestName());
-				apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
-				headers = replaceDynamicPlaceHolders(rowData.getHeaders());
-				queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
-				url = appHosts.get(rowData.getHost()) + apiPath + queryString;
-				logger.debug("URL=" + url);
-				RequestSpecification reqSpec = given();
-				// Get and set headers to request
-				if (StringUtils.isNotBlank(rowData.getHeaders())) {
-					Map<String, String> headersMap = getHeaders(headers);
-					reqSpec.headers(headersMap);
-				}
-
-				// Set body to request if the http method is not GET.
-				if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(rowData.getBody())) {
-					reqSpec.body(rowData.getBody());
-				}
-
-				if (rowData.getMethod().equalsIgnoreCase(PUT)) {
-					logger.debug("Entered into PUT Method");
-
-					// Call the Rest API and get the response
-					response = reqSpec.when().put(url);
-
-				}
-
-				// response.then().log().all();
+				response=getAPIResponce();
 				responseJson = response.asString();
 				statusCode = String.valueOf(response.getStatusCode());
 				// Validate the response with expected data

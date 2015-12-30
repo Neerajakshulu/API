@@ -49,7 +49,7 @@ import com.thomsonreuters.automation.report.ReportFactory;
 /**
  * Common setup class for all the tests
  */
-public abstract class AbstractBase {
+public abstract class AbstractBaseOld {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
 
@@ -76,7 +76,6 @@ public abstract class AbstractBase {
 	protected static final String DELETE = "DELETE";
 	private static final String PASS = "PASS";
 	private static final String FAIL = "FAIL";
-	private static final String SKIP = "SKIP";
 	private static final String DEPENDENCY_FAIL = "DEPFAIL";
 
 	private static final String EMPTY_STRING = "";
@@ -111,7 +110,6 @@ public abstract class AbstractBase {
 	protected RowData rowData = null;
 
 	protected boolean isTestFail = false;
-	protected String isTestFailDescroption = null;
 
 	public void setUp() throws Exception {
 	}
@@ -131,11 +129,13 @@ public abstract class AbstractBase {
 		String envSuffix = System.getProperty("envSuffix");
 		String IP = System.getProperty("IP");
 		String usersList = System.getProperty("sys_users");
-
-		if (StringUtils.isNotBlank(usersList)) {
-			String[] users = StringUtils.split(usersList, TOKENIZER_DOUBLE_PIPE);
-			for (int i = 0; i < users.length; i++)
-				dataStore.put(USER_VAR + String.valueOf(i + 1), users[i]);
+		int i = 1;
+		String user = null;
+		StringTokenizer validationsTokenizer = new StringTokenizer(usersList, TOKENIZER_DOUBLE_PIPE);
+		while (validationsTokenizer.hasMoreTokens()) {
+			user = validationsTokenizer.nextToken();
+			dataStore.put(USER_VAR + String.valueOf(i), user);
+			i++;
 		}
 
 		logger.info("envSuffix = " + envSuffix);
@@ -143,125 +143,6 @@ public abstract class AbstractBase {
 		logger.info("Users = " + dataStore);
 		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
 
-	}
-
-	protected void process(XSSFRow row,
-			String sheetName) {
-		// RowData rowData = null;
-		Response response = null;
-		String validationString = null;
-		String responseJson = null;
-		String statusCode = null;
-		boolean testSuccess = false;
-		/*
-		 * If mandatory information like test case name, host, api path and valid http method are not provided then skip
-		 * those tests and update the status as fail.
-		 */
-		if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
-				&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
-			testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
-			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
-				validationString = replaceDynamicPlaceHolders(rowData.getValidations());
-				response = getAPIResponce();
-				responseJson = response.asString();
-				statusCode = String.valueOf(response.getStatusCode());
-
-				try {
-					// Validate the response with expected data
-					testSuccess = validateResponse(validationString, responseJson, statusCode);
-
-					// Update the excel file with Test PASS / FAIL status
-					updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
-
-					// Save API response to file
-					saveAPIResponse(responseJson, sheetName, rowData.getTestName());
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-
-				if (testSuccess) {
-					// Store the data which is required for subsequent test cases.
-					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
-					// Report status
-					testReporter.log(LogStatus.PASS, "PASS");
-				} else {
-					isTestFail = true;
-					// Report status
-					testReporter.log(LogStatus.FAIL, "FAIL");
-				}
-
-				logger.info("End execution of test:" + rowData.getTestName());
-				logger.info("-----------------------------------------------------------------------");
-
-			} else {
-				logger.debug("Dependency test "+rowData.getDependencyTests()+" failed hence skipping this test.");
-				try {
-					updateTestStatus(rowData.getTestName(), row, DEPENDENCY_FAIL);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				testReporter.log(LogStatus.SKIP, "Dependency tests failed hence skipping this test");
-			}
-		} else {
-			logger.debug("Mandatory information like test name, host, api path or http method not provided.");
-			try {
-				updateTestStatus(rowData.getTestName(), row, FAIL);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			testReporter.log(LogStatus.SKIP,
-					"Mandatory information like test name, host, api path or http method not provided.");
-		}
-		reporter.endTest(testReporter);
-
-	}
-
-	protected Response getAPIResponce() {
-		Response response = null;
-		String apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
-		String headers = replaceDynamicPlaceHolders(rowData.getHeaders());
-		String queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
-		String bodyString = replaceDynamicPlaceHolders(rowData.getBody());
-
-		String url = appHosts.get(rowData.getHost()) + apiPath + queryString;
-		logger.debug("URL=" + url);
-		RequestSpecification reqSpec = given();
-
-		// Get and set headers to request
-		if (StringUtils.isNotBlank(rowData.getHeaders())) {
-			Map<String, String> headersMap = getHeaders(headers);
-			reqSpec.headers(headersMap);
-		}
-		if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) {
-			reqSpec.body(bodyString);
-		}
-
-		if (rowData.getMethod().equalsIgnoreCase(GET)) {
-			logger.debug("Entered into GET Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().get(url);
-
-		} else if (rowData.getMethod().equalsIgnoreCase(PUT)) {
-			logger.debug("Entered into PUT Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().put(url);
-
-		} else if (rowData.getMethod().equalsIgnoreCase(POST)) {
-			logger.debug("Entered into POST Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().post(url);
-
-		} else if (rowData.getMethod().equalsIgnoreCase(DELETE)) {
-			logger.debug("Entered into DELETE Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().delete(url);
-		}
-		return response;
 	}
 
 	/**
@@ -279,13 +160,25 @@ public abstract class AbstractBase {
 			int sheetRowCount;
 			XSSFSheet sheet = null;
 			XSSFRow row = null;
+			// RowData rowData = null;
+			Response response = null;
 			String sheetName = null;
+			String apiPath = null;
+			String headers = null;
+			String queryString = null;
+			String validationString = null;
+			String bodyString = null;
+			String url = null;
+			String responseJson = null;
+			String statusCode = null;
+			boolean testSuccess = false;
 
 			// Read Excel file
 			File myxl = new File(testDataExcelPath);
 			inputStream = new FileInputStream(myxl);
 			workBook = new XSSFWorkbook(inputStream);
 			int totalSheets = workBook.getNumberOfSheets();
+
 			// Loop through each sheet in the Excel
 			for (int currentSheet = 0; currentSheet < totalSheets; currentSheet++) {
 
@@ -312,22 +205,126 @@ public abstract class AbstractBase {
 
 						logger.debug("row data=" + rowData.toString());
 
-						if (appHosts.get(rowData.getHost()) != null) {
-							logger.debug("Real host=" + appHosts.get(rowData.getHost()));
-							if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())) {
-								Thread.sleep(5000);
-							}
-							process(row, sheetName);
-						} else {
+						logger.debug("Real host=" + appHosts.get(rowData.getHost()));
+						if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())) {
+							Thread.sleep(5000);
+						}
+						/*
+						 * If mandatory information like test case name, host, api path and valid http method are not
+						 * provided then skip those tests and update the status as fail.
+						 */
+						if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
+								&& StringUtils.isNotBlank(rowData.getApiPath())
+								&& isSupportedMethod(rowData.getMethod())) {
+
 							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
 									.assignCategory(appName);
-							testReporter.log(LogStatus.SKIP, "Testcase skipped due to service down");
-							reporter.endTest(testReporter);
-							isTestFail = true;
-							isTestFailDescroption="Testcase skipped due to service down";
-							updateTestStatus(rowData.getTestName(), row, SKIP);
-						}
+							// If any of the dependency test failed then don't
+							// proceed.
+							if (isDependencyTestsPassed(rowData.getDependencyTests())) {
 
+								logger.info("-----------------------------------------------------------------------");
+								logger.info("Starting test:" + rowData.getTestName());
+
+								apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
+								headers = replaceDynamicPlaceHolders(rowData.getHeaders());
+								queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
+								validationString = replaceDynamicPlaceHolders(rowData.getValidations());
+
+								bodyString = replaceDynamicPlaceHolders(rowData.getBody());
+
+								url = appHosts.get(rowData.getHost()) + apiPath + queryString;
+								logger.debug("URL=" + url);
+
+								RequestSpecification reqSpec = given();
+
+								// Get and set headers to request
+								if (StringUtils.isNotBlank(rowData.getHeaders())) {
+									Map<String, String> headersMap = getHeaders(headers);
+									reqSpec.headers(headersMap);
+								}
+
+								// Set body to request if the http method is not
+								// GET.
+								// if
+								// (!rowData.getMethod().equalsIgnoreCase(GET)
+								// && StringUtils.isNotBlank(rowData.getBody()))
+								// {
+								// reqSpec.body(rowData.getBody());
+								// }
+
+								if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) {
+									reqSpec.body(bodyString);
+								}
+
+								if (rowData.getMethod().equalsIgnoreCase(GET)) {
+									logger.debug("Entered into GET Method");
+
+									// Call the Rest API and get the response
+									response = reqSpec.when().get(url);
+
+								} else if (rowData.getMethod().equalsIgnoreCase(PUT)) {
+									logger.debug("Entered into PUT Method");
+
+									// Call the Rest API and get the response
+									response = reqSpec.when().put(url);
+
+								} else if (rowData.getMethod().equalsIgnoreCase(POST)) {
+									logger.debug("Entered into POST Method");
+
+									// Call the Rest API and get the response
+									response = reqSpec.when().post(url);
+
+								} else if (rowData.getMethod().equalsIgnoreCase(DELETE)) {
+									logger.debug("Entered into DELETE Method");
+
+									// Call the Rest API and get the response
+									response = reqSpec.when().delete(url);
+								}
+
+								// response.then().log().all();
+								responseJson = response.asString();
+								statusCode = String.valueOf(response.getStatusCode());
+
+								// Validate the response with expected data
+								// testSuccess =
+								// validateResponse(rowData.getValidations(),
+								// responseJson, statusCode);
+								testSuccess = validateResponse(validationString, responseJson, statusCode);
+
+								// Update the excel file with Test PASS / FAIL
+								// status
+								updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
+
+								// Save API response to file
+								saveAPIResponse(responseJson, sheetName, rowData.getTestName());
+
+								if (testSuccess) {
+									// Store the data which is required for
+									// subsequent test cases.
+									storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+									// Report status
+									testReporter.log(LogStatus.PASS, "PASS");
+								} else {
+									isTestFail = true;
+									// Report status
+									testReporter.log(LogStatus.FAIL, "FAIL");
+								}
+
+								logger.info("End execution of test:" + rowData.getTestName());
+								logger.info("-----------------------------------------------------------------------");
+
+							} else {
+								logger.debug("Dependency tests failed hence skipping this test.");
+								updateTestStatus(rowData.getTestName(), row, DEPENDENCY_FAIL);
+								testReporter.log(LogStatus.SKIP, "Dependency tests failed hence skipping this test");
+							}
+						} else {
+							logger.debug(
+									"Mandatory information like test name, host, api path or http method not provided.");
+							updateTestStatus(rowData.getTestName(), row, FAIL);
+						}
+						reporter.endTest(testReporter);
 					}
 				}
 				logger.info("End executing tests from sheet " + (currentSheet + 1));
@@ -343,9 +340,6 @@ public abstract class AbstractBase {
 
 		// Write updates to excel
 		writeUpdatestoExcel(workBook);
-		if(StringUtils.isNotBlank(isTestFailDescroption)){
-			Assert.assertFalse(isTestFail, isTestFailDescroption);
-		}
 		Assert.assertFalse(isTestFail, "One or more tests in " + appName + " failed");
 		logger.info("End of processs method...");
 	}
@@ -392,37 +386,33 @@ public abstract class AbstractBase {
 	 * @return string after replacing the place holders
 	 */
 	protected String replaceDynamicPlaceHolders(String stringToFormat) {
+
+		logger.debug("Before replace=" + stringToFormat);
+
+		StringBuffer sb = new StringBuffer();
+		String toReplace = null;
+
 		if (StringUtils.isNotBlank(stringToFormat)) {
-			logger.debug("Before replace=" + stringToFormat);
 
-			StringBuffer sb = new StringBuffer();
-			String toReplace = null;
+			Matcher matcher = Pattern.compile(PLACEHOLDER_MATCHER_PATTERN).matcher(stringToFormat);
 
-			if (StringUtils.isNotBlank(stringToFormat)) {
+			while (matcher.find()) {
 
-				Matcher matcher = Pattern.compile(PLACEHOLDER_MATCHER_PATTERN).matcher(stringToFormat);
+				// What to replace
+				toReplace = matcher.group(1);
 
-				while (matcher.find()) {
+				logger.debug("toReplace=" + toReplace);
 
-					// What to replace
-					toReplace = matcher.group(1);
-
-					logger.debug("toReplace=" + toReplace);
-
-					// Append replaced match.
-					matcher.appendReplacement(sb, dataStore.get(toReplace));
-				}
-				matcher.appendTail(sb);
+				// Append replaced match.
+				matcher.appendReplacement(sb, dataStore.get(toReplace));
 			}
-
-			logger.debug("After replace=" + sb);
-
-			return sb.toString();
+			matcher.appendTail(sb);
 		}
-		return stringToFormat;
-		
-	}
 
+		logger.debug("After replace=" + sb);
+
+		return sb.toString();
+	}
 
 	/**
 	 * As configured in the excel, this method stores required data from current test response
