@@ -201,7 +201,7 @@ public abstract class AbstractBase {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				testReporter.log(LogStatus.SKIP, "Dependency tests failed hence skipping this test");
+				testReporter.log(LogStatus.SKIP, "Dependency test "+rowData.getDependencyTests()+" failed hence skipping this test.");
 			}
 		} else {
 			logger.debug("Mandatory information like test name, host, api path or http method not provided.");
