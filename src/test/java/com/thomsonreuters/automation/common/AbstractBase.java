@@ -317,7 +317,17 @@ public abstract class AbstractBase {
 							if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())) {
 								Thread.sleep(5000);
 							}
-							process(row, sheetName);
+							try{
+								process(row, sheetName);
+							}catch(Exception e){
+								logger.error("Exception while executing the test: " + rowData.getTestName() + e);
+								e.printStackTrace();
+								testReporter.log(LogStatus.ERROR,  e.toString());
+								testReporter.log(LogStatus.FAIL, "Testcase Failed due to "+ e.toString());
+								reporter.endTest(testReporter);
+								isTestFail = true;
+								isTestFailDescroption="Testcase Failed due to "+  e.toString();
+							}
 						} else {
 							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
 									.assignCategory(appName);
