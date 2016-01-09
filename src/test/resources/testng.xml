@@ -42,11 +42,11 @@
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistTest" />
 		</classes>
 	</test>
-	<test name="Profilesearch">
+	<!--  <test name="Profilesearch">
 		<classes>
 			<class name="com.thomsonreuters.automation.profilesearch.ProfileSearchTest" />
 		</classes>
-	</test>
+	</test>-->
 	<test name="TypeAhead">
 		<classes>
 			<class name="com.thomsonreuters.automation.typeahead.TypeAheadTest" />
