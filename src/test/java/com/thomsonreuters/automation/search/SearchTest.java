@@ -72,15 +72,22 @@ public class SearchTest extends AbstractBase {
 					if (status) {
 						JsonPath jsonPath = new JsonPath(json);
 						List<Object> actualValue = null;
-						// if (rowData.getDescription().contains("times cited")) {
-						// actualValue = jsonPath.getList("hits.hits._source.fullrecord.citingsrcscount");
-						// status = verifySortorder(actualValue, rowData.getDescription());
-						// }
-						if (rowData.getDescription().contains("score")) {
+						if (rowData.getDescription().contains("times cited")) {
+							if(rowData.getDescription().contains("patents")){
+								
+								actualValue = jsonPath.getList("hits.hits.sort");
+							
+							}else{
+								actualValue = jsonPath.getList("hits.hits.fields.citingsrcslocalcount");
+							}
+							status = verifySortorder(actualValue, rowData.getDescription());
+						}
+						else if (rowData.getDescription().contains("relavence")) {
 							actualValue = jsonPath.getList("hits.hits._score");
 							status = verifySortorder(actualValue, rowData.getDescription());
-						} else if (rowData.getDescription().contains("sort on pub date")) {
-							actualValue = jsonPath.getList("hits.hits._source.sortdate");
+						}
+						 else if (rowData.getDescription().contains("pub date")) {
+							actualValue = jsonPath.getList("hits.hits.fields.sortdate");
 							status = verifySortorder(actualValue, rowData.getDescription());
 						}
 					}
@@ -113,7 +120,9 @@ public class SearchTest extends AbstractBase {
 			status = tempList.equals(actualList);
 		}
 		return status;
-
+		
 	}
+	
+	
 
 }
