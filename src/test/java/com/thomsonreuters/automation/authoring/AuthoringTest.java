@@ -36,8 +36,9 @@ public class AuthoringTest extends AbstractBase {
 		rowData.setMethod("POST");
 		rowData.setQueryString("");
 		rowData.setHeaders("X-1P-User=(SYS_USER1)||Content-Type=application/json");
+		rowData.setValidations("status=200||comments.userId=(SYS_USER1)||comments.targetId=468387744WOS1");
 		rowData.setBody(	
-				"{\"targetType\":\"wos\",\"targetId\":\"468387744WOS1\",\"content\":\"Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length Comment test with max length\"}");
+				"{\"targetType\":\"wos\",\"targetId\":\"468387744WOS1\",\"content\":\"Comment Max Length Test: As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher,>1500I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge...! >2500\"}");
 		rowData.setStore("comments.id");
 		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
@@ -52,6 +53,7 @@ public class AuthoringTest extends AbstractBase {
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
+		String validationString = null;
 
 		logger.debug("row data=" + rowData.toString());
 		logger.debug("Real host=" + appHosts.get(rowData.getHost()));
@@ -64,38 +66,51 @@ public class AuthoringTest extends AbstractBase {
 				&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
 			// If any of the dependency test failed then don't proceed.
 			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
-				response=getAPIResponce();
-				
-				responseJson = response.asString();
-				statusCode = String.valueOf(response.getStatusCode());
-				// Validate the response with expected data
-//				testSuccess = testSummaryMaxLengthvalidateResponse(rowData.getValidations(), responseJson, statusCode);
-				if(statusCode.equals("200")){
-				JsonPath jsonPath = new JsonPath(responseJson);
-				String content = jsonPath.getString("comments.content");
-				int oldCount = Integer.parseInt(dataStore.get("OPQA-344_1_counterValue"));
-				int newCount =Integer.parseInt(jsonPath.getString("size"));
-				if ((content.substring(1, content.length()-1)).length() == 2500 && newCount == oldCount+1 ) {
-					logger.info("Comment content was truncated to 2500 characters");
-					logger.info("Comment size was increased ");
-					testReporter.log(LogStatus.INFO, "Comment content was truncated to 2500 characters");
-					testReporter.log(LogStatus.INFO, "Comment size was increased");
-					testSuccess = true;
-				}
-				}
-				// Save API response to file
-				saveAPIResponse(responseJson, sheetName, rowData.getTestName());
+				try{
+					response=getAPIResponce();
+					validationString = replaceDynamicPlaceHolders(rowData.getValidations());
+					responseJson = response.asString();
+					statusCode = String.valueOf(response.getStatusCode());
+					testSuccess = validateResponse(validationString, responseJson, statusCode);
+					logger.info("Status code:"+statusCode);
+					// Validate the response with expected data
+					//testSuccess = testSummaryMaxLengthvalidateResponse(rowData.getValidations(), responseJson, statusCode);
+					if(testSuccess){
+					JsonPath jsonPath = new JsonPath(responseJson);
+					String content = jsonPath.getString("comments.content");
+					int oldCount = Integer.parseInt(dataStore.get("OPQA-344_1_counterValue"));
+					int newCount =Integer.parseInt(jsonPath.getString("size"));
+					if ((content.substring(1, content.length()-1)).length() == 2500 && newCount == oldCount+1 ) {
+						logger.info("Comment content was truncated to 2500 characters");
+						logger.info("Comment size was increased ");
+						testReporter.log(LogStatus.INFO, "Comment content was truncated to 2500 characters");
+						testReporter.log(LogStatus.INFO, "Comment size was increased");
+						testSuccess = true;
+						storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+						testReporter.log(LogStatus.PASS, "PASS" );
+					}else{//Added by Janardhan to log fail case
+						logger.info("Comment is not truncated to 2500 characters! and Old comment count:"+oldCount+" new count:"+newCount);
+						logger.info("Response content::"+content);
+						testReporter.log(LogStatus.INFO, "Comment is not truncated to 2500 characters!");
+						testReporter.log(LogStatus.FAIL, "Validation Failed");
+					}
+					}else{
+						logger.info("Status code:"+statusCode);
+						//testReporter.log(LogStatus.FAIL, "Error status code:"+statusCode);
+					}
+					// Save API response to file
+					saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 
-				if (!testSuccess) {
-					testReporter.log(LogStatus.FAIL, "FAIL");
-					throw new Exception("Validation Failed");
-				}else{
-					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
-					testReporter.log(LogStatus.PASS, "PASS" );
-				}
+					if (!testSuccess) {
+						testReporter.log(LogStatus.FAIL, "FAIL");
+						//throw new Exception("Validation Failed");
+					}
 
-				logger.info("End execution of test:" + rowData.getTestName());
-				logger.info("-----------------------------------------------------------------------");
+					logger.info("End execution of test:" + rowData.getTestName());
+					logger.info("-----------------------------------------------------------------------");
+				}catch(Exception e){
+					e.printStackTrace();
+				}
 			}
 		}
 	}
