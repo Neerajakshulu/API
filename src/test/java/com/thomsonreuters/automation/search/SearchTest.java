@@ -33,7 +33,6 @@ public class SearchTest extends AbstractBase {
 			final String statusCode) throws Exception {
 		boolean status = true;
 		if (StringUtils.isNotBlank(validations)) {
-
 			StringTokenizer validationsTokenizer = new StringTokenizer(validations, TOKENIZER_DOUBLE_AMPERSAND);
 			while (validationsTokenizer.hasMoreTokens()) {
 				String validationsToken = validationsTokenizer.nextToken();
@@ -51,7 +50,6 @@ public class SearchTest extends AbstractBase {
 		boolean status = true;
 		if (StringUtils.isNotBlank(validations)) {
 			Matcher matcher = Pattern.compile(PLACEHOLDER_MATCHER_PATTERN_VALIDATION).matcher(validations);
-
 			if (matcher.find()) {
 				validations = validations.substring(1, validations.length() - 1);
 				StringTokenizer validationsTokenizer = new StringTokenizer(validations, TOKENIZER_DOUBLE_PIPE);
@@ -66,27 +64,22 @@ public class SearchTest extends AbstractBase {
 					status = super.validateResponse(validations, json, statusCode);
 				}
 			} else {
-				// if(false){System.out.println("dzfcds");
 				if (rowData.getDescription().contains("sort")) {
 					status = super.validateResponse(validations, json, statusCode);
 					if (status) {
 						JsonPath jsonPath = new JsonPath(json);
 						List<Object> actualValue = null;
 						if (rowData.getDescription().contains("times cited")) {
-							if(rowData.getDescription().contains("patents")){
-								
+							if (rowData.getDescription().contains("patents")) {
 								actualValue = jsonPath.getList("hits.hits.sort");
-							
-							}else{
+							} else {
 								actualValue = jsonPath.getList("hits.hits.fields.citingsrcslocalcount");
 							}
 							status = verifySortorder(actualValue, rowData.getDescription());
-						}
-						else if (rowData.getDescription().contains("relavence")) {
+						} else if (rowData.getDescription().contains("relevance")) {
 							actualValue = jsonPath.getList("hits.hits._score");
 							status = verifySortorder(actualValue, rowData.getDescription());
-						}
-						 else if (rowData.getDescription().contains("pub date")) {
+						} else if (rowData.getDescription().contains("pub date")) {
 							actualValue = jsonPath.getList("hits.hits.fields.sortdate");
 							status = verifySortorder(actualValue, rowData.getDescription());
 						}
@@ -120,9 +113,5 @@ public class SearchTest extends AbstractBase {
 			status = tempList.equals(actualList);
 		}
 		return status;
-		
 	}
-	
-	
-
 }
