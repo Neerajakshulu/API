@@ -7,6 +7,11 @@
 			<class name="com.thomsonreuters.automation.notify.NotifyTest" />
 		</classes>
 	</test>
+	<test name="Recommend">
+		<classes>
+			<class name="com.thomsonreuters.automation.recommend.RecommendTest" />
+		</classes>
+	</test>
 	<test name="IAM">
 		<classes>
 			<class name="com.thomsonreuters.automation.iam.IamTest" />
@@ -58,5 +63,4 @@
 			<class name="com.thomsonreuters.automation.authoring.AuthoringTest" />
 		</classes>
 	</test>
-	
 </suite>

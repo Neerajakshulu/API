@@ -336,6 +336,8 @@ public abstract class AbstractBase {
 							isTestFail = true;
 							isTestFailDescroption="Testcase skipped due to service down";
 							updateTestStatus(rowData.getTestName(), row, SKIP);
+							logger.info("Testcase skipped due to service down");
+							logger.info("-----------------------------------------------------------------------");
 						}
 
 					}
