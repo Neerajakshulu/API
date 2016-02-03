@@ -41,13 +41,13 @@
 			<class name="com.thomsonreuters.automation.search.SearchTest" />
 		</classes>
 	</test>
-
+	<!--  
 	<test name="Watchlist">
 		<classes>
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistTest" />
 		</classes>
 	</test>
-	<!--  <test name="Profilesearch">
+	<test name="Profilesearch">
 		<classes>
 			<class name="com.thomsonreuters.automation.profilesearch.ProfileSearchTest" />
 		</classes>
