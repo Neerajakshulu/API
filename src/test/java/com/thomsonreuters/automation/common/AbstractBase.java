@@ -315,7 +315,7 @@ public abstract class AbstractBase {
 						if (appHosts.get(rowData.getHost()) != null) {
 							logger.debug("Real host=" + appHosts.get(rowData.getHost()));
 							if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())) {
-								Thread.sleep(7000);
+								Thread.sleep(15000);
 							}
 							try{
 								process(row, sheetName);
