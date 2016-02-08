@@ -195,13 +195,14 @@ public abstract class AbstractBase {
 				logger.info("-----------------------------------------------------------------------");
 
 			} else {
-				logger.debug("Dependency test "+rowData.getDependencyTests()+" failed hence skipping this test.");
+				logger.debug("Dependency test " + rowData.getDependencyTests() + " failed hence skipping this test.");
 				try {
 					updateTestStatus(rowData.getTestName(), row, DEPENDENCY_FAIL);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				testReporter.log(LogStatus.SKIP, "Dependency test "+rowData.getDependencyTests()+" failed hence skipping this test.");
+				testReporter.log(LogStatus.SKIP,
+						"Dependency test " + rowData.getDependencyTests() + " failed hence skipping this test.");
 			}
 		} else {
 			logger.debug("Mandatory information like test name, host, api path or http method not provided.");
@@ -305,11 +306,8 @@ public abstract class AbstractBase {
 
 					// Get current row information
 					row = sheet.getRow(i);
-
-					if (row != null) {
-
-						rowData = getRowData(row);
-
+					rowData = getRowData(row);
+					if (StringUtils.isNotBlank(rowData.getTestName())) {
 						logger.debug("row data=" + rowData.toString());
 
 						if (appHosts.get(rowData.getHost()) != null) {
@@ -317,16 +315,16 @@ public abstract class AbstractBase {
 							if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())) {
 								Thread.sleep(15000);
 							}
-							try{
+							try {
 								process(row, sheetName);
-							}catch(Exception e){
+							} catch (Exception e) {
 								logger.error("Exception while executing the test: " + rowData.getTestName() + e);
 								e.printStackTrace();
-								testReporter.log(LogStatus.ERROR,  e.toString());
-								testReporter.log(LogStatus.FAIL, "Testcase Failed due to "+ e.toString());
+								testReporter.log(LogStatus.ERROR, e.toString());
+								testReporter.log(LogStatus.FAIL, "Testcase Failed due to " + e.toString());
 								reporter.endTest(testReporter);
 								isTestFail = true;
-								isTestFailDescroption="Testcase Failed due to "+  e.toString();
+								isTestFailDescroption = "Testcase Failed due to " + e.toString();
 							}
 						} else {
 							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
@@ -334,7 +332,7 @@ public abstract class AbstractBase {
 							testReporter.log(LogStatus.SKIP, "Testcase skipped due to service down");
 							reporter.endTest(testReporter);
 							isTestFail = true;
-							isTestFailDescroption="Testcase skipped due to service down";
+							isTestFailDescroption = "Testcase skipped due to service down";
 							updateTestStatus(rowData.getTestName(), row, SKIP);
 							logger.info("Testcase skipped due to service down");
 							logger.info("-----------------------------------------------------------------------");
@@ -355,7 +353,7 @@ public abstract class AbstractBase {
 
 		// Write updates to excel
 		writeUpdatestoExcel(workBook);
-		if(StringUtils.isNotBlank(isTestFailDescroption)){
+		if (StringUtils.isNotBlank(isTestFailDescroption)) {
 			Assert.assertFalse(isTestFail, isTestFailDescroption);
 		}
 		Assert.assertFalse(isTestFail, "One or more tests in " + appName + " failed");
@@ -432,9 +430,8 @@ public abstract class AbstractBase {
 			return sb.toString();
 		}
 		return stringToFormat;
-		
-	}
 
+	}
 
 	/**
 	 * As configured in the excel, this method stores required data from current test response
