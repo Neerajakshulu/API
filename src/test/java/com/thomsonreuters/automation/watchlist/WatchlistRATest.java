@@ -13,7 +13,7 @@ public class WatchlistRATest extends AbstractBase {
 
 	@Test
 	public void wathclistTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/WatchlistTestRAData.xlsx";
+		testDataExcelPath = "src/test/test-data/WatchlistRATestData.xlsx";
 		appName = "1PWATCHLISTRA";
 		runTests();
 	}
