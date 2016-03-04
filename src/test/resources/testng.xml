@@ -65,4 +65,11 @@
 			<class name="com.thomsonreuters.automation.authoring.AuthoringTest" />
 		</classes>
 	</test>
+	
+	<test name="Claiming">
+		<classes>
+			<class name="com.thomsonreuters.automation.claiming.ClaimingTest" />
+		</classes>
+	</test>
+	
 </suite>
