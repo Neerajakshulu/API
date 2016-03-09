@@ -329,12 +329,12 @@ public abstract class AbstractBase {
 						} else {
 							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
 									.assignCategory(appName);
-							testReporter.log(LogStatus.SKIP, "Testcase skipped due to service down");
+							testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
 							reporter.endTest(testReporter);
 							isTestFail = true;
-							isTestFailDescroption = "Testcase skipped due to service down";
-							updateTestStatus(rowData.getTestName(), row, SKIP);
-							logger.info("Testcase skipped due to service down");
+							isTestFailDescroption = "Testcase failed due to service unavailable";
+							updateTestStatus(rowData.getTestName(), row, FAIL);
+							logger.info("Testcase failed due to service unavailable");
 							logger.info("-----------------------------------------------------------------------");
 						}
 
