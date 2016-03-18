@@ -2,21 +2,30 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
 <suite name="API Automation">
+	<test name="Search">
+		<classes>
+			<class name="com.thomsonreuters.automation.search.SearchTest" />
+		</classes>
+	</test>
+	  
 	<test name="Notify">
 		<classes>
 			<class name="com.thomsonreuters.automation.notify.NotifyTest" />
 		</classes>
 	</test>
+	
 	<test name="Recommend">
 		<classes>
 			<class name="com.thomsonreuters.automation.recommend.RecommendTest" />
 		</classes>
 	</test>
+	
 	<test name="IAM">
 		<classes>
 			<class name="com.thomsonreuters.automation.iam.IamTest" />
 		</classes>
 	</test>
+	
 	<test name="Groups">
 		<classes>
 			<class name="com.thomsonreuters.automation.groups.GroupsTest" />
@@ -35,13 +44,6 @@
 		</classes>
 	</test>
 
-
-	<test name="Search">
-		<classes>
-			<class name="com.thomsonreuters.automation.search.SearchTest" />
-		</classes>
-	</test>
-	  
 	<test name="WatchlistRA">
 		<classes>
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistRATest" />
