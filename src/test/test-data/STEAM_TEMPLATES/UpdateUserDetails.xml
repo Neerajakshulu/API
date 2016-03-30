@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<request xmlns="http://www.isinet.com/xrpc40">
+	<fn name="STEAMAdminAPI.loadAdminSession">
+		<list>
+			<val name="SID">{{SID}}</val>
+			<map name="clientInfo">
+				<val name="COMPONENT">ESTI</val>
+				<val name="VERSION">1</val>
+				<val name="ENVIRONMENT">steam</val>
+			</map>
+		</list>
+	</fn>
+	<fn name="STEAMCoreAPI.updateObject">
+		<list>
+			<val name="type">USER</val>
+			<val name="UserId">(OPQA-AAA_user.userID)</val>
+			<map name="Map">
+				<list name="attributes">
+					<map>
+						<list name="attributes">
+							<map>
+								<val name="value">{{USER_FIRST_NAME}}</val>
+								<val name="obj_type">USER_INFO_FIRST_NAME</val>
+							</map>
+							<map>
+								<val name="value">{{USER_LAST_NAME}}</val>
+								<val name="obj_type">USER_INFO_LAST_NAME</val>
+							</map>
+							<map>
+								<val name="value">{{USER_MIDDLE_NAME}}</val>
+								<val name="obj_type">USER_INFO_MIDDLE_NAME</val>
+							</map>
+							<map>
+								<val name="value">(OPQA-AAA_user.truID)</val>
+								<val name="obj_type">USER_INFO_TRUID</val>
+							</map>
+						</list>
+						<val name="obj_type">USER_USER_INFO</val>
+					</map>
+				</list>
+				<val name="obj_type">USER</val>
+			</map>
+
+			<list name="List">
+				<map>
+					<list name="attributes">
+						<map>
+							<val name="obj_type">USER_ID</val>
+						</map>
+					</list>
+					<val name="obj_type">USER</val>
+				</map>
+			</list>
+		</list>
+	</fn>
+</request>

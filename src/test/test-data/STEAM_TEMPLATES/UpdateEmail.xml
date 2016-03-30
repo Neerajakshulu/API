@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<request xmlns="http://www.isinet.com/xrpc41" src="app.id = Customer Care">
+	<fn name="STEAMAdminAPI.loadAdminSession">
+		<list>
+			<val name="SID">{{SID}}</val>
+			<map name="clientInfo">
+				<val name="COMPONENT">CustomerCare</val>
+				<val name="VERSION">3.6</val>
+				<val name="ENVIRONMENT">CC</val>
+			</map>
+		</list>
+	</fn>
+	<fn name="STEAMCoreAPI.updateObject">
+		<list>
+			<val name="type">USER</val>
+			<val name="UserId">(OPQA-AAA_user.userID)</val>
+			<map name="Map">
+				<val name="obj_type">USER</val>
+				<list name="attributes">
+					<map>
+						<val name="obj_type">USER_UsernamePasswordCredential</val>
+						<list name="attributes">
+							<map>
+								<val name="obj_type">UNP_Username</val>
+								<val name="value">{{UNP_Username}}</val>
+							</map>
+						</list>
+					</map>
+				</list>
+			</map>
+			<list name="List">
+				<map>
+					<val name="obj_type">USER</val>
+					<val name="ret_name">user</val>
+					<list name="attributes">
+						<map>
+							<val name="obj_type">USER_ID</val>
+							<val name="ret_name">userID</val>
+						</map>
+					</list>
+				</map>
+			</list>
+		</list>
+	</fn>
+</request>
+

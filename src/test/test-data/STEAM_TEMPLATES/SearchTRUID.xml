@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<request xmlns="http://www.isinet.com/xrpc40">
+	<fn name="STEAMAdminAPI.loadAdminSession">
+		<list>
+			<val name="SID">{{SID}}</val>
+			<map name="clientInfo">
+				<val name="COMPONENT">ESTI</val>
+				<val name="VERSION">1</val>
+				<val name="ENVIRONMENT">steam</val>
+			</map>
+		</list>
+	</fn>
+	<fn name="STEAMCoreAPI.search">
+		<list>
+			<map>
+				<val name="SEARCH_NAME">USER_SEARCH_BY_TRUID</val>
+				<val name="TR_UID">(OPQA-AAA_user.truID)</val>
+			</map>
+			<list>
+				<map>
+					<val name="obj_type">RAW_SEARCH_RESULTS_LIST</val>
+					<val name="ret_name">Results</val>
+				</map>
+			</list>
+		</list>
+	</fn>
+</request>

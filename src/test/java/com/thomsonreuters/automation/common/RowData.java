@@ -8,6 +8,7 @@ public class RowData {
 	private String host;
 	private String apiPath;
 	private String method;
+	private String templateName;
 	private String headers;
 	private String queryString;
 	private String body;
@@ -56,6 +57,14 @@ public class RowData {
 		this.method = method;
 	}
 	
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
+
 	public String getHeaders() {
 		return headers;
 	}
@@ -115,8 +124,8 @@ public class RowData {
 	@Override
 	public String toString() {
 		return "RowData [testName=" + testName + ", description=" + description + ", host=" + host + ", apiPath="
-				+ apiPath + ", method=" + method + ", headers=" + headers + ", queryString=" + queryString + ", body="
-				+ body + ", dependencyTests=" + dependencyTests + ", validations=" + validations + ", store=" + store
+				+ apiPath + ", method=" + method + ", headers=" + headers + ", queryString=" + queryString + ", templateName="+ templateName +
+				", body="+ body + ", dependencyTests=" + dependencyTests + ", validations=" + validations + ", store=" + store
 				+ ", status=" + status + "]";
 	}
 	

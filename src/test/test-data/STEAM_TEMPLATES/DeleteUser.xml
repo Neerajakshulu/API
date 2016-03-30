@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<request xmlns="http://www.isinet.com/xrpc40">
+  <fn name="STEAMAdminAPI.loadAdminSession">
+    <list>
+      <val name="SID">{{SID}}</val>
+      <map name="clientInfo">
+        <val name="COMPONENT">ESTI</val>
+        <val name="VERSION">1</val>
+        <val name="ENVIRONMENT">steam</val>
+      </map>
+    </list>
+  </fn>
+  <fn name="STEAMCoreAPI.deleteObject">
+    <list>
+      <val name="type">USER</val>
+      <val name="UserId">(OPQA-AAA_user.userID)</val>
+    </list>
+  </fn>
+</request>

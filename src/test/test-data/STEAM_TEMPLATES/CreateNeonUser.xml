@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<request xmlns="http://www.isinet.com/xrpc40">
+  <fn name="STEAMAdminAPI.loadAdminSession">
+    <list>
+      <val name="SID">{{SID}}</val>
+      <map name="clientInfo">
+        <val name="COMPONENT">ESTI</val>
+        <val name="VERSION">1</val>
+        <val name="ENVIRONMENT">steam</val>
+      </map>
+    </list>
+  </fn>
+   <fn name="STEAMCoreAPI_v2.createObject">
+    <list>
+      <val name="type">USER</val>
+      <map>
+        <val name="obj_type">USER</val>
+        <list name="attributes">
+          <map>
+            <val name="obj_type">USER_UsernamePasswordCredential</val>
+            <list name="attributes">
+              <map>
+                <val name="obj_type">UNP_Username</val>
+                <val name="value">{{USER_NAME}}</val>
+              </map>
+           	      <map>
+                <val name="obj_type">UNP_PASSWORD_OPTIONS</val>
+                <map name="value">
+                <val name="PASSWORD">{{USER_PASSWORD}}</val>
+                  <val name="GENERATE">{{PASSWORD_GENERATE}}</val>
+                  <val name="EMAIL">{{EMAIL_GENERATE}}</val>
+                  <val name="APP_CODE">NEON</val>
+                </map>
+              </map>
+            </list>
+          </map>
+          <map>
+            <val name="obj_type">USER_USER_INFO</val>
+            <list name="attributes">
+              <map>
+                <val name="obj_type">USER_INFO_FIRST_NAME</val>
+                <val name="value">{{USER_FIRST_NAME}}</val>
+              </map>
+              <map>
+                <val name="obj_type">USER_INFO_LAST_NAME</val>
+                <val name="value">{{USER_LAST_NAME}}</val>
+              </map>
+              <map>
+                <val name="obj_type">USER_INFO_MIDDLE_NAME</val>
+                <val name="value">{{USER_MIDDLE_NAME}}</val>
+              </map>    
+            </list>
+          </map>
+        </list>
+      </map>
+   <map name="CONTEXT">
+        <val name="Application">NEON</val>
+   </map>
+      <list>
+        <map>
+          <val name="obj_type">USER</val>
+          <val name="ret_name">user</val>
+          <list name="attributes">
+            <map>
+              <val name="obj_type">USER_ID</val>
+              <val name="ret_name">userID</val>
+            </map>
+              <map>
+              <val name="obj_type">USER_TRUID</val>
+              <val name="ret_name">truID</val>
+            </map>
+          </list>
+        </map>
+      </list>
+    </list>
+  </fn>
+</request>
