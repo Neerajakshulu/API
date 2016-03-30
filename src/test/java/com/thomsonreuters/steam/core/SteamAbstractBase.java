@@ -138,7 +138,7 @@ public abstract class SteamAbstractBase {
 	protected String isTestFailDescroption = null;
 
 	//For STEAM
-	private static String steamURL = "http://emetadev6.isinet.com:5000/esti/xrpc";
+	private static String steamURL = "http://10.226.32.121:5000/esti/xrpc";
 	protected static String SID=AdminLogin.login();
 	protected String templatePath = null;
 	private static final String XMLFILE_EXT = ".xml";
