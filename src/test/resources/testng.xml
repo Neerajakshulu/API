@@ -73,11 +73,12 @@
 			<class name="com.thomsonreuters.automation.claiming.ClaimingTest" />
 		</classes>
 	</test>
-
+	
+	<!-- 
 	<test name="Steam">
 		<classes>
 			<class name="com.thomsonreuters.automation.steam.SteamTest" />
 		</classes>
 	</test>
-	
+	 -->
 </suite>
