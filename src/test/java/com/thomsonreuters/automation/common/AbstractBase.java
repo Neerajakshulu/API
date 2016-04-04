@@ -169,7 +169,11 @@ public abstract class AbstractBase {
 				try {
 					// Validate the response with expected data
 					testSuccess = validateResponse(validationString, responseJson, statusCode);
-
+					
+					if(!testSuccess && responseJson != null){
+						logger.info("Response:"+ responseJson);
+					}
+					
 					// Update the excel file with Test PASS / FAIL status
 					updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
 
