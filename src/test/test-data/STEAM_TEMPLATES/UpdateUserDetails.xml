@@ -47,6 +47,24 @@
 						<map>
 							<val name="obj_type">USER_ID</val>
 						</map>
+						<map>
+							<val name="obj_type">USER_USER_INFO</val>
+							<val name="ret_name">UserInfo</val>
+							<list name="attributes">
+								<map>
+									<val name="obj_type">USER_INFO_FIRST_NAME</val>
+								</map>
+								<map>
+									<val name="obj_type">USER_INFO_LAST_NAME</val>
+								</map>
+								<map>
+									<val name="obj_type">USER_INFO_MIDDLE_NAME</val>
+								</map>
+								<map>
+									<val name="obj_type">USER_INFO_FULL_NAME</val>
+								</map>
+							</list>
+						</map>
 					</list>
 					<val name="obj_type">USER</val>
 				</map>
