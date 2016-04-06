@@ -11,6 +11,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.URL;
@@ -1152,9 +1153,14 @@ public abstract class SteamAbstractBase {
 	
 	//Test status code for the host
 	public static boolean pingHost(String host) {
+		try{
 		int response = given().when().get(host).thenReturn().statusCode();
 		System.out.println("Steam Host Reacheable Status Code ::"+response);
 		if(response == 200) return true;
+		}catch(Exception ex){
+			System.out.println("====== Exception in pingHost ===== "+ex.getMessage());
+			ex.printStackTrace();
+		}
 		return false;
 	}
 
