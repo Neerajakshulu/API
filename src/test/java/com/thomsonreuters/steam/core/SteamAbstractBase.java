@@ -175,10 +175,8 @@ public abstract class SteamAbstractBase {
 				dataStore.put(USER_VAR + String.valueOf(i + 1), users[i]);
 		}
 		
-		if(pingHost(steamURL)){
-			logger.info("Steam Host is reacheable..");
-			SID=AdminLogin.login();
-		}
+		//Get Admin SID
+		SID=AdminLogin.login();
 		
 		//store SID in datastore
 		dataStore.put("SID",SID);
@@ -1149,19 +1147,6 @@ public abstract class SteamAbstractBase {
 
 	public void addCategory() {
 
-	}
-	
-	//Test status code for the host
-	public static boolean pingHost(String host) {
-		try{
-		int response = given().when().get(host).thenReturn().statusCode();
-		System.out.println("Steam Host Reacheable Status Code ::"+response);
-		if(response == 200) return true;
-		}catch(Exception ex){
-			System.out.println("====== Exception in pingHost ===== "+ex.getMessage());
-			ex.printStackTrace();
-		}
-		return false;
 	}
 
 }
