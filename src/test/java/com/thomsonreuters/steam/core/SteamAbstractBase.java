@@ -1,5 +1,6 @@
 package com.thomsonreuters.steam.core;
 
+import static com.jayway.restassured.RestAssured.baseURI;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.path.xml.XmlPath.from;
 import static com.jayway.restassured.path.xml.XmlPath.with;
@@ -10,6 +11,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -139,7 +142,7 @@ public abstract class SteamAbstractBase {
 
 	//For STEAM
 	private static String steamURL = "http://10.205.140.204:5000/esti/xrpc";
-	protected static String SID=AdminLogin.login();
+	protected static String SID = "";
 	protected String templatePath = null;
 	private static final String XMLFILE_EXT = ".xml";
 	private static final String XML_REQUEST_PLACEHOLDER_MATCHER_PATTERN = "\\{\\{(.*?)}\\}";
@@ -170,10 +173,15 @@ public abstract class SteamAbstractBase {
 			for (int i = 0; i < users.length; i++)
 				dataStore.put(USER_VAR + String.valueOf(i + 1), users[i]);
 		}
-
+		
+		if(pingHost(steamURL)){
+			logger.info("Steam Host is reacheable..");
+			SID=AdminLogin.login();
+		}
+		
 		//store SID in datastore
 		dataStore.put("SID",SID);
-
+		
 		logger.info("envSuffix = " + envSuffix);
 		logger.info("IP = " + IP);
 		logger.info("Users = " + dataStore);
@@ -666,7 +674,6 @@ public abstract class SteamAbstractBase {
 			final String statusCode) throws Exception {
 
 		boolean success=true;
-		List<String> ExpectedSKUs= new ArrayList<String>();
 		String validationsToken = null;
 		String xmlNameKey = null;
 		String expectedValue = null;
@@ -1141,6 +1148,14 @@ public abstract class SteamAbstractBase {
 
 	public void addCategory() {
 
+	}
+	
+	//Test status code for the host
+	public static boolean pingHost(String host) {
+		int response = given().when().get(host).thenReturn().statusCode();
+		System.out.println("Steam Host Reacheable Status Code ::"+response);
+		if(response == 200) return true;
+		return false;
 	}
 
 }
