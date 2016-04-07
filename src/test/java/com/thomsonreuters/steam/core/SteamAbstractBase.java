@@ -314,8 +314,12 @@ public abstract class SteamAbstractBase {
 		reqSpec.request().body(updatedXML);								 
 		response = reqSpec.when().post(steamURL);*/
 		
-		response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
-
+		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
+		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
+		
+		response = given().proxy(host("squid.dev.oneplatform.build").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
+		
+		
 		/*
 		// Get and set headers to request
 		if (StringUtils.isNotBlank(rowData.getHeaders())) {

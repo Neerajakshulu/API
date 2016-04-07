@@ -33,8 +33,9 @@ public class AdminLogin extends SteamAbstractBase{
 		try{
 			//String response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
 			
-			String response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( myEnvelope ).when().post("/esti/xrpc").thenReturn().asString();
-            
+			//String response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( myEnvelope ).when().post("/esti/xrpc").thenReturn().asString();
+			String response = given().proxy(host("squid.dev.oneplatform.build").withPort(5000)).when().body( myEnvelope ).when().post("/esti/xrpc").thenReturn().asString();
+			
 			Node fnResponse = with(response).get("response.fn[0]");
 			Map hm=(Map) fnResponse.attributes();
 			String rc = (hm.get("rc")).toString();
