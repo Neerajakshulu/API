@@ -1,5 +1,6 @@
 package com.thomsonreuters.steam.core;
 
+import static com.jayway.restassured.RestAssured.baseURI;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.path.xml.XmlPath.from;
 import static com.jayway.restassured.path.xml.XmlPath.with;
@@ -317,7 +318,9 @@ public abstract class SteamAbstractBase {
 		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
 		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
 		
-		response = given().proxy(host("squid.dev.oneplatform.build").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
+		//response = given().proxy(host("squid.dev.oneplatform.build").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
+		
+		response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( updatedXML ).when().post( steamURL );
 		
 		
 		/*
