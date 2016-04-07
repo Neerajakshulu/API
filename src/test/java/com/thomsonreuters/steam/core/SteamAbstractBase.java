@@ -57,15 +57,15 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.path.xml.element.Node;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.RowData;
 import com.thomsonreuters.automation.report.ReportFactory;
+import static com.jayway.restassured.RestAssured.given;
+import static com.jayway.restassured.specification.ProxySpecification.host;
 
 /**
  * Common setup class for all the tests
@@ -311,16 +311,16 @@ public abstract class SteamAbstractBase {
 
 		logger.debug("URL=" + steamURL);
 		
-		RequestSpecification reqSpec = new RequestSpecBuilder().setProxy("squid.oneplatform.build", 3128).build();
+		/*RequestSpecification reqSpec = new RequestSpecBuilder().setProxy("squid.oneplatform.build", 3128).build();
 		reqSpec.request().body(updatedXML);								 
-		response = reqSpec.when().post(steamURL);
+		response = reqSpec.when().post(steamURL);*/
 		
 		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
 		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
 		
 		//response = given().proxy(host("squid.dev.oneplatform.build").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
 		
-		//response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( updatedXML ).when().post( steamURL );
+		response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( updatedXML ).when().post( steamURL );
 		
 		
 		/*
