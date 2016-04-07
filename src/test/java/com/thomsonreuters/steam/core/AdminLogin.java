@@ -31,10 +31,10 @@ public class AdminLogin extends SteamAbstractBase{
 				"</request>";
 
 		try{
-			//String response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
+			String response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
 			
 			//String response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( myEnvelope ).when().post("/esti/xrpc").thenReturn().asString();
-			String response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( myEnvelope ).when().post( baseURI ).thenReturn().asString();
+			//String response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( myEnvelope ).when().post( baseURI ).thenReturn().asString();
 			
 			Node fnResponse = with(response).get("response.fn[0]");
 			Map hm=(Map) fnResponse.attributes();
