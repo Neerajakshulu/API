@@ -15,6 +15,7 @@ public class SteamTest extends SteamAbstractBase {
 		//System.out.println("Getting system property::steam.proxy.host="+System.getProperty("steam.proxy.host"));
 		//System.out.println("Getting system property::steam.xrpc.endpoint="+System.getProperty("steam.xrpc.endpoint"));
 		
+		
 		testDataExcelPath = "src/test/test-data/STeAMTestData.xlsx";
 		templatePath="src/test/test-data/STEAM_TEMPLATES/";
 		appName = "1PSTEAM";
