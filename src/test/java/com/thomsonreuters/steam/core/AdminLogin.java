@@ -3,7 +3,11 @@ package com.thomsonreuters.steam.core;
 import static com.jayway.restassured.RestAssured.*;
 import static com.jayway.restassured.path.xml.XmlPath.*;
 import java.util.Map;
+
+import com.jayway.restassured.builder.RequestSpecBuilder;
 import com.jayway.restassured.path.xml.element.Node;
+import com.jayway.restassured.specification.RequestSpecification;
+
 import static com.jayway.restassured.specification.ProxySpecification.host;
 
 public class AdminLogin extends SteamAbstractBase{
@@ -31,10 +35,14 @@ public class AdminLogin extends SteamAbstractBase{
 				"</request>";
 
 		try{
-			String response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
+			//String response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
 			
 			//String response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( myEnvelope ).when().post("/esti/xrpc").thenReturn().asString();
 			//String response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( myEnvelope ).when().post( baseURI ).thenReturn().asString();
+			
+			RequestSpecification reqSpec = new RequestSpecBuilder().setProxy("squid.oneplatform.build", 3128).build();
+			reqSpec.request().body(myEnvelope);								 
+			String response = reqSpec.when().post(baseURI).thenReturn().asString();
 			
 			Node fnResponse = with(response).get("response.fn[0]");
 			Map hm=(Map) fnResponse.attributes();
