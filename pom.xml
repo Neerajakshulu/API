@@ -126,6 +126,25 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			
+			<plugin>
+				<artifactId>maven-clean-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<filesets>
+						<fileset>
+							<directory>Reports</directory>
+							<includes>
+								<include>*.html</include>
+							</includes>
+								<excludes>
+								<exclude>*.txt</exclude>
+							</excludes>
+							<followSymlinks>false</followSymlinks>
+						</fileset>
+					</filesets>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
