@@ -1,9 +1,9 @@
 package com.thomsonreuters.steam.core;
 
-import static com.jayway.restassured.RestAssured.baseURI;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.path.xml.XmlPath.from;
 import static com.jayway.restassured.path.xml.XmlPath.with;
+import static com.jayway.restassured.specification.ProxySpecification.host;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -11,9 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.ConnectException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.file.Files;
@@ -21,10 +18,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -48,7 +43,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.util.FileUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -65,15 +59,13 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
-import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.path.xml.element.Node;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 import com.relevantcodes.extentreports.ExtentReports;
 import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
-import com.thomsonreuters.automation.report.ReportFactory;
 import com.thomsonreuters.automation.common.RowData;
+import com.thomsonreuters.automation.report.ReportFactory;
 
 /**
  * Common setup class for all the tests
@@ -318,9 +310,11 @@ public abstract class SteamAbstractBase {
 		//url=url+"&sid="+SID+rowData.getQueryString()+"&request="+updatedXML;
 
 		logger.debug("URL=" + steamURL);
-		RequestSpecification reqSpec = given();
+		/*RequestSpecification reqSpec = given();
 		reqSpec.request().body(updatedXML);								 
-		response = reqSpec.when().post(steamURL);
+		response = reqSpec.when().post(steamURL);*/
+		
+		response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
 
 		/*
 		// Get and set headers to request
