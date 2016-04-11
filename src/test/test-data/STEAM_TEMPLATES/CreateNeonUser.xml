@@ -48,7 +48,11 @@
               <map>
                 <val name="obj_type">USER_INFO_MIDDLE_NAME</val>
                 <val name="value">{{USER_MIDDLE_NAME}}</val>
-              </map>    
+              </map>
+			  <map>
+                <val name="obj_type">USER_INFO_TRUID</val>
+                <val name="value">{{USER_TRUID}}</val>
+              </map> 			  
             </list>
           </map>
         </list>

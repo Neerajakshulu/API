@@ -43,10 +43,6 @@
                   <val name="obj_type">USER_TRUID</val>
                 </map>
                 <map>
-                  <val name="ret_name">isActive</val>
-                  <val name="obj_type">USER_ISACTIVE</val>
-                </map>
-                <map>
                   <val name="obj_type">USER_USER_INFO</val>
                   <val name="ret_name">UserInfo</val>
                   <list name="attributes">
