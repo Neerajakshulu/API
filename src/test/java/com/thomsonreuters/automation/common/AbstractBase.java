@@ -129,7 +129,7 @@ public abstract class AbstractBase {
 
 		String eurekaURL = System.getProperty("eurekaUrl");
 		String envSuffix = System.getProperty("envSuffix");
-		String IP = System.getProperty("IP");
+		String local = System.getProperty("Local");
 		String usersList = System.getProperty("sys_users");
 
 		if (StringUtils.isNotBlank(usersList)) {
@@ -139,9 +139,9 @@ public abstract class AbstractBase {
 		}
 
 		logger.info("envSuffix = " + envSuffix);
-		logger.info("IP = " + IP);
+		logger.info("Local = " + local);
 		logger.info("Users = " + dataStore);
-		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
+		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, local);
 
 	}
 
@@ -790,7 +790,7 @@ public abstract class AbstractBase {
 	 */
 	protected void getAllAppHostsForGivenEnv(String eurekaURL,
 			String env,
-			String IP) throws Exception {
+			String local) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String appName = null;
@@ -818,12 +818,12 @@ public abstract class AbstractBase {
 				}
 
 				// Get IP Address
-				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME) && IP.equalsIgnoreCase("N")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME) && local.equalsIgnoreCase("Y")) {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}
 
-				if (startElement.getName().getLocalPart().equals(EUREKA_IP_ADDRESS) && IP.equalsIgnoreCase("Y")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_IP_ADDRESS) && local.equalsIgnoreCase("N")) {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}
