@@ -64,6 +64,8 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.RowData;
 import com.thomsonreuters.automation.report.ReportFactory;
+
+import static com.jayway.restassured.RestAssured.baseURI;
 import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.specification.ProxySpecification.host;
 
@@ -141,6 +143,7 @@ public abstract class SteamAbstractBase {
 	private static final String XML_REQUEST_PLACEHOLDER_MATCHER_PATTERN = "\\{\\{(.*?)}\\}";
 	DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 	DocumentBuilder dBuilder;
+	protected static String local = "";
 
 	public void setUp() throws Exception {
 	}
@@ -158,7 +161,7 @@ public abstract class SteamAbstractBase {
 
 		String eurekaURL = System.getProperty("eurekaUrl");
 		String envSuffix = System.getProperty("envSuffix");
-		String IP = System.getProperty("IP");
+		local = System.getProperty("Local");
 		String usersList = System.getProperty("sys_users");
 
 		if (StringUtils.isNotBlank(usersList)) {
@@ -166,18 +169,20 @@ public abstract class SteamAbstractBase {
 			for (int i = 0; i < users.length; i++)
 				dataStore.put(USER_VAR + String.valueOf(i + 1), users[i]);
 		}
+
+		logger.info("envSuffix = " + envSuffix);
+		logger.info("Local = " + local);
+		logger.info("Users = " + dataStore);
 		
+		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, local);
+
 		//Get Admin SID
 		SID=AdminLogin.login();
+
+		logger.info("Admin SID = " + SID);
 		
 		//store SID in datastore
 		dataStore.put("SID",SID);
-		
-		logger.info("envSuffix = " + envSuffix);
-		logger.info("IP = " + IP);
-		logger.info("Users = " + dataStore);
-		logger.info("Admin SID = " + SID);
-		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, IP);
 	}
 
 	protected void process(XSSFRow row,
@@ -205,7 +210,7 @@ public abstract class SteamAbstractBase {
 				try {
 					// Save API response to file
 					saveAPIResponse(responseXML, sheetName, rowData.getTestName());
-					
+
 					// Validate the response with expected data
 					testSuccess = validateResponse(validationString, responseXML, statusCode);
 
@@ -297,7 +302,7 @@ public abstract class SteamAbstractBase {
 
 		//convert xml data to string format
 		String stringxml = convertXMLToString(completeTemplatePath);
-		
+
 		//Update dynamic place holders in template xml file
 		String updatedPlaceHolder = replaceDynamicPlaceHolders(stringxml);
 
@@ -310,19 +315,14 @@ public abstract class SteamAbstractBase {
 		//url=url+"&sid="+SID+rowData.getQueryString()+"&request="+updatedXML;
 
 		logger.debug("URL=" + steamURL);
-		
-		/*RequestSpecification reqSpec = new RequestSpecBuilder().setProxy("squid.oneplatform.build", 3128).build();
-		reqSpec.request().body(updatedXML);								 
-		response = reqSpec.when().post(steamURL);*/
-		
-		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
-		//response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
-		
-		//response = given().proxy(host("squid.dev.oneplatform.build").withPort(5000)).when().body( updatedXML ).when().post("/esti/xrpc");
-		
-		response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( updatedXML ).when().post( steamURL );
-		
-		
+
+		// local is Y <=> this block to be executed Locally 
+		if(local.equalsIgnoreCase("Y")){
+			response = given().body( updatedXML ).when().post(steamURL);
+		}else{//execute in Jenkins with proxy setup
+			response = given().proxy(host("squid.oneplatform.build").withPort(3128)).body( updatedXML ).when().post( steamURL );
+		}
+
 		/*
 		// Get and set headers to request
 		if (StringUtils.isNotBlank(rowData.getHeaders())) {
@@ -409,7 +409,7 @@ public abstract class SteamAbstractBase {
 
 						if (appHosts.get(rowData.getHost()) != null) {
 							logger.debug("Real host=" + appHosts.get(rowData.getHost()));
-							
+
 							try {
 								process(row, sheetName);
 							} catch (Exception e) {
@@ -679,7 +679,7 @@ public abstract class SteamAbstractBase {
 		String expectedValue = null;
 		String actualValue = null;
 		String actualRC = null;
-		
+
 		if(rowData.getTemplateName().equals("DeleteUser")){
 			actualRC = from(responsexml).get("response.fn[1].@rc");
 			logger.debug("actual RC for Delete User service::"+actualRC);
@@ -909,7 +909,7 @@ public abstract class SteamAbstractBase {
 	 */
 	protected void getAllAppHostsForGivenEnv(String eurekaURL,
 			String env,
-			String IP) throws Exception {
+			String local) throws Exception {
 		XMLInputFactory inputFactory = XMLInputFactory.newInstance();
 
 		String appName = null;
@@ -937,12 +937,12 @@ public abstract class SteamAbstractBase {
 				}
 
 				// Get IP Address
-				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME) && IP.equalsIgnoreCase("N")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_NAME) && local.equalsIgnoreCase("Y")) {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}
 
-				if (startElement.getName().getLocalPart().equals(EUREKA_IP_ADDRESS) && IP.equalsIgnoreCase("Y")) {
+				if (startElement.getName().getLocalPart().equals(EUREKA_IP_ADDRESS) && local.equalsIgnoreCase("N")) {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}

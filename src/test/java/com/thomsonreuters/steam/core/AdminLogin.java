@@ -17,7 +17,7 @@ public class AdminLogin extends SteamAbstractBase{
 		baseURI = "http://10.205.140.204:5000/esti/xrpc";
 		String UserName="Neon_Test_Admin@tr.com";
 		String Password="1234qwer$";
-
+		String response ;
 
 		String myEnvelope = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"+
 				" <request xmlns=\"http://www.isinet.com/xrpc40\">"+
@@ -35,15 +35,13 @@ public class AdminLogin extends SteamAbstractBase{
 				"</request>";
 
 		try{
-			//String response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
 			
-			//String response = given().proxy(host("10.205.140.204").withPort(5000)).when().body( myEnvelope ).when().post("/esti/xrpc").thenReturn().asString();
-			
-			String response = given().proxy(host("squid.oneplatform.build").withPort(3128)).when().body( myEnvelope ).when().post( baseURI ).thenReturn().asString();
-			
-			/*RequestSpecification reqSpec = new RequestSpecBuilder().setProxy("squid.oneplatform.build", 3128).build();
-			reqSpec.request().body(myEnvelope);								 
-			String response = reqSpec.when().post(baseURI).thenReturn().asString();*/
+			// local is Y <=> this block to be executed locally 
+			if(local.equalsIgnoreCase("Y")){
+				response = given().body( myEnvelope ).when().post(baseURI).thenReturn().asString();
+			}else{//execute in Jenkins with proxy setup
+				response = given().proxy(host("squid.oneplatform.build").withPort(3128)).body( myEnvelope ).when().post( baseURI ).thenReturn().asString();
+			}
 			
 			Node fnResponse = with(response).get("response.fn[0]");
 			Map hm=(Map) fnResponse.attributes();
