@@ -14,7 +14,7 @@
 		<list>
 			<map>
 				<val name="SEARCH_NAME">USER_SEARCH_BY_TRUID</val>
-				<val name="TR_UID">(OPQA-AAA_user.truID)</val>
+				<val name="TR_UID">(OPQA-1410_user.truID)</val>
 			</map>
 			<list>
 				<map>

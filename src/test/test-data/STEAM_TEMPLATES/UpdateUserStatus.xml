@@ -16,7 +16,7 @@
       <map>
         <val name="type">SIMPLIFIED</val>
         <map name="USER_UPDATE_NEON_USER_STATUS_PARAMS">
-		  <val name="TRUID">(OPQA-AAA_user.truID)</val>
+		  <val name="TRUID">(OPQA-1410_user.truID)</val>
           <!--<val name="USER_ID">585619</val> -->
           <val name="ISACTIVE">{{ISACTIVE}}</val>
         </map>

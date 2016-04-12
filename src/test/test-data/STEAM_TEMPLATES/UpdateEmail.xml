@@ -13,7 +13,7 @@
 	<fn name="STEAMCoreAPI.updateObject">
 		<list>
 			<val name="type">USER</val>
-			<val name="UserId">(OPQA-AAA_user.userID)</val>
+			<val name="UserId">(OPQA-1410_user.userID)</val>
 			<map name="Map">
 				<val name="obj_type">USER</val>
 				<list name="attributes">
