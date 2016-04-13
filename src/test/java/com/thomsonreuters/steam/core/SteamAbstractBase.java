@@ -1,3 +1,11 @@
+/**
+* The SteamAbstractBase program implements Steam API test cases execution flow.
+* This program contains utility methods for getXMLNodeValue, validate response, update extent report etc.. 
+*  
+* @author  Janardhan
+* @version 1.0
+* @since   2016-03-31 
+*/
 package com.thomsonreuters.steam.core;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -67,9 +75,6 @@ import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.RowData;
 import com.thomsonreuters.automation.report.ReportFactory;
 
-/**
- * Common setup class for all the tests
- */
 public abstract class SteamAbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
@@ -129,13 +134,30 @@ public abstract class SteamAbstractBase {
 	public void setUp() throws Exception {
 	}
 
+	/**
+	 * This method creates a folder for storing all test cases response xml files.
+	 * 
+	 * @return 		Nothing
+	 * @exception 	Exception On folder creation error
+	 * @see 		Exception
+	 * 
+	 */
 	@BeforeSuite
 	public void beforeSuite() throws Exception {
 		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
 		TEST_OUTPUT_ROOT_FOLDER_PATH = Paths.get(TEST_OUTPUT_FOLDER_PATH, strDateTime);
 		Files.createDirectories(TEST_OUTPUT_ROOT_FOLDER_PATH);
 	}
-
+	
+	/**
+	 * This method stores parameters which are passed as arguments to this suite. 
+	 * Also has utility methods storing SID, host names and IP Addresses of all apps.  
+	 * 
+	 * @return 		Nothing
+	 * @exception 	Exception On folder creation error
+	 * @see 		Exception
+	 * 
+	 */
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
@@ -159,6 +181,12 @@ public abstract class SteamAbstractBase {
 		dataStore.put("SID", SID);
 	}
 
+	/**
+	 * This method executes specified test case, validate the response, store the response file and update the test status.  
+	 * 
+	 * @return 		Nothing
+	 * 
+	 */
 	protected void process(XSSFRow row,
 			String sheetName) {
 		// RowData rowData = null;
@@ -232,14 +260,17 @@ public abstract class SteamAbstractBase {
 		reporter.endTest(testReporter);
 	}
 
+	/**
+	 * This method updates body params into xml template, sends the request and returns the response. 
+	 * 
+	 * @return 		Response xml response returns
+	 * 
+	 */
 	protected Response getAPIResponse() {
 		Response response = null;
-		// String apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
-		// String headers = replaceDynamicPlaceHolders(rowData.getHeaders());
-		// String queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
 		String bodyString = replaceDynamicPlaceHolders(rowData.getBody());
 		String completeTemplatePath = templatePath + rowData.getTemplateName() + ".xml";
-		// logger.debug("XML TEMPLATE PATH:"+completeTemplatePath);
+		
 		// Store body params into map
 		Map<String, String> bodyParams = new HashMap<String, String>();
 		StringTokenizer bodyTokenizer = new StringTokenizer(bodyString, TOKENIZER_DOUBLE_PIPE);
@@ -248,6 +279,7 @@ public abstract class SteamAbstractBase {
 		String valueParam = null;
 		// assign SID to map
 		bodyParams.put("SID", SID);
+		
 		while (bodyTokenizer.hasMoreTokens()) {
 			paramToken = bodyTokenizer.nextToken();
 			StringTokenizer paramTokenizer = new StringTokenizer(paramToken, TOKENIZER_EQUALTO);
@@ -266,15 +298,14 @@ public abstract class SteamAbstractBase {
 				}
 			}
 		}
+		
 		// convert xml data to string format
 		String stringxml = convertXMLToString(completeTemplatePath);
 		// Update dynamic place holders in template xml file
 		String updatedPlaceHolder = replaceDynamicPlaceHolders(stringxml);
 		// update template with body param values
 		String updatedXML = updateTemplate(updatedPlaceHolder, bodyParams);
-		// String url = appHosts.get(rowData.getHost()) + apiPath + queryString;
-		// Modify url specific to steam format
-		// url=url+"&sid="+SID+rowData.getQueryString()+"&request="+updatedXML;
+		
 		logger.debug("URL=" + steamURL);
 		// local is Y <=> this block to be executed Locally
 		if (local.equalsIgnoreCase("Y")) {
@@ -283,26 +314,14 @@ public abstract class SteamAbstractBase {
 			response = given().proxy(host("squid.oneplatform.build").withPort(3128)).body(updatedXML).when()
 					.post(steamURL);
 		}
-		/*
-		 * // Get and set headers to request if (StringUtils.isNotBlank(rowData.getHeaders())) { Map<String, String>
-		 * headersMap = getHeaders(headers); reqSpec.headers(headersMap); } if
-		 * (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) { //Steam XRPC doesn't
-		 * accept body //reqSpec.body(bodyString); } if (rowData.getMethod().equalsIgnoreCase(GET)) { logger.debug(
-		 * "Entered into GET Method"); // Call the Rest API and get the response response = reqSpec.when().get(url); }
-		 * else if (rowData.getMethod().equalsIgnoreCase(PUT)) { logger.debug("Entered into PUT Method"); // Call the
-		 * Rest API and get the response response = reqSpec.when().put(url); } else if
-		 * (rowData.getMethod().equalsIgnoreCase(POST)) { logger.debug("Entered into POST Method"); // Call the Rest API
-		 * and get the response response = reqSpec.when().post(url); } else if
-		 * (rowData.getMethod().equalsIgnoreCase(DELETE)) { logger.debug("Entered into DELETE Method"); // Call the Rest
-		 * API and get the response response = reqSpec.when().delete(url); }
-		 */
 		return response;
 	}
 
 	/**
-	 * Execute all the test cases defined in the excel file.
+	 * This method executes all the test cases defined in the excel file and update the test status about exceptions
 	 * 
-	 * @throws Exception
+	 * @throws 		Exception
+	 * @return 		Nothing
 	 */
 	protected void runTests() throws Exception {
 		logger.info("Entered the process method...");
@@ -384,7 +403,7 @@ public abstract class SteamAbstractBase {
 		}
 
 		// Write updates to excel
-		writeUpdatestoExcel(workBook);
+		writeUpdatesToExcel(workBook);
 		if (StringUtils.isNotBlank(isTestFailDescroption)) {
 			Assert.assertFalse(isTestFail, isTestFailDescroption);
 		}
@@ -393,7 +412,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * Checks whether current test dependency tests passed or not.
+	 * This method checks whether current test's dependency tests passed or not.
 	 * 
 	 * @param dependencyTests dependency tests
 	 * @return true if all the dependency tests passed else false
@@ -413,7 +432,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * Checks for valid / supported methods.
+	 * This method checks for valid / supported methods.
 	 * 
 	 * @param method the method as configured in the test case
 	 * @return true means valid else invalid method
@@ -427,8 +446,8 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This method replace the place holders in path, headers, query string and body with respective values captured
-	 * from the previous tests.
+	 * This method replaces the place holders in path, headers, query string 
+	 * and body with respective values captured from the previous tests.
 	 * 
 	 * @param stringToFormat string with place holders
 	 * @return string after replacing the place holders
@@ -469,7 +488,7 @@ public abstract class SteamAbstractBase {
 	 * As configured in the excel, this method stores required data from current test response
 	 * 
 	 * @param xmlresponse current test response body
-	 * @param xmlNameKeys json elements for which data to be stored
+	 * @param xmlNameKeys xml elements for which data to be stored
 	 * @param testName current test name
 	 */
 	protected void storeDependentTestsData(String xmlresponse,
@@ -492,7 +511,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * Get configured header from excel and load to a map.
+	 * Get configured header from excel and load into a map.
 	 * 
 	 * @param header as configured in excel
 	 * @return map of headers
@@ -533,7 +552,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * Updates the current test case status.
+	 * Updates the current test case status in excel.
 	 * 
 	 * @param testName test case name
 	 * @param row current test case row
@@ -567,7 +586,7 @@ public abstract class SteamAbstractBase {
 	 * @param workBook current excel from where tests run
 	 * @throws Exception
 	 */
-	protected void writeUpdatestoExcel(XSSFWorkbook workBook) throws Exception {
+	protected void writeUpdatesToExcel(XSSFWorkbook workBook) throws Exception {
 		FileOutputStream fos = new FileOutputStream(new File(testDataExcelPath));
 		workBook.write(fos);
 		fos.close();
@@ -670,7 +689,7 @@ public abstract class SteamAbstractBase {
 							String error = with(responsexml).getString("response.fn[1].error");
 
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equalsIgnoreCase(error)) {
-								testReporter.log(LogStatus.INFO, "Actual value: " + error + " for key: " + xmlNameKey
+								testReporter.log(LogStatus.ERROR, "Actual value: " + error + " for key: " + xmlNameKey
 										+ " is not matching expected value:" + expectedValue);
 								break;
 							} else {
@@ -694,7 +713,7 @@ public abstract class SteamAbstractBase {
 							break;
 						}
 					} else {
-						testReporter.log(LogStatus.INFO,
+						testReporter.log(LogStatus.ERROR,
 								"Expected value is empty !! Please provide input for " + xmlNameKey
 										+ ". For Empty string check, provide \"\" and for null check, provide null ");
 
@@ -713,6 +732,7 @@ public abstract class SteamAbstractBase {
 	 * 
 	 * @param responsexml represents xml response
 	 * @param node for getting specific node value
+	 * @return String node value
 	 * 
 	 */
 
@@ -842,7 +862,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * Read host names across all applications for the given environment and load them to map.
+	 * Read host names across all applications for the given environment and load them into map.
 	 * 
 	 * @param env environment for which the tests connect
 	 * @throws Exception
@@ -954,7 +974,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This function will convert an object of type excel cell to a string value
+	 * This method converts an object of type excel cell to a string value
 	 * 
 	 * @param cell excel cell
 	 * @return the cell value
@@ -986,7 +1006,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This function will convert XML template to string
+	 * This method converts XML template to string
 	 * 
 	 * @param string xmlfilepath
 	 * @return the XML String data
@@ -1030,7 +1050,7 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This function will update XML template with map values
+	 * This method will update XML template with map values
 	 * 
 	 * @param string xmldata
 	 * @param Map bodyparams for updating values in xmldata
@@ -1042,26 +1062,24 @@ public abstract class SteamAbstractBase {
 		// update xml placeholders with values
 		if (StringUtils.isNotBlank(xmldata)) {
 			logger.debug("Before replace XML=" + xmldata);
-
 			StringBuffer sb = new StringBuffer();
 			String toReplace = null;
 
 			if (StringUtils.isNotBlank(xmldata)) {
-
 				Matcher matcher = Pattern.compile(XML_REQUEST_PLACEHOLDER_MATCHER_PATTERN).matcher(xmldata);
-
+				
 				while (matcher.find()) {
-
 					// What to replace
 					toReplace = matcher.group(1);
-
 					// System.out.println("to Replace XML PlaceHolder=" + toReplace);
 					String target = "NO_DATA_FOUND";
+					
 					if (bodyParams.containsKey(toReplace)) {
 						// Replace single specific char $ with \\$ to avoid exception while replace
 						target = bodyParams.get(toReplace).replaceAll(Pattern.quote("$"),
 								Matcher.quoteReplacement("\\$"));
 					}
+					
 					// logger.debug("to Replace XML PlaceHolder::"+toReplace+" with Target::"+target);
 					// Append replaced match.
 					matcher.appendReplacement(sb, target);
@@ -1069,20 +1087,20 @@ public abstract class SteamAbstractBase {
 				matcher.appendTail(sb);
 			}
 
-			// logger.debug("=================================After replace XML ===========================\n" + sb);
-
 			return sb.toString();
 		}
 		return xmldata;
 	}
 
+	/**
+	 * This method closes report
+	 * 
+	 * @return Nothing
+	 */
 	@AfterSuite
 	public void afterSuite() {
 		reporter.close();
 	}
 
-	public void addCategory() {
-
-	}
 
 }

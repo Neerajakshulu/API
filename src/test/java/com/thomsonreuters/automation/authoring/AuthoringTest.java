@@ -1,19 +1,33 @@
+/**
+* The AuthoringTest program is an entry point for running Authoring API test cases.
+* This class initializes app name, excel file path which are utilized by AbstractBase class.
+* Also executes external test case and update the test status.   
+*
+* @author  Janardhan
+* @version 1.0
+* @since   2015-08-31 
+*/
 package com.thomsonreuters.automation.authoring;
 
 import org.apache.commons.lang.StringUtils;
 import org.testng.annotations.Test;
-
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
-/**
- * Test the Authoring APIs
- */
+
 public class AuthoringTest extends AbstractBase {
 
+	/**
+	 * This method is entry point for testing. Initializes excel file path and app name. 
+	 * Calls runTests method for executing test cases specified in the excel file.  
+	 * 
+	 * @return 		Nothing
+	 * @throws 		Exception
+	 * 
+	 */
 	@Test
 	public void authoringTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/AuthoringTestData.xlsx";
@@ -22,7 +36,14 @@ public class AuthoringTest extends AbstractBase {
 		runTests();
 	}
 
-	/* comments size which should be 2500 characters */
+	/**
+	 * This method is entry point for testing on priority.  
+	 * This method tests for comment length = 2500 or not and updates test status.
+	 * 
+	 * @return 		Nothing
+	 * @throws 		Exception
+	 * 
+	 */
 	@Test(priority = 1)
 	public void testCommentMaxLength() throws Exception {
 		logger.info("Entered Authoring testCommentMaxLength method...");
@@ -40,12 +61,19 @@ public class AuthoringTest extends AbstractBase {
 				"{\"targetType\":\"wos\",\"targetId\":\"468387744WOS1\",\"content\":\"Comment Max Length Test: As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher,>1500I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge base, make connections to my peers and gain exposure to others in my field. As a researcher, I want to interact with Thomson Reuters’ research content so that I can discover new data, contribute to the knowledge...! >2500\"}");
 		rowData.setStore("comments.id");
 		testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
-		ExecuteTest(rowData);
+		executeTest(rowData);
 		reporter.endTest(testReporter);
 		logger.info("Ennding Authoring testCommentMaxLength method...");
 	}
 
-	private void ExecuteTest(RowData rowData) throws Exception {
+	/**
+	 * This method executes specified test case, validates the response, stores the response and update the test status.  
+	 * 
+	 * @return 		Nothing
+	 * @throws 		Exception
+	 * 
+	 */
+	private void executeTest(RowData rowData) throws Exception {
 		Response response = null;
 		String sheetName = "Authoring";
 		String responseJson = null;
@@ -70,9 +98,8 @@ public class AuthoringTest extends AbstractBase {
 					statusCode = String.valueOf(response.getStatusCode());
 					testSuccess = validateResponse(validationString, responseJson, statusCode);
 					logger.info("Status code:" + statusCode);
+					
 					// Validate the response with expected data
-					// testSuccess = testSummaryMaxLengthvalidateResponse(rowData.getValidations(), responseJson,
-					// statusCode);
 					if (testSuccess) {
 						JsonPath jsonPath = new JsonPath(responseJson);
 						String content = jsonPath.getString("comments.content");
@@ -90,7 +117,7 @@ public class AuthoringTest extends AbstractBase {
 							logger.info("Comment is not truncated to 2500 characters! and Old comment count:" + oldCount
 									+ " new count:" + newCount);
 							logger.info("Response content::" + content);
-							testReporter.log(LogStatus.INFO, "Comment is not truncated to 2500 characters!");
+							testReporter.log(LogStatus.ERROR, "Comment is not truncated to 2500 characters!");
 							testReporter.log(LogStatus.FAIL, "Validation Failed");
 						}
 					} else {
