@@ -1,83 +1,83 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <request xmlns="http://www.isinet.com/xrpc40">
-  <fn name="STEAMAdminAPI.loadAdminSession">
-    <list>
-      <val name="SID">{{SID}}</val>
-      <map name="clientInfo">
-        <val name="COMPONENT">ESTI</val>
-        <val name="VERSION">1</val>
-        <val name="ENVIRONMENT">steam</val>
-      </map>
-    </list>
-  </fn>
-<fn name="STEAMCoreAPI_v2.login">
-    <list>
-      <map>
-        <val name="type">SIMPLIFIED</val>
-        <map name="SESSION_USERNAME_PASSWORD_CREDENTIALS">
-            <val name="USERNAME">{{USERNAME}}</val>
-          <val name="PASSWORD">{{PASSWORD}}</val>
-        </map>
-     </map>
-   <map name="CONTEXT">
-        <val name="Application">NEON</val>
-   </map>
-     <list>
-        <map>
-          <val name="EXCLUSIVITY_POLICY">FIRST_SUCCESS</val>
-          <val name="ret_name">session</val>
-          <list name="attributes">
-            <map>
-              <val name="ret_name">SID</val>
-              <val name="obj_type">SESSION_ID</val>
-            </map>
-            <map>
-              <val name="ret_name">User</val>
-              <list name="attributes">                
-                <map>
-                  <val name="ret_name">userID</val>
-                  <val name="obj_type">USER_ID</val>
-                </map>
-                 <map>
-                  <val name="ret_name">truId</val>
-                  <val name="obj_type">USER_TRUID</val>
-                </map>
-                <map>
-                  <val name="obj_type">USER_USER_INFO</val>
-                  <val name="ret_name">UserInfo</val>
-                  <list name="attributes">
-                    <map>
-                      <val name="obj_type">USER_INFO_FIRST_NAME</val>
-                    </map>
-                    <map>
-                      <val name="obj_type">USER_INFO_LAST_NAME</val>
-                    </map>
-                    <map>
-                      <val name="obj_type">USER_INFO_MIDDLE_NAME</val>
-                    </map>
-                    <map>
-                   <val name="obj_type">USER_INFO_FULL_NAME</val>
-                   </map>
-                  </list>
-                </map>
-                <map>
-                  <val name="ret_name">UsernamePassword</val>
-                  <list name="attributes">
-                    <map>
-                      <val name="ret_name">Username</val>
-                      <val name="obj_type">UNP_Username</val>
-                    </map>                   
-                  </list>
-                  <val name="obj_type">USER_UsernamePasswordCredential</val>
-               </map>
-               </list>
-              <val name="obj_type">SESSION_NAMED_USER</val>
-            </map>
-              </list>
-          <val name="REJECTION_POLICY">BYPASS</val>
-          <val name="obj_type">SESSION</val>
-        </map>
-      </list>
-    </list>
-  </fn>
+	<fn name="STEAMAdminAPI.loadAdminSession">
+		<list>
+			<val name="SID">{{SID}}</val>
+			<map name="clientInfo">
+				<val name="COMPONENT">ESTI</val>
+				<val name="VERSION">1</val>
+				<val name="ENVIRONMENT">steam</val>
+			</map>
+		</list>
+	</fn>
+	<fn name="STEAMCoreAPI_v2.login">
+		<list>
+			<map>
+				<val name="type">SIMPLIFIED</val>
+				<map name="SESSION_USERNAME_PASSWORD_CREDENTIALS">
+					<val name="USERNAME">{{USERNAME}}</val>
+					<val name="PASSWORD">{{PASSWORD}}</val>
+				</map>
+			</map>
+			<map name="CONTEXT">
+				<val name="Application">NEON</val>
+			</map>
+			<list>
+				<map>
+					<val name="EXCLUSIVITY_POLICY">FIRST_SUCCESS</val>
+					<val name="ret_name">session</val>
+					<list name="attributes">
+						<map>
+							<val name="ret_name">SID</val>
+							<val name="obj_type">SESSION_ID</val>
+						</map>
+						<map>
+							<val name="ret_name">User</val>
+							<list name="attributes">
+								<map>
+									<val name="ret_name">userID</val>
+									<val name="obj_type">USER_ID</val>
+								</map>
+								<map>
+									<val name="ret_name">truId</val>
+									<val name="obj_type">USER_TRUID</val>
+								</map>
+								<map>
+									<val name="obj_type">USER_USER_INFO</val>
+									<val name="ret_name">UserInfo</val>
+									<list name="attributes">
+										<map>
+											<val name="obj_type">USER_INFO_FIRST_NAME</val>
+										</map>
+										<map>
+											<val name="obj_type">USER_INFO_LAST_NAME</val>
+										</map>
+										<map>
+											<val name="obj_type">USER_INFO_MIDDLE_NAME</val>
+										</map>
+										<map>
+											<val name="obj_type">USER_INFO_FULL_NAME</val>
+										</map>
+									</list>
+								</map>
+								<map>
+									<val name="ret_name">UsernamePassword</val>
+									<list name="attributes">
+										<map>
+											<val name="ret_name">Username</val>
+											<val name="obj_type">UNP_Username</val>
+										</map>
+									</list>
+									<val name="obj_type">USER_UsernamePasswordCredential</val>
+								</map>
+							</list>
+							<val name="obj_type">SESSION_NAMED_USER</val>
+						</map>
+					</list>
+					<val name="REJECTION_POLICY">BYPASS</val>
+					<val name="obj_type">SESSION</val>
+				</map>
+			</list>
+		</list>
+	</fn>
 </request>

@@ -1,15 +1,10 @@
 package com.thomsonreuters.automation.profile;
 
-import static com.jayway.restassured.RestAssured.given;
-
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
@@ -25,8 +20,6 @@ public class ProfileTest extends AbstractBase {
 		appName = "1PPROFILE";
 		runTests();
 	}
-	
-	
 
 	@Test
 	public void testSummaryMaxLength() throws Exception {
@@ -35,7 +28,8 @@ public class ProfileTest extends AbstractBase {
 		rowData = new RowData();
 		rowData.setTestName("OPQA-497_1");
 		rowData.setHost("1PPROFILE");
-		rowData.setDescription("Verify that update user profile summary with exceeds Max length and verify that API should truncate to 1500 characters");
+		rowData.setDescription(
+				"Verify that update user profile summary with exceeds Max length and verify that API should truncate to 1500 characters");
 		rowData.setApiPath("/users/user/(SYS_USER1)");
 		rowData.setMethod("PUT");
 		rowData.setHeaders("X-1P-User=(SYS_USER1)||Content-Type=application/json");
@@ -44,7 +38,7 @@ public class ProfileTest extends AbstractBase {
 		rowData.setValidations("status=200||hits.hits._source.firstName=Mohana");
 		rowData.setStore("hits.hits._id");
 		rowData.setQueryString("");
-		testReporter=reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
+		testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
 		reporter.endTest(testReporter);
 		logger.info("Entered Profile testSummaryMaxLength method...");
@@ -56,13 +50,11 @@ public class ProfileTest extends AbstractBase {
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
-
 		logger.debug("row data=" + rowData.toString());
 		logger.debug("Real host=" + appHosts.get(rowData.getHost()));
 		/*
-		 * If mandatory information like test case name, host, api path and
-		 * valid http method are not provided then skip those tests and update
-		 * the status as fail.
+		 * If mandatory information like test case name, host, api path and valid http method are not provided then skip
+		 * those tests and update the status as fail.
 		 */
 		if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 				&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
@@ -70,28 +62,28 @@ public class ProfileTest extends AbstractBase {
 			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
 				logger.info("-----------------------------------------------------------------------");
 				logger.info("Starting test:" + rowData.getTestName());
-				response=getAPIResponce();
+				response = getAPIResponce();
 				responseJson = response.asString();
 				statusCode = String.valueOf(response.getStatusCode());
 				// Validate the response with expected data
-//				testSuccess = testSummaryMaxLengthvalidateResponse(rowData.getValidations(), responseJson, statusCode);
-				if(statusCode.equals("200")){
-				JsonPath jsonPath = new JsonPath(responseJson);
-				String summary = jsonPath.getString("summary");
-				if (summary.length() == 1500) {
-					logger.info("summary text was truncated to 1500 characters");
-					testReporter.log(LogStatus.INFO, "summary text was truncated to 1500 characters");
-					testSuccess = true;
-				}
+				// testSuccess = testSummaryMaxLengthvalidateResponse(rowData.getValidations(), responseJson,
+				// statusCode);
+				if (statusCode.equals("200")) {
+					JsonPath jsonPath = new JsonPath(responseJson);
+					String summary = jsonPath.getString("summary");
+					if (summary.length() == 1500) {
+						logger.info("summary text was truncated to 1500 characters");
+						testReporter.log(LogStatus.INFO, "summary text was truncated to 1500 characters");
+						testSuccess = true;
+					}
 				}
 				// Save API response to file
 				saveAPIResponse(responseJson, sheetName, rowData.getTestName());
-
 				if (!testSuccess) {
 					testReporter.log(LogStatus.FAIL, "FAIL");
 					throw new Exception("Validation Failed");
-				}else{
-					testReporter.log(LogStatus.PASS, "PASS" );
+				} else {
+					testReporter.log(LogStatus.PASS, "PASS");
 				}
 
 				logger.info("End execution of test:" + rowData.getTestName());

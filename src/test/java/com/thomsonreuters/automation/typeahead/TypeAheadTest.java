@@ -9,7 +9,8 @@ import com.thomsonreuters.automation.common.AbstractBase;
  * 
  * TestData: TypeAheadTestData.xlsx
  */
-public class TypeAheadTest extends AbstractBase{
+public class TypeAheadTest extends AbstractBase {
+
 	@Test
 	public void typeAheadTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/TypeAheadTestData.xlsx";

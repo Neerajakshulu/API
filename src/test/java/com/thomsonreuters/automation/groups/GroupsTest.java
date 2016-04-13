@@ -4,7 +4,6 @@ import org.testng.annotations.Test;
 
 import com.thomsonreuters.automation.common.AbstractBase;
 
-
 /**
  * Test for the Groups API's
  * 

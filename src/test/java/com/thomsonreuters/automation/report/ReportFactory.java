@@ -15,10 +15,10 @@ public class ReportFactory {
 	public static synchronized ExtentReports getReporter() {
 		if (reporter == null) {
 			Date today = new Date();
-	        DateFormat df = new SimpleDateFormat("YYYY-MM-dd_HH-mm_z");
-	        df.setTimeZone(TimeZone.getDefault());
-	        String date_time = df.format(today);
-			reporter = new ExtentReports("Reports/1P-API-AUTOMATION-TEST-REPORT_" +date_time + ".html", true,
+			DateFormat df = new SimpleDateFormat("YYYY-MM-dd_HH-mm_z");
+			df.setTimeZone(TimeZone.getDefault());
+			String date_time = df.format(today);
+			reporter = new ExtentReports("Reports/1P-API-AUTOMATION-TEST-REPORT_" + date_time + ".html", true,
 					DisplayOrder.OLDEST_FIRST);
 			reporter.config().documentTitle("1P-API-AUTOMATION-TEST-REPORT").reportName("Regression")
 					.reportHeadline("1P-API-AUTOMATION-TEST-REPORT");

@@ -9,7 +9,8 @@ import com.thomsonreuters.automation.common.AbstractBase;
  * 
  * TestData: RecommendTestData.xlsx
  */
-public class RecommendTest extends AbstractBase{
+public class RecommendTest extends AbstractBase {
+
 	@Test
 	public void recommendTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/RecommendTestData.xlsx";

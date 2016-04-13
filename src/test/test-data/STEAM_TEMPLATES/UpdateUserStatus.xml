@@ -11,48 +11,48 @@
 		</list>
 	</fn>
 	<fn name="STEAMCoreAPI.action">
-    <list>
-      <val name="type">UPDATE_NEON_USER_STATUS</val>
-      <map>
-        <val name="type">SIMPLIFIED</val>
-        <map name="USER_UPDATE_NEON_USER_STATUS_PARAMS">
-		  <val name="TRUID">(OPQA-1410_user.truID)</val>
-          <!--<val name="USER_ID">585619</val> -->
-          <val name="ISACTIVE">{{ISACTIVE}}</val>
-        </map>
-      </map>
-      <list>
-        <map>
-          <val name="EXCLUSIVITY_POLICY">FIRST_SUCCESS</val>
-          <val name="REJECTION_POLICY">BYPASS</val>
-          <val name="obj_type">DATA_TRANSACTION</val>
-          <val name="ret_name">TRANSACTION</val>
-          <list name="attributes">
-            <map>
-              <val name="obj_type">DATA_TRANSACTION_STATUS</val>
-              <val name="ret_name">STATUS</val>
-            </map>
-            <map>
-              <val name="obj_type">DATA_TRANSACTION_MESSAGE</val>
-              <val name="ret_name">MESSAGE</val>
-            </map>
-          </list>
-        </map>
-        <map>
-          <val name="obj_type">DATA_ERROR</val>
-          <val name="ret_name">ERROR</val>
-          <list name="attributes">
-            <map>
-              <val name="obj_type">DATA_ERROR_ID</val>
-              <val name="ret_name">ID</val>
-            </map>
-            <map>
-              <val name="obj_type">DATA_ERROR_ERROR_MESSAGE</val>
-              <val name="ret_name">MESSAGE</val>
-            </map>
-          </list>
-        </map>
-      </list>
-    </list>
-  </fn>
+		<list>
+			<val name="type">UPDATE_NEON_USER_STATUS</val>
+			<map>
+				<val name="type">SIMPLIFIED</val>
+				<map name="USER_UPDATE_NEON_USER_STATUS_PARAMS">
+					<val name="TRUID">(OPQA-1410_user.truID)</val>
+					<!--<val name="USER_ID">585619</val> -->
+					<val name="ISACTIVE">{{ISACTIVE}}</val>
+				</map>
+			</map>
+			<list>
+				<map>
+					<val name="EXCLUSIVITY_POLICY">FIRST_SUCCESS</val>
+					<val name="REJECTION_POLICY">BYPASS</val>
+					<val name="obj_type">DATA_TRANSACTION</val>
+					<val name="ret_name">TRANSACTION</val>
+					<list name="attributes">
+						<map>
+							<val name="obj_type">DATA_TRANSACTION_STATUS</val>
+							<val name="ret_name">STATUS</val>
+						</map>
+						<map>
+							<val name="obj_type">DATA_TRANSACTION_MESSAGE</val>
+							<val name="ret_name">MESSAGE</val>
+						</map>
+					</list>
+				</map>
+				<map>
+					<val name="obj_type">DATA_ERROR</val>
+					<val name="ret_name">ERROR</val>
+					<list name="attributes">
+						<map>
+							<val name="obj_type">DATA_ERROR_ID</val>
+							<val name="ret_name">ID</val>
+						</map>
+						<map>
+							<val name="obj_type">DATA_ERROR_ERROR_MESSAGE</val>
+							<val name="ret_name">MESSAGE</val>
+						</map>
+					</list>
+				</map>
+			</list>
+		</list>
+	</fn>
 </request>

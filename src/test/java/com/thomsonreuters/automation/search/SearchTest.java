@@ -28,6 +28,7 @@ public class SearchTest extends AbstractBase {
 		runTests();
 	}
 
+	@Override
 	protected boolean validateResponse(final String validations,
 			final String json,
 			final String statusCode) throws Exception {
@@ -92,6 +93,7 @@ public class SearchTest extends AbstractBase {
 		return status;
 	}
 
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private boolean verifySortorder(List<Object> actualValue,
 			String description) {
 		boolean status = false;

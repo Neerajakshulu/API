@@ -1,15 +1,10 @@
 package com.thomsonreuters.automation.follow;
 
-import static com.jayway.restassured.RestAssured.given;
-
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.testng.annotations.Test;
 
 import com.jayway.restassured.path.json.JsonPath;
 import com.jayway.restassured.response.Response;
-import com.jayway.restassured.specification.RequestSpecification;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
@@ -41,14 +36,12 @@ public class FollowTest extends AbstractBase {
 		testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
 		ExecuteTest(rowData);
 		reporter.endTest(testReporter);
-
 		rowData.setTestName("OPQA-462_1");
 		rowData.setHost("1PFOLLOW");
 		rowData.setDescription("Verify that Stop following a user");
 		rowData.setApiPath("/follow/user/(SYS_USER2)/following/(SYS_USER1)");
 		rowData.setMethod("DELETE");
 		ExecuteTest(rowData);
-
 		logger.info("Ending 1PFOLLOW checkFallowersCount method...");
 	}
 
@@ -58,7 +51,6 @@ public class FollowTest extends AbstractBase {
 		String responseJson = null;
 		String statusCode = null;
 		boolean testSuccess = false;
-
 		logger.debug("row data=" + rowData.toString());
 		logger.debug("Real host=" + appHosts.get(rowData.getHost()));
 		/*
@@ -96,7 +88,6 @@ public class FollowTest extends AbstractBase {
 					testReporter.log(LogStatus.PASS, "PASS");
 					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
 				}
-
 				logger.info("End execution of test:" + rowData.getTestName());
 				logger.info("-----------------------------------------------------------------------");
 			}

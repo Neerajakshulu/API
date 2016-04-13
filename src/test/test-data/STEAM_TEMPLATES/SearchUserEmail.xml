@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <request xmlns="http://www.isinet.com/xrpc40">
-  <fn name="STEAMAdminAPI.loadAdminSession">
-    <list>
-      <val name="SID">{{SID}}</val>
-      <map name="clientInfo">
-        <val name="COMPONENT">ESTI</val>
-        <val name="VERSION">1</val>
-        <val name="ENVIRONMENT">steam</val>
-      </map>
-    </list>
-  </fn>
-  <fn name="STEAMCoreAPI.search">
-    <list>
-      <map>
-        <val name="SEARCH_NAME">USER_SEARCH_BY_EMAIL</val>
-        <val name="LOGIN">{{EMAIL_ID}}</val>
-      </map>
-      <list>
-        <map>
-          <val name="obj_type">USER</val>
-          <val name="ret_name">USER</val>
-          <list name="attributes">
-           <map>
-              <val name="obj_type">USER_ID</val>
-              <val name="ret_name">UserId</val>
-            </map>    
-          </list>
-        </map>
-      </list>
-    </list>
-  </fn>
+	<fn name="STEAMAdminAPI.loadAdminSession">
+		<list>
+			<val name="SID">{{SID}}</val>
+			<map name="clientInfo">
+				<val name="COMPONENT">ESTI</val>
+				<val name="VERSION">1</val>
+				<val name="ENVIRONMENT">steam</val>
+			</map>
+		</list>
+	</fn>
+	<fn name="STEAMCoreAPI.search">
+		<list>
+			<map>
+				<val name="SEARCH_NAME">USER_SEARCH_BY_EMAIL</val>
+				<val name="LOGIN">{{EMAIL_ID}}</val>
+			</map>
+			<list>
+				<map>
+					<val name="obj_type">USER</val>
+					<val name="ret_name">USER</val>
+					<list name="attributes">
+						<map>
+							<val name="obj_type">USER_ID</val>
+							<val name="ret_name">UserId</val>
+						</map>
+					</list>
+				</map>
+			</list>
+		</list>
+	</fn>
 </request>

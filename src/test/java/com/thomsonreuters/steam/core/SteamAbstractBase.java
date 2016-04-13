@@ -1,7 +1,9 @@
 package com.thomsonreuters.steam.core;
 
+import static com.jayway.restassured.RestAssured.given;
 import static com.jayway.restassured.path.xml.XmlPath.from;
 import static com.jayway.restassured.path.xml.XmlPath.with;
+import static com.jayway.restassured.specification.ProxySpecification.host;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,43 +67,28 @@ import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.RowData;
 import com.thomsonreuters.automation.report.ReportFactory;
 
-import static com.jayway.restassured.RestAssured.baseURI;
-import static com.jayway.restassured.RestAssured.given;
-import static com.jayway.restassured.specification.ProxySpecification.host;
-
 /**
  * Common setup class for all the tests
  */
 public abstract class SteamAbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
-
 	protected ExtentTest testReporter = null;
-	// reporter.startTest("complexTest001", "This is a simple simpleTest001");
-
 	protected static final Logger logger = LogManager.getLogger();
-
-	// private static final String EUREKA_URL =
-	// "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
-
 	private static final String EUREKA_APP_NAME = "name";
 	private static final String EUREKA_HOST_NAME = "hostName";
 	private static final String EUREKA_IP_ADDRESS = "ipAddr";
 	private static final String EUREKA_HOST_PORT = "port";
 	private static final String EUREKA_VIP_ADDRESS = "vipAddress";
 	private static final String EUREKA_DC_NAME = "Amazon";
-
 	private static final int TESTDATA_COLUMN_COUNT = 13;
-
 	protected static final String GET = "GET";
 	protected static final String POST = "POST";
 	protected static final String PUT = "PUT";
 	protected static final String DELETE = "DELETE";
 	private static final String PASS = "PASS";
 	private static final String FAIL = "FAIL";
-	private static final String SKIP = "SKIP";
 	private static final String DEPENDENCY_FAIL = "DEPFAIL";
-
 	private static final String EMPTY_STRING = "";
 	protected static final String TOKENIZER_DOUBLE_BACK_SLACH = "//";
 	protected static final String TOKENIZER_DOUBLE_PIPE = "||";
@@ -109,15 +96,11 @@ public abstract class SteamAbstractBase {
 	private static final String UNDERSCORE = "_";
 	private static final String COLON = ":";
 	private static final String FORWARD_SLASH = "/";
-	private static final String COMMA = ",";
 	private static final String PLACEHOLDER_MATCHER_PATTERN = "\\((.*?)\\)";
-	private static final String REPLACE_SQURE_BRACKETS = "[\\[\\]]";
 	protected static final String TOKENIZER_DOUBLE_AMPERSAND = "&&";
 	protected static final String PLACEHOLDER_MATCHER_PATTERN_VALIDATION = "\\{.*?}";
-
 	private static final String HTTP = "http://";
 	private static final String UTF8_ENCODING = "utf-8";
-	private static final String TEXTFILE_EXT = ".txt";
 	private static final String TEST_OUTPUT_FOLDER_PATH = "src/test/test-responses";
 	private static Path TEST_OUTPUT_ROOT_FOLDER_PATH = null;
 	protected static final String STATUS = "status";
@@ -127,15 +110,13 @@ public abstract class SteamAbstractBase {
 	protected Map<String, String> dataStore = new HashMap<String, String>();
 	private Map<String, String> testStatus = new HashMap<String, String>();
 	protected static final String TESTOUTPUT_FOLDER_DATEFORMAT = "ddMMMyyyy_HHmmss";
-	// protected static final String ENV = "stable.dev";
 	protected String strDateTime = null;
 	protected String testDataExcelPath = null;
 	protected String appName = null;
 	protected RowData rowData = null;
 	protected boolean isTestFail = false;
 	protected String isTestFailDescroption = null;
-
-	//For STEAM
+	// For STEAM
 	private static String steamURL = "http://10.205.140.204:5000/esti/xrpc";
 	protected static String SID = "";
 	protected String templatePath = null;
@@ -158,31 +139,24 @@ public abstract class SteamAbstractBase {
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
-
 		String eurekaURL = System.getProperty("eurekaUrl");
 		String envSuffix = System.getProperty("envSuffix");
 		local = System.getProperty("Local");
 		String usersList = System.getProperty("sys_users");
-
 		if (StringUtils.isNotBlank(usersList)) {
 			String[] users = StringUtils.split(usersList, TOKENIZER_DOUBLE_PIPE);
 			for (int i = 0; i < users.length; i++)
 				dataStore.put(USER_VAR + String.valueOf(i + 1), users[i]);
 		}
-
 		logger.info("envSuffix = " + envSuffix);
 		logger.info("Local = " + local);
 		logger.info("Users = " + dataStore);
-		
 		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, local);
-
-		//Get Admin SID
-		SID=AdminLogin.login();
-
+		// Get Admin SID
+		SID = AdminLogin.login();
 		logger.info("Admin SID = " + SID);
-		
-		//store SID in datastore
-		dataStore.put("SID",SID);
+		// store SID in datastore
+		dataStore.put("SID", SID);
 	}
 
 	protected void process(XSSFRow row,
@@ -205,7 +179,7 @@ public abstract class SteamAbstractBase {
 				response = getAPIResponse();
 				responseXML = response.thenReturn().asString();
 				statusCode = String.valueOf(response.getStatusCode());
-				//logger.debug("RESPONSE CODE::"+statusCode);
+				// logger.debug("RESPONSE CODE::"+statusCode);
 
 				try {
 					// Save API response to file
@@ -256,42 +230,35 @@ public abstract class SteamAbstractBase {
 					"Mandatory information like test name, host, api path or http method not provided.");
 		}
 		reporter.endTest(testReporter);
-
 	}
 
 	protected Response getAPIResponse() {
 		Response response = null;
-		String apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
-		String headers = replaceDynamicPlaceHolders(rowData.getHeaders());
-		String queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
+		// String apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
+		// String headers = replaceDynamicPlaceHolders(rowData.getHeaders());
+		// String queryString = replaceDynamicPlaceHolders(rowData.getQueryString());
 		String bodyString = replaceDynamicPlaceHolders(rowData.getBody());
-		String completeTemplatePath = templatePath+rowData.getTemplateName()+".xml";
-		//logger.debug("XML TEMPLATE PATH:"+completeTemplatePath);
-
-		//Store body params into map
+		String completeTemplatePath = templatePath + rowData.getTemplateName() + ".xml";
+		// logger.debug("XML TEMPLATE PATH:"+completeTemplatePath);
+		// Store body params into map
 		Map<String, String> bodyParams = new HashMap<String, String>();
 		StringTokenizer bodyTokenizer = new StringTokenizer(bodyString, TOKENIZER_DOUBLE_PIPE);
 		String paramToken = null;
 		String keyParam = null;
 		String valueParam = null;
-
-		//assign SID to map
+		// assign SID to map
 		bodyParams.put("SID", SID);
-
 		while (bodyTokenizer.hasMoreTokens()) {
 			paramToken = bodyTokenizer.nextToken();
 			StringTokenizer paramTokenizer = new StringTokenizer(paramToken, TOKENIZER_EQUALTO);
 			while (paramTokenizer.hasMoreTokens()) {
 				keyParam = paramTokenizer.nextToken();
-
 				// Get next token to get value
 				if (paramTokenizer.hasMoreTokens()) {
 					valueParam = paramTokenizer.nextToken();
-
-					//store into map
+					// store into map
 					bodyParams.put(keyParam, valueParam);
-					//logger.debug("Key: "+keyParam+"  value: "+valueParam);
-
+					// logger.debug("Key: "+keyParam+" value: "+valueParam);
 				} else {
 					logger.info("Expected value is empty !! Please provide input for " + keyParam
 							+ ". For Empty string check, provide \"\" and for null check, provide null ");
@@ -299,65 +266,35 @@ public abstract class SteamAbstractBase {
 				}
 			}
 		}
-
-		//convert xml data to string format
+		// convert xml data to string format
 		String stringxml = convertXMLToString(completeTemplatePath);
-
-		//Update dynamic place holders in template xml file
+		// Update dynamic place holders in template xml file
 		String updatedPlaceHolder = replaceDynamicPlaceHolders(stringxml);
-
-		//update template with body param values
+		// update template with body param values
 		String updatedXML = updateTemplate(updatedPlaceHolder, bodyParams);
-
-		//String url = appHosts.get(rowData.getHost()) + apiPath + queryString;
-
-		//Modify url specific to steam format
-		//url=url+"&sid="+SID+rowData.getQueryString()+"&request="+updatedXML;
-
+		// String url = appHosts.get(rowData.getHost()) + apiPath + queryString;
+		// Modify url specific to steam format
+		// url=url+"&sid="+SID+rowData.getQueryString()+"&request="+updatedXML;
 		logger.debug("URL=" + steamURL);
-
-		// local is Y <=> this block to be executed Locally 
-		if(local.equalsIgnoreCase("Y")){
-			response = given().body( updatedXML ).when().post(steamURL);
-		}else{//execute in Jenkins with proxy setup
-			response = given().proxy(host("squid.oneplatform.build").withPort(3128)).body( updatedXML ).when().post( steamURL );
+		// local is Y <=> this block to be executed Locally
+		if (local.equalsIgnoreCase("Y")) {
+			response = given().body(updatedXML).when().post(steamURL);
+		} else {// execute in Jenkins with proxy setup
+			response = given().proxy(host("squid.oneplatform.build").withPort(3128)).body(updatedXML).when()
+					.post(steamURL);
 		}
-
 		/*
-		// Get and set headers to request
-		if (StringUtils.isNotBlank(rowData.getHeaders())) {
-			Map<String, String> headersMap = getHeaders(headers);
-			reqSpec.headers(headersMap);
-		}
-		if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) {
-			//Steam XRPC doesn't accept body
-			//reqSpec.body(bodyString);
-		}
-
-		if (rowData.getMethod().equalsIgnoreCase(GET)) {
-			logger.debug("Entered into GET Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().get(url);
-
-		} else if (rowData.getMethod().equalsIgnoreCase(PUT)) {
-			logger.debug("Entered into PUT Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().put(url);
-
-		} else if (rowData.getMethod().equalsIgnoreCase(POST)) {
-			logger.debug("Entered into POST Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().post(url);
-
-		} else if (rowData.getMethod().equalsIgnoreCase(DELETE)) {
-			logger.debug("Entered into DELETE Method");
-
-			// Call the Rest API and get the response
-			response = reqSpec.when().delete(url);
-		}
+		 * // Get and set headers to request if (StringUtils.isNotBlank(rowData.getHeaders())) { Map<String, String>
+		 * headersMap = getHeaders(headers); reqSpec.headers(headersMap); } if
+		 * (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) { //Steam XRPC doesn't
+		 * accept body //reqSpec.body(bodyString); } if (rowData.getMethod().equalsIgnoreCase(GET)) { logger.debug(
+		 * "Entered into GET Method"); // Call the Rest API and get the response response = reqSpec.when().get(url); }
+		 * else if (rowData.getMethod().equalsIgnoreCase(PUT)) { logger.debug("Entered into PUT Method"); // Call the
+		 * Rest API and get the response response = reqSpec.when().put(url); } else if
+		 * (rowData.getMethod().equalsIgnoreCase(POST)) { logger.debug("Entered into POST Method"); // Call the Rest API
+		 * and get the response response = reqSpec.when().post(url); } else if
+		 * (rowData.getMethod().equalsIgnoreCase(DELETE)) { logger.debug("Entered into DELETE Method"); // Call the Rest
+		 * API and get the response response = reqSpec.when().delete(url); }
 		 */
 		return response;
 	}
@@ -540,14 +477,14 @@ public abstract class SteamAbstractBase {
 			String testName) {
 		if (StringUtils.isNotBlank(xmlNameKeys)) {
 			StringTokenizer xmlNameKeysTokenizer = new StringTokenizer(xmlNameKeys, TOKENIZER_DOUBLE_PIPE);
-			//JsonPath jsonPath = new JsonPath(xmlresponse);
+			// JsonPath jsonPath = new JsonPath(xmlresponse);
 			String xmlNameKey = null;
 
 			while (xmlNameKeysTokenizer.hasMoreTokens()) {
 				xmlNameKey = xmlNameKeysTokenizer.nextToken();
-				//String value = jsonPath.getString(xmlNameKey).replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
+				// String value = jsonPath.getString(xmlNameKey).replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
 				String value = getXMLNodeValue(xmlresponse, xmlNameKey);
-				//logger.debug("Storing token key::"+xmlNameKey+" value::"+value+" in Data store!");
+				// logger.debug("Storing token key::"+xmlNameKey+" value::"+value+" in Data store!");
 				dataStore.put(testName + UNDERSCORE + xmlNameKey, value);
 			}
 		}
@@ -673,20 +610,20 @@ public abstract class SteamAbstractBase {
 			final String responsexml,
 			final String statusCode) throws Exception {
 
-		boolean success=true;
+		boolean success = true;
 		String validationsToken = null;
 		String xmlNameKey = null;
 		String expectedValue = null;
 		String actualValue = null;
 		String actualRC = null;
 
-		if(rowData.getTemplateName().equals("DeleteUser")){
+		if (rowData.getTemplateName().equals("DeleteUser")) {
 			actualRC = from(responsexml).get("response.fn[1].@rc");
-			logger.debug("actual RC for Delete User service::"+actualRC);
-		}else{
+			logger.debug("actual RC for Delete User service::" + actualRC);
+		} else {
 			Node fnResponse = with(responsexml).get("response.fn[1]");
-			Map<?, ?> hm=(Map<?, ?>) fnResponse.attributes();
-			actualRC= (hm.get("rc")).toString();
+			Map<?, ?> hm = fnResponse.attributes();
+			actualRC = (hm.get("rc")).toString();
 		}
 
 		if (StringUtils.isNotBlank(validations)) {
@@ -701,7 +638,7 @@ public abstract class SteamAbstractBase {
 					xmlNameKey = validationTokenizer.nextToken();
 					// Get next token to get value
 					if (validationTokenizer.hasMoreTokens()) {
-						expectedValue = validationTokenizer.nextToken();		
+						expectedValue = validationTokenizer.nextToken();
 						if (xmlNameKey.equalsIgnoreCase(STATUS)) {
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equals(statusCode)) {
 
@@ -713,61 +650,63 @@ public abstract class SteamAbstractBase {
 								success = false;
 								break;
 							}
-						}else if(xmlNameKey.equalsIgnoreCase("rc")){
+						} else if (xmlNameKey.equalsIgnoreCase("rc")) {
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equalsIgnoreCase(actualRC)) {
 								String error = with(responsexml).getString("response.fn[1].error");
-								testReporter.log(LogStatus.ERROR, "Actual response code: " + actualRC
-										+ "is not matching expected status code value: " + expectedValue+ " Error message:"+error);
+								testReporter.log(LogStatus.ERROR,
+										"Actual response code: " + actualRC
+												+ "is not matching expected status code value: " + expectedValue
+												+ " Error message:" + error);
 								success = false;
 								break;
-							}else{
-								testReporter.log(LogStatus.INFO,"Actual value: " + actualRC + " for key: "
-										+ xmlNameKey + " is matching expected value:" + expectedValue);
-								success=true;
+							} else {
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualRC + " for key: " + xmlNameKey
+										+ " is matching expected value:" + expectedValue);
+								success = true;
 								break;
-							}	
+							}
 
-						} else if(xmlNameKey.contains("error")){
+						} else if (xmlNameKey.contains("error")) {
 							String error = with(responsexml).getString("response.fn[1].error");
 
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equalsIgnoreCase(error)) {
-								testReporter.log(LogStatus.INFO,"Actual value: " + error + " for key: "
-										+ xmlNameKey + " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO, "Actual value: " + error + " for key: " + xmlNameKey
+										+ " is not matching expected value:" + expectedValue);
 								break;
-							}else{
-								testReporter.log(LogStatus.INFO,"Actual value: " + error + " for key: "
-										+ xmlNameKey + " is matching expected value:" + expectedValue);
-								success=true;
+							} else {
+								testReporter.log(LogStatus.INFO, "Actual value: " + error + " for key: " + xmlNameKey
+										+ " is matching expected value:" + expectedValue);
+								success = true;
 								break;
-							}	
-						} else{
-							actualValue= getXMLNodeValue(responsexml, xmlNameKey);
-							if(expectedValue.equals(actualValue)) {
-								testReporter.log(LogStatus.INFO,"Actual value: " + actualValue + " for key: "
+							}
+						} else {
+							actualValue = getXMLNodeValue(responsexml, xmlNameKey);
+							if (expectedValue.equals(actualValue)) {
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
 										+ xmlNameKey + " is matching expected value:" + expectedValue);
-								success = true;							
-							}else{
-								testReporter.log(LogStatus.ERROR,"Actual value: " + actualValue + " for key: "
+								success = true;
+							} else {
+								testReporter.log(LogStatus.ERROR, "Actual value: " + actualValue + " for key: "
 										+ xmlNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 							}
-							logger.debug("Actual value:::::"+actualValue+" Expected Value:::::"+expectedValue);
+							logger.debug("Actual value:::::" + actualValue + " Expected Value:::::" + expectedValue);
 							break;
-						}			
+						}
 					} else {
-						testReporter.log(LogStatus.INFO, "Expected value is empty !! Please provide input for " + xmlNameKey
-								+ ". For Empty string check, provide \"\" and for null check, provide null ");
+						testReporter.log(LogStatus.INFO,
+								"Expected value is empty !! Please provide input for " + xmlNameKey
+										+ ". For Empty string check, provide \"\" and for null check, provide null ");
 
 						success = false;
 						break;
-					}									 
+					}
 				}
-			}  
+			}
 		}
 
 		return success;
 	}
-
 
 	/**
 	 * Get XML node value for the specified node
@@ -777,51 +716,53 @@ public abstract class SteamAbstractBase {
 	 * 
 	 */
 
-	public String getXMLNodeValue(String responsexml, String node){
+	public String getXMLNodeValue(String responsexml,
+			String node) {
 
-		String parentNode="";
-		String childNode="";
-		String nodeValue="";
+		String parentNode = "";
+		String childNode = "";
+		String nodeValue = "";
 		try {
-			dBuilder=dbFactory.newDocumentBuilder();
-			Document doc=dBuilder.parse(new InputSource(new StringReader(responsexml)));
+			dBuilder = dbFactory.newDocumentBuilder();
+			Document doc = dBuilder.parse(new InputSource(new StringReader(responsexml)));
 			doc.getDocumentElement().normalize();
-			if(node.contains(".")){
-				String[] kvPairs= node.split("\\.");
+			if (node.contains(".")) {
+				String[] kvPairs = node.split("\\.");
 				parentNode = kvPairs[0];
-				childNode = kvPairs[1];	   		
+				childNode = kvPairs[1];
 				NodeList maps = doc.getElementsByTagName("map");
-				for(int x=0; x<maps.getLength();x++){
-					if(((maps.item(x).getAttributes().getNamedItem("name"))!=null) && (maps.item(x).getAttributes().getNamedItem("name").getNodeValue()).equalsIgnoreCase(parentNode)){
+				for (int x = 0; x < maps.getLength(); x++) {
+					if (((maps.item(x).getAttributes().getNamedItem("name")) != null)
+							&& (maps.item(x).getAttributes().getNamedItem("name").getNodeValue())
+									.equalsIgnoreCase(parentNode)) {
 						Element map = null;
-						String d="";
-						map  = (Element) maps.item(x); 
+						map = (Element) maps.item(x);
 						NodeList valList = map.getElementsByTagName("val");
-						for(int j=0; j<valList.getLength();j++){
-							if((valList.item(j).getAttributes().getNamedItem("name").getNodeValue()).equalsIgnoreCase(childNode)){
-								nodeValue= valList.item(j).getFirstChild().getNodeValue();
+						for (int j = 0; j < valList.getLength(); j++) {
+							if ((valList.item(j).getAttributes().getNamedItem("name").getNodeValue())
+									.equalsIgnoreCase(childNode)) {
+								nodeValue = valList.item(j).getFirstChild().getNodeValue();
 							}
 						}
-					} 
+					}
 				}
-			}              
-			else{
+			} else {
 				NodeList maps = doc.getElementsByTagName("map");
 				Element map = null;
-				String attributeVal="";
-				for(int i=0; i<maps.getLength();i++){
-					map  = (Element) maps.item(i); 
+				String attributeVal = "";
+				for (int i = 0; i < maps.getLength(); i++) {
+					map = (Element) maps.item(i);
 					NodeList valList = map.getElementsByTagName("val");
 
-					for(int j=0; j<valList.getLength();j++){
-						attributeVal=valList.item(j).getAttributes().getNamedItem("name").getNodeValue();
-						if(node.equalsIgnoreCase(attributeVal)){
-							nodeValue=valList.item(j).getFirstChild().getFirstChild().getNodeValue();
+					for (int j = 0; j < valList.getLength(); j++) {
+						attributeVal = valList.item(j).getAttributes().getNamedItem("name").getNodeValue();
+						if (node.equalsIgnoreCase(attributeVal)) {
+							nodeValue = valList.item(j).getFirstChild().getFirstChild().getNodeValue();
 						}
 					}
 				}
 
-			} 
+			}
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		} catch (SAXException e) {
@@ -831,7 +772,6 @@ public abstract class SteamAbstractBase {
 		}
 		return nodeValue;
 	}
-
 
 	/**
 	 * Reads host name for the given application and environment
@@ -981,32 +921,32 @@ public abstract class SteamAbstractBase {
 			currentCellData = getCellData(row.getCell(currentCell, Row.CREATE_NULL_AS_BLANK));
 
 			switch (currentCell) {
-			case 0:
-				rowData.setTestName(currentCellData);
-			case 1:
-				rowData.setDescription(currentCellData);
-			case 2:
-				rowData.setHost(currentCellData);
-			case 3:
-				rowData.setApiPath(currentCellData);
-			case 4:
-				rowData.setMethod(currentCellData);
-			case 5:
-				rowData.setHeaders(currentCellData);
-			case 6:
-				rowData.setQueryString(currentCellData);
-			case 7:
-				rowData.setTemplateName(currentCellData);
-			case 8:
-				rowData.setBody(currentCellData);
-			case 9:
-				rowData.setDependencyTests(currentCellData);
-			case 10:
-				rowData.setValidations(currentCellData);
-			case 11:
-				rowData.setStore(currentCellData);
-			case 12:
-				rowData.setStatus(currentCellData);
+				case 0:
+					rowData.setTestName(currentCellData);
+				case 1:
+					rowData.setDescription(currentCellData);
+				case 2:
+					rowData.setHost(currentCellData);
+				case 3:
+					rowData.setApiPath(currentCellData);
+				case 4:
+					rowData.setMethod(currentCellData);
+				case 5:
+					rowData.setHeaders(currentCellData);
+				case 6:
+					rowData.setQueryString(currentCellData);
+				case 7:
+					rowData.setTemplateName(currentCellData);
+				case 8:
+					rowData.setBody(currentCellData);
+				case 9:
+					rowData.setDependencyTests(currentCellData);
+				case 10:
+					rowData.setValidations(currentCellData);
+				case 11:
+					rowData.setStore(currentCellData);
+				case 12:
+					rowData.setStatus(currentCellData);
 			}
 		}
 
@@ -1023,24 +963,24 @@ public abstract class SteamAbstractBase {
 		int type = cell.getCellType();
 		Object result;
 		switch (type) {
-		case XSSFCell.CELL_TYPE_STRING:
-			result = cell.getStringCellValue();
-			break;
-		case XSSFCell.CELL_TYPE_NUMERIC:
-			result = cell.getNumericCellValue();
-			break;
-		case XSSFCell.CELL_TYPE_FORMULA:
-			throw new RuntimeException("We can't evaluate formulas in Java");
-		case XSSFCell.CELL_TYPE_BLANK:
-			result = EMPTY_STRING;
-			break;
-		case XSSFCell.CELL_TYPE_BOOLEAN:
-			result = cell.getBooleanCellValue();
-			break;
-		case XSSFCell.CELL_TYPE_ERROR:
-			throw new RuntimeException("This cell has an error");
-		default:
-			throw new RuntimeException("We don't support this cell type: " + type);
+			case Cell.CELL_TYPE_STRING:
+				result = cell.getStringCellValue();
+				break;
+			case Cell.CELL_TYPE_NUMERIC:
+				result = cell.getNumericCellValue();
+				break;
+			case Cell.CELL_TYPE_FORMULA:
+				throw new RuntimeException("We can't evaluate formulas in Java");
+			case Cell.CELL_TYPE_BLANK:
+				result = EMPTY_STRING;
+				break;
+			case Cell.CELL_TYPE_BOOLEAN:
+				result = cell.getBooleanCellValue();
+				break;
+			case Cell.CELL_TYPE_ERROR:
+				throw new RuntimeException("This cell has an error");
+			default:
+				throw new RuntimeException("We don't support this cell type: " + type);
 		}
 		return result.toString();
 	}
@@ -1051,10 +991,10 @@ public abstract class SteamAbstractBase {
 	 * @param string xmlfilepath
 	 * @return the XML String data
 	 */
-	public String convertXMLToString(String xmlFilePath){
+	public String convertXMLToString(String xmlFilePath) {
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder;
-		String result ="";
+		String result = "";
 		File xmlFile = new File(xmlFilePath);
 
 		try {
@@ -1065,47 +1005,41 @@ public abstract class SteamAbstractBase {
 			Transformer transformer;
 			transformer = transformerFactory.newTransformer();
 			DOMSource source = new DOMSource(doc);
-			StringWriter sw = new StringWriter();   
+			StringWriter sw = new StringWriter();
 			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
 			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			//transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+			// transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
 
 			transformer.transform(source, new StreamResult(sw));
-			result=sw.toString();
-			//logger.debug("After converting XML to String::"+result);
+			result = sw.toString();
+			// logger.debug("After converting XML to String::"+result);
 
-		} catch (SAXException  e1) {
+		} catch (SAXException e1) {
 			e1.printStackTrace();
-		}
-		catch (TransformerConfigurationException e1) {
+		} catch (TransformerConfigurationException e1) {
 			e1.printStackTrace();
-		}
-		catch(ParserConfigurationException e1){
+		} catch (ParserConfigurationException e1) {
 			e1.printStackTrace();
-		}
-		catch(IOException e1){
+		} catch (IOException e1) {
 			e1.printStackTrace();
-		} 
-		catch (TransformerException e) {
+		} catch (TransformerException e) {
 			e.printStackTrace();
 		}
-		return result;	
+		return result;
 	}
 
-
-
-
 	/**
-	 * This function will update XML template with map values 
+	 * This function will update XML template with map values
 	 * 
 	 * @param string xmldata
 	 * @param Map bodyparams for updating values in xmldata
-	 * @return String XMLdata for sending updated data 
+	 * @return String XMLdata for sending updated data
 	 */
-	public String updateTemplate(String xmldata, Map<String, String> bodyParams){
+	public String updateTemplate(String xmldata,
+			Map<String, String> bodyParams) {
 
-		//update xml placeholders with values
+		// update xml placeholders with values
 		if (StringUtils.isNotBlank(xmldata)) {
 			logger.debug("Before replace XML=" + xmldata);
 
@@ -1121,20 +1055,21 @@ public abstract class SteamAbstractBase {
 					// What to replace
 					toReplace = matcher.group(1);
 
-					//System.out.println("to Replace XML PlaceHolder=" + toReplace);
+					// System.out.println("to Replace XML PlaceHolder=" + toReplace);
 					String target = "NO_DATA_FOUND";
-					if(bodyParams.containsKey(toReplace)){
-						//Replace single specific char $ with \\$ to avoid exception while replace 
-						target = bodyParams.get(toReplace).replaceAll(Pattern.quote("$"), Matcher.quoteReplacement("\\$"));
+					if (bodyParams.containsKey(toReplace)) {
+						// Replace single specific char $ with \\$ to avoid exception while replace
+						target = bodyParams.get(toReplace).replaceAll(Pattern.quote("$"),
+								Matcher.quoteReplacement("\\$"));
 					}
-					//logger.debug("to Replace XML PlaceHolder::"+toReplace+" with Target::"+target);
+					// logger.debug("to Replace XML PlaceHolder::"+toReplace+" with Target::"+target);
 					// Append replaced match.
 					matcher.appendReplacement(sb, target);
 				}
 				matcher.appendTail(sb);
 			}
 
-			//logger.debug("=================================After replace XML ===========================\n" + sb);
+			// logger.debug("=================================After replace XML ===========================\n" + sb);
 
 			return sb.toString();
 		}

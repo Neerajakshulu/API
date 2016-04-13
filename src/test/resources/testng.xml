@@ -7,31 +7,37 @@
 			<class name="com.thomsonreuters.automation.search.SearchTest" />
 		</classes>
 	</test>
-	  
+
+	<test name="TypeAhead">
+		<classes>
+			<class name="com.thomsonreuters.automation.typeahead.TypeAheadTest" />
+		</classes>
+	</test>
+
 	<test name="Notify">
 		<classes>
 			<class name="com.thomsonreuters.automation.notify.NotifyTest" />
 		</classes>
 	</test>
-	
+
 	<test name="Recommend">
 		<classes>
 			<class name="com.thomsonreuters.automation.recommend.RecommendTest" />
 		</classes>
 	</test>
-	
+
 	<test name="IAM">
 		<classes>
 			<class name="com.thomsonreuters.automation.iam.IamTest" />
 		</classes>
 	</test>
-	
+
 	<test name="Groups">
 		<classes>
 			<class name="com.thomsonreuters.automation.groups.GroupsTest" />
 		</classes>
 	</test>
-	
+
 	<test name="Profile">
 		<classes>
 			<class name="com.thomsonreuters.automation.profile.ProfileTest" />
@@ -49,35 +55,23 @@
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistRATest" />
 		</classes>
 	</test>
-	
-	<!--
-	<test name="Profilesearch">
-		<classes>
-			<class name="com.thomsonreuters.automation.profilesearch.ProfileSearchTest" />
-		</classes>
-	</test>-->
-	<test name="TypeAhead">
-		<classes>
-			<class name="com.thomsonreuters.automation.typeahead.TypeAheadTest" />
-		</classes>
-	</test>
-	
+
 	<test name="Authoring">
 		<classes>
 			<class name="com.thomsonreuters.automation.authoring.AuthoringTest" />
 		</classes>
 	</test>
-	
+
 	<test name="Claiming">
 		<classes>
 			<class name="com.thomsonreuters.automation.claiming.ClaimingTest" />
 		</classes>
 	</test>
-	 
+
 	<test name="Steam">
 		<classes>
 			<class name="com.thomsonreuters.automation.steam.SteamTest" />
 		</classes>
 	</test>
-	 
+
 </suite>

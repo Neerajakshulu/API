@@ -879,21 +879,21 @@ public abstract class AbstractBaseOld {
 		int type = cell.getCellType();
 		Object result;
 		switch (type) {
-			case XSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_STRING:
 				result = cell.getStringCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_NUMERIC:
 				result = cell.getNumericCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_FORMULA:
+			case Cell.CELL_TYPE_FORMULA:
 				throw new RuntimeException("We can't evaluate formulas in Java");
-			case XSSFCell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_BLANK:
 				result = EMPTY_STRING;
 				break;
-			case XSSFCell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_BOOLEAN:
 				result = cell.getBooleanCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_ERROR:
 				throw new RuntimeException("This cell has an error");
 			default:
 				throw new RuntimeException("We don't support this cell type: " + type);

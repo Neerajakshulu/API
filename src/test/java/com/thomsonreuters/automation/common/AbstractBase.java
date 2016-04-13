@@ -52,33 +52,22 @@ import com.thomsonreuters.automation.report.ReportFactory;
 public abstract class AbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
-
 	protected ExtentTest testReporter = null;
-	// reporter.startTest("complexTest001", "This is a simple simpleTest001");
-
 	protected static final Logger logger = LogManager.getLogger();
-
-	// private static final String EUREKA_URL =
-	// "http://eureka.us-west-2.dev.oneplatform.build:8080/v2/apps";
-
 	private static final String EUREKA_APP_NAME = "name";
 	private static final String EUREKA_HOST_NAME = "hostName";
 	private static final String EUREKA_IP_ADDRESS = "ipAddr";
 	private static final String EUREKA_HOST_PORT = "port";
 	private static final String EUREKA_VIP_ADDRESS = "vipAddress";
 	private static final String EUREKA_DC_NAME = "Amazon";
-
 	private static final int TESTDATA_COLUMN_COUNT = 12;
-
 	protected static final String GET = "GET";
 	protected static final String POST = "POST";
 	protected static final String PUT = "PUT";
 	protected static final String DELETE = "DELETE";
 	private static final String PASS = "PASS";
 	private static final String FAIL = "FAIL";
-	private static final String SKIP = "SKIP";
 	private static final String DEPENDENCY_FAIL = "DEPFAIL";
-
 	private static final String EMPTY_STRING = "";
 	protected static final String TOKENIZER_DOUBLE_BACK_SLACH = "//";
 	protected static final String TOKENIZER_DOUBLE_PIPE = "||";
@@ -90,7 +79,6 @@ public abstract class AbstractBase {
 	private static final String REPLACE_SQURE_BRACKETS = "[\\[\\]]";
 	protected static final String TOKENIZER_DOUBLE_AMPERSAND = "&&";
 	protected static final String PLACEHOLDER_MATCHER_PATTERN_VALIDATION = "\\{.*?}";
-
 	private static final String HTTP = "http://";
 	private static final String UTF8_ENCODING = "utf-8";
 	private static final String TEXTFILE_EXT = ".txt";
@@ -102,14 +90,11 @@ public abstract class AbstractBase {
 	protected Map<String, String> appHosts = new HashMap<String, String>();
 	protected Map<String, String> dataStore = new HashMap<String, String>();
 	private Map<String, String> testStatus = new HashMap<String, String>();
-
 	protected static final String TESTOUTPUT_FOLDER_DATEFORMAT = "ddMMMyyyy_HHmmss";
-	// protected static final String ENV = "stable.dev";
 	protected String strDateTime = null;
 	protected String testDataExcelPath = null;
 	protected String appName = null;
 	protected RowData rowData = null;
-
 	protected boolean isTestFail = false;
 	protected String isTestFailDescroption = null;
 
@@ -145,6 +130,11 @@ public abstract class AbstractBase {
 
 	}
 
+	/**
+	 * 
+	 * @param row
+	 * @param sheetName
+	 */
 	protected void process(XSSFRow row,
 			String sheetName) {
 		// RowData rowData = null;
@@ -169,11 +159,11 @@ public abstract class AbstractBase {
 				try {
 					// Validate the response with expected data
 					testSuccess = validateResponse(validationString, responseJson, statusCode);
-					
-					if(!testSuccess && responseJson != null){
-						logger.info("Response:"+ responseJson);
+
+					if (!testSuccess && responseJson != null) {
+						logger.info("Response:" + responseJson);
 					}
-					
+
 					// Update the excel file with Test PASS / FAIL status
 					updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
 
@@ -642,15 +632,10 @@ public abstract class AbstractBase {
 										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
-							}
-							// else if (actualValue.startsWith("[") &&
-							// (actualValue.contains(expectedValue)||StringUtils.containsIgnoreCase(actualValue,
-							// expectedValue))) {
-							else if (actualValue.startsWith("[")
+							} else if (actualValue.startsWith("[")
 									&& StringUtils.containsIgnoreCase(actualValue, expectedValue)) {
 								// This scenario is when json value for the key
 								// contains array of values
-
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
@@ -658,7 +643,6 @@ public abstract class AbstractBase {
 								success = true;
 								break;
 							} else if (expectedValue.equals(actualValue)) {
-
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
@@ -666,7 +650,6 @@ public abstract class AbstractBase {
 								success = true;
 								break;
 							} else if (StringUtils.containsIgnoreCase(actualValue, expectedValue)) {
-
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is matching expected value:" + expectedValue);
 								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
@@ -675,11 +658,8 @@ public abstract class AbstractBase {
 								break;
 							} else if (expectedValue.trim().equalsIgnoreCase("\"\"")
 									|| expectedValue.trim().equalsIgnoreCase("\'\'")) {// Added by Janardhan for Empty
-																						// string in response
 								// Get actual value for the key from json string
 								actualValue = jsonPath.getString(jsonNameKey);
-								// System.out.println("Expected value for "+jsonNameKey+" is Empty and Actual value in
-								// the response is:"+actualValue);
 								if (actualValue.isEmpty() || actualValue.trim().length() == 0) {
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is matching expected value:" + expectedValue);
@@ -902,21 +882,21 @@ public abstract class AbstractBase {
 		int type = cell.getCellType();
 		Object result;
 		switch (type) {
-			case XSSFCell.CELL_TYPE_STRING:
+			case Cell.CELL_TYPE_STRING:
 				result = cell.getStringCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_NUMERIC:
+			case Cell.CELL_TYPE_NUMERIC:
 				result = cell.getNumericCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_FORMULA:
+			case Cell.CELL_TYPE_FORMULA:
 				throw new RuntimeException("We can't evaluate formulas in Java");
-			case XSSFCell.CELL_TYPE_BLANK:
+			case Cell.CELL_TYPE_BLANK:
 				result = EMPTY_STRING;
 				break;
-			case XSSFCell.CELL_TYPE_BOOLEAN:
+			case Cell.CELL_TYPE_BOOLEAN:
 				result = cell.getBooleanCellValue();
 				break;
-			case XSSFCell.CELL_TYPE_ERROR:
+			case Cell.CELL_TYPE_ERROR:
 				throw new RuntimeException("This cell has an error");
 			default:
 				throw new RuntimeException("We don't support this cell type: " + type);
