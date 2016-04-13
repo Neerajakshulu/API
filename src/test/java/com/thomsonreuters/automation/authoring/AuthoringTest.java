@@ -1,12 +1,3 @@
-/**
-* The AuthoringTest program is an entry point for running Authoring API test cases.
-* This class initializes app name, excel file path which are utilized by AbstractBase class.
-* Also executes external test case and update the test status.   
-*
-* @author  Janardhan
-* @version 1.0
-* @since   2015-08-31 
-*/
 package com.thomsonreuters.automation.authoring;
 
 import org.apache.commons.lang.StringUtils;
@@ -17,7 +8,15 @@ import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
-
+/**
+* The AuthoringTest program is an entry point for running Authoring API test cases.
+* This class initializes app name, excel file path which are utilized by AbstractBase class.
+* Also executes external test case and update the test status.   
+*
+* @author  Janardhan
+* @version 1.0
+* @since   2015-08-31 
+*/
 public class AuthoringTest extends AbstractBase {
 
 	/**

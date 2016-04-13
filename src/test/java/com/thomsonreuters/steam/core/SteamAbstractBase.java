@@ -1,11 +1,3 @@
-/**
-* The SteamAbstractBase program implements Steam API test cases execution flow.
-* This program contains utility methods for getXMLNodeValue, validate response, update extent report etc.. 
-*  
-* @author  Janardhan
-* @version 1.0
-* @since   2016-03-31 
-*/
 package com.thomsonreuters.steam.core;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -74,7 +66,14 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.RowData;
 import com.thomsonreuters.automation.report.ReportFactory;
-
+/**
+* The SteamAbstractBase program implements Steam API test cases execution flow.
+* This program contains utility methods for getXMLNodeValue, validate response, update extent report etc.. 
+*  
+* @author  Janardhan
+* @version 1.0
+* @since   2016-03-31 
+*/
 public abstract class SteamAbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();

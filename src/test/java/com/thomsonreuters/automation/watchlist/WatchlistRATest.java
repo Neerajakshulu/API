@@ -1,3 +1,8 @@
+package com.thomsonreuters.automation.watchlist;
+
+import org.testng.annotations.Test;
+import com.thomsonreuters.automation.common.AbstractBase;
+
 /**
 * The WatchlistRATest program is an entry point for running WatchlistRA API test cases.
 * This class initializes app name, excel file path which are utilized by AbstractBase class.  
@@ -6,12 +11,6 @@
 * @version 1.0
 * @since   2015-08-31 
 */
-package com.thomsonreuters.automation.watchlist;
-
-import org.testng.annotations.Test;
-import com.thomsonreuters.automation.common.AbstractBase;
-
-
 public class WatchlistRATest extends AbstractBase {
 
 	/**

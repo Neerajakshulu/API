@@ -1,10 +1,4 @@
-/**
-* The AdminLogin program implements Steam API for getting admin session id. 
-*  
-* @author  Janardhan
-* @version 1.0
-* @since   2016-03-31 
-*/
+
 package com.thomsonreuters.steam.core;
 
 import static com.jayway.restassured.RestAssured.baseURI;
@@ -14,6 +8,13 @@ import static com.jayway.restassured.specification.ProxySpecification.host;
 import java.util.Map;
 import com.jayway.restassured.path.xml.element.Node;
 
+/**
+* The AdminLogin program implements Steam API for getting admin session id. 
+*  
+* @author  Janardhan
+* @version 1.0
+* @since   2016-03-31 
+*/
 public class AdminLogin extends SteamAbstractBase {
 
 	/**

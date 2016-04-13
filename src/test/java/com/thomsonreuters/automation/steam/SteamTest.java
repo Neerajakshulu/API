@@ -1,3 +1,8 @@
+package com.thomsonreuters.automation.steam;
+
+import org.testng.annotations.Test;
+import com.thomsonreuters.steam.core.SteamAbstractBase;
+
 /**
 * The SteamTest program is an entry point for running Steam API test cases.
 * This class initializes app name, excel file path and xml templates folder path which are utilized by SteamAbstractBase.
@@ -6,11 +11,6 @@
 * @version 1.0
 * @since   2016-03-31 
 */
-package com.thomsonreuters.automation.steam;
-
-import org.testng.annotations.Test;
-import com.thomsonreuters.steam.core.SteamAbstractBase;
-
 public class SteamTest extends SteamAbstractBase {
 
 	/**
