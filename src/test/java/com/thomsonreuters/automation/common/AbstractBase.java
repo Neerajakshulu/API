@@ -47,8 +47,13 @@ import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.report.ReportFactory;
 
 /**
- * Common setup class for all the tests
+ * The {@code AbstractBase} class is the common setup class for all the test classes.
+ *
+ * The class {@code AbstractBase} is support to test RestFull web services.
+ * 
+ * @author Mohana Yalamarthi
  */
+
 public abstract class AbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
@@ -101,6 +106,12 @@ public abstract class AbstractBase {
 	public void setUp() throws Exception {
 	}
 
+	/**
+	 * Creates root directory to store all the test responses.
+	 *
+	 * @exception Exception On folder creation error
+	 * @see Exception
+	 */
 	@BeforeSuite
 	public void beforeSuite() throws Exception {
 		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
@@ -108,6 +119,12 @@ public abstract class AbstractBase {
 		Files.createDirectories(TEST_OUTPUT_ROOT_FOLDER_PATH);
 	}
 
+	/**
+	 * Support to stores the input parameters and Host/IP names.
+	 *
+	 * @exception Exception On storing parameters.
+	 * @see Exception
+	 */
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
@@ -131,6 +148,8 @@ public abstract class AbstractBase {
 	}
 
 	/**
+	 * {@code process} method to build URL with help of row, calling {@code getAPIResponce} method for getting response
+	 * and validates response json and updates status(PASS/FAIL/DEPFAIL) back into excel file
 	 * 
 	 * @param row
 	 * @param sheetName
@@ -212,6 +231,11 @@ public abstract class AbstractBase {
 
 	}
 
+	/**
+	 * {@code getAPIResponce} method to build URL and calling rest assured API's and returns response object
+	 * 
+	 * @return Response json
+	 */
 	protected Response getAPIResponce() {
 		Response response = null;
 		String apiPath = replaceDynamicPlaceHolders(rowData.getApiPath());
@@ -670,6 +694,8 @@ public abstract class AbstractBase {
 								} else {
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is not matching expected value:" + expectedValue);
+									testReporter.log(LogStatus.ERROR, "Actual value: " + actualValue + " for key: "
+											+ jsonNameKey + " is not matching expected value:" + expectedValue);
 									success = false;
 									break;
 								}
@@ -677,6 +703,8 @@ public abstract class AbstractBase {
 								System.out.println("Expected value:" + expectedValue);
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.ERROR, "Actual value: " + actualValue + " for key: "
+										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
 							}
@@ -684,6 +712,9 @@ public abstract class AbstractBase {
 					} else {// Added by Janardhan for Empty string in the expected value
 						logger.info("Expected value is empty !! Please provide input for " + jsonNameKey
 								+ ". For Empty string check, provide \"\" and for null check, provide null ");
+						testReporter.log(LogStatus.ERROR,
+								"Expected value is empty !! Please provide input for " + jsonNameKey
+										+ ". For Empty string check, provide \"\" and for null check, provide null ");
 						success = false;
 						break;
 					}

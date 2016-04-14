@@ -15,12 +15,23 @@ import com.jayway.restassured.path.json.JsonPath;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * Tests for the Search API
+ * The {@code SearchTest} class to test for the Search API's.
+ *
+ * @author Avinash P
  * 
- * TestData: SearchTestData.xlsx
  */
+
 public class SearchTest extends AbstractBase {
 
+	/**
+	 * {@code searchTest} method is the entry point to test 1PSEARCH API's.<BR>
+	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
+	 * SearchTestData.xlsx file.</BR>
+	 * 
+	 * @throws Exception On Executing the 1PSEARCH tests
+	 * @see Exception
+	 * 
+	 */
 	@Test
 	public void searchTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/SearchTestData.xlsx";
@@ -28,6 +39,16 @@ public class SearchTest extends AbstractBase {
 		runTests();
 	}
 
+	/**
+	 * {@code validateResponse} method to Validates the expected data provided in validations string with actual json
+	 * data.<BR>
+	 * 
+	 * @param validations expected data
+	 * @param json response body
+	 * @param statusCode status code expecting
+	 * @return validation success or failure
+	 * @throws Exception
+	 */
 	@Override
 	protected boolean validateResponse(final String validations,
 			final String json,
@@ -45,6 +66,16 @@ public class SearchTest extends AbstractBase {
 		return status;
 	}
 
+	/**
+	 * {@code validateResponse} method to Validates the expected data provided in validations string with actual json
+	 * data.<BR>
+	 * 
+	 * @param validations expected data
+	 * @param json response body
+	 * @param statusCode status code expecting
+	 * @return validation success or failure
+	 * @throws Exception
+	 */
 	public boolean validateSearch(String validations,
 			final String json,
 			final String statusCode) throws Exception {
@@ -93,6 +124,13 @@ public class SearchTest extends AbstractBase {
 		return status;
 	}
 
+	/**
+	 * {@code verifySortorder} method to validates the actualValue list in sorted order or not.
+	 * 
+	 * @param actualValue input list
+	 * @param description type of sort (ASC/DESC)
+	 * @return validation success or failure
+	 */
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	private boolean verifySortorder(List<Object> actualValue,
 			String description) {

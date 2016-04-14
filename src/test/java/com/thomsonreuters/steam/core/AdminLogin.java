@@ -9,20 +9,20 @@ import java.util.Map;
 import com.jayway.restassured.path.xml.element.Node;
 
 /**
-* The AdminLogin program implements Steam API for getting admin session id. 
-*  
-* @author  Janardhan
-* @version 1.0
-* @since   2016-03-31 
-*/
+ * The AdminLogin program implements Steam API for getting admin session id.
+ * 
+ * @author Janardhan
+ * @version 1.0
+ * @since 2016-03-31
+ */
 public class AdminLogin extends SteamAbstractBase {
 
 	/**
-	 * This method sends the request and returns the session id from the response. 
+	 * This method sends the request and returns the session id from the response.
 	 * 
-	 * @return 		String session id
-	 * @exception 	Exception On request fail
-	 * @see 		Exception
+	 * @return String session id
+	 * @exception Exception On request fail
+	 * @see Exception
 	 */
 	@SuppressWarnings("rawtypes")
 	public static String login() {

@@ -9,21 +9,21 @@ import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
 /**
-* The ProfileTest program is an entry point for running Profile API test cases.
-* This class initializes app name, excel file path which are utilized by AbstractBase class.  
-*
-* @author  Janardhan
-* @version 1.0
-* @since   2015-08-31 
-*/
+ * The ProfileTest program is an entry point for running Profile API test cases. This class initializes app name, excel
+ * file path which are utilized by AbstractBase class.
+ *
+ * @author Janardhan
+ * @version 1.0
+ * @since 2015-08-31
+ */
 public class ProfileTest extends AbstractBase {
 
 	/**
-	 * This method is entry point for testing. Initializes excel file path and app name. 
-	 * Calls runTests method for executing test cases specified in the excel file.  
+	 * This method is entry point for testing. Initializes excel file path and app name. Calls runTests method for
+	 * executing test cases specified in the excel file.
 	 * 
-	 * @return 		Nothing
-	 * @throws 		Exception
+	 * @return Nothing
+	 * @throws Exception
 	 * 
 	 */
 	@Test(priority = 1)
@@ -34,11 +34,11 @@ public class ProfileTest extends AbstractBase {
 	}
 
 	/**
-	 * This method is entry point for testing on priority.  
-	 * This method tests for profile summary length = 1500 or not and updates test status.
+	 * This method is entry point for testing on priority. This method tests for profile summary length = 1500 or not
+	 * and updates test status.
 	 * 
-	 * @return 		Nothing
-	 * @throws 		Exception
+	 * @return Nothing
+	 * @throws Exception
 	 * 
 	 */
 	@Test

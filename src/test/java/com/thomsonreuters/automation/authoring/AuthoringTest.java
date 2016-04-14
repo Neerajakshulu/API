@@ -9,22 +9,22 @@ import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
 /**
-* The AuthoringTest program is an entry point for running Authoring API test cases.
-* This class initializes app name, excel file path which are utilized by AbstractBase class.
-* Also executes external test case and update the test status.   
-*
-* @author  Janardhan
-* @version 1.0
-* @since   2015-08-31 
-*/
+ * The AuthoringTest program is an entry point for running Authoring API test cases. This class initializes app name,
+ * excel file path which are utilized by AbstractBase class. Also executes external test case and update the test
+ * status.
+ *
+ * @author Janardhan
+ * @version 1.0
+ * @since 2015-08-31
+ */
 public class AuthoringTest extends AbstractBase {
 
 	/**
-	 * This method is entry point for testing. Initializes excel file path and app name. 
-	 * Calls runTests method for executing test cases specified in the excel file.  
+	 * This method is entry point for testing. Initializes excel file path and app name. Calls runTests method for
+	 * executing test cases specified in the excel file.
 	 * 
-	 * @return 		Nothing
-	 * @throws 		Exception
+	 * @return Nothing
+	 * @throws Exception
 	 * 
 	 */
 	@Test
@@ -36,11 +36,11 @@ public class AuthoringTest extends AbstractBase {
 	}
 
 	/**
-	 * This method is entry point for testing on priority.  
-	 * This method tests for comment length = 2500 or not and updates test status.
+	 * This method is entry point for testing on priority. This method tests for comment length = 2500 or not and
+	 * updates test status.
 	 * 
-	 * @return 		Nothing
-	 * @throws 		Exception
+	 * @return Nothing
+	 * @throws Exception
 	 * 
 	 */
 	@Test(priority = 1)
@@ -66,10 +66,10 @@ public class AuthoringTest extends AbstractBase {
 	}
 
 	/**
-	 * This method executes specified test case, validates the response, stores the response and update the test status.  
+	 * This method executes specified test case, validates the response, stores the response and update the test status.
 	 * 
-	 * @return 		Nothing
-	 * @throws 		Exception
+	 * @return Nothing
+	 * @throws Exception
 	 * 
 	 */
 	private void executeTest(RowData rowData) throws Exception {
@@ -97,7 +97,7 @@ public class AuthoringTest extends AbstractBase {
 					statusCode = String.valueOf(response.getStatusCode());
 					testSuccess = validateResponse(validationString, responseJson, statusCode);
 					logger.info("Status code:" + statusCode);
-					
+
 					// Validate the response with expected data
 					if (testSuccess) {
 						JsonPath jsonPath = new JsonPath(responseJson);
@@ -121,14 +121,13 @@ public class AuthoringTest extends AbstractBase {
 						}
 					} else {
 						logger.info("Status code:" + statusCode);
-						// testReporter.log(LogStatus.FAIL, "Error status code:"+statusCode);
+						testReporter.log(LogStatus.FAIL, "Error status code:"+statusCode);
 					}
 					// Save API response to file
 					saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 
 					if (!testSuccess) {
 						testReporter.log(LogStatus.FAIL, "FAIL");
-						// throw new Exception("Validation Failed");
 					}
 					logger.info("End execution of test:" + rowData.getTestName());
 					logger.info("-----------------------------------------------------------------------");

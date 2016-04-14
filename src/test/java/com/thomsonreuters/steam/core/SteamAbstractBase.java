@@ -66,14 +66,15 @@ import com.relevantcodes.extentreports.ExtentTest;
 import com.relevantcodes.extentreports.LogStatus;
 import com.thomsonreuters.automation.common.RowData;
 import com.thomsonreuters.automation.report.ReportFactory;
+
 /**
-* The SteamAbstractBase program implements Steam API test cases execution flow.
-* This program contains utility methods for getXMLNodeValue, validate response, update extent report etc.. 
-*  
-* @author  Janardhan
-* @version 1.0
-* @since   2016-03-31 
-*/
+ * The SteamAbstractBase program implements Steam API test cases execution flow. This program contains utility methods
+ * for getXMLNodeValue, validate response, update extent report etc..
+ * 
+ * @author Janardhan
+ * @version 1.0
+ * @since 2016-03-31
+ */
 public abstract class SteamAbstractBase {
 
 	protected ExtentReports reporter = ReportFactory.getReporter();
@@ -136,9 +137,9 @@ public abstract class SteamAbstractBase {
 	/**
 	 * This method creates a folder for storing all test cases response xml files.
 	 * 
-	 * @return 		Nothing
-	 * @exception 	Exception On folder creation error
-	 * @see 		Exception
+	 * @return Nothing
+	 * @exception Exception On folder creation error
+	 * @see Exception
 	 * 
 	 */
 	@BeforeSuite
@@ -147,14 +148,14 @@ public abstract class SteamAbstractBase {
 		TEST_OUTPUT_ROOT_FOLDER_PATH = Paths.get(TEST_OUTPUT_FOLDER_PATH, strDateTime);
 		Files.createDirectories(TEST_OUTPUT_ROOT_FOLDER_PATH);
 	}
-	
+
 	/**
-	 * This method stores parameters which are passed as arguments to this suite. 
-	 * Also has utility methods storing SID, host names and IP Addresses of all apps.  
+	 * This method stores parameters which are passed as arguments to this suite. Also has utility methods storing SID,
+	 * host names and IP Addresses of all apps.
 	 * 
-	 * @return 		Nothing
-	 * @exception 	Exception On folder creation error
-	 * @see 		Exception
+	 * @return Nothing
+	 * @exception Exception On folder creation error
+	 * @see Exception
 	 * 
 	 */
 	@BeforeClass
@@ -181,9 +182,10 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This method executes specified test case, validate the response, store the response file and update the test status.  
+	 * This method executes specified test case, validate the response, store the response file and update the test
+	 * status.
 	 * 
-	 * @return 		Nothing
+	 * @return Nothing
 	 * 
 	 */
 	protected void process(XSSFRow row,
@@ -260,16 +262,16 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This method updates body params into xml template, sends the request and returns the response. 
+	 * This method updates body params into xml template, sends the request and returns the response.
 	 * 
-	 * @return 		Response xml response returns
+	 * @return Response xml response returns
 	 * 
 	 */
 	protected Response getAPIResponse() {
 		Response response = null;
 		String bodyString = replaceDynamicPlaceHolders(rowData.getBody());
 		String completeTemplatePath = templatePath + rowData.getTemplateName() + ".xml";
-		
+
 		// Store body params into map
 		Map<String, String> bodyParams = new HashMap<String, String>();
 		StringTokenizer bodyTokenizer = new StringTokenizer(bodyString, TOKENIZER_DOUBLE_PIPE);
@@ -278,7 +280,7 @@ public abstract class SteamAbstractBase {
 		String valueParam = null;
 		// assign SID to map
 		bodyParams.put("SID", SID);
-		
+
 		while (bodyTokenizer.hasMoreTokens()) {
 			paramToken = bodyTokenizer.nextToken();
 			StringTokenizer paramTokenizer = new StringTokenizer(paramToken, TOKENIZER_EQUALTO);
@@ -297,14 +299,14 @@ public abstract class SteamAbstractBase {
 				}
 			}
 		}
-		
+
 		// convert xml data to string format
 		String stringxml = convertXMLToString(completeTemplatePath);
 		// Update dynamic place holders in template xml file
 		String updatedPlaceHolder = replaceDynamicPlaceHolders(stringxml);
 		// update template with body param values
 		String updatedXML = updateTemplate(updatedPlaceHolder, bodyParams);
-		
+
 		logger.debug("URL=" + steamURL);
 		// local is Y <=> this block to be executed Locally
 		if (local.equalsIgnoreCase("Y")) {
@@ -319,8 +321,8 @@ public abstract class SteamAbstractBase {
 	/**
 	 * This method executes all the test cases defined in the excel file and update the test status about exceptions
 	 * 
-	 * @throws 		Exception
-	 * @return 		Nothing
+	 * @throws Exception
+	 * @return Nothing
 	 */
 	protected void runTests() throws Exception {
 		logger.info("Entered the process method...");
@@ -445,8 +447,8 @@ public abstract class SteamAbstractBase {
 	}
 
 	/**
-	 * This method replaces the place holders in path, headers, query string 
-	 * and body with respective values captured from the previous tests.
+	 * This method replaces the place holders in path, headers, query string and body with respective values captured
+	 * from the previous tests.
 	 * 
 	 * @param stringToFormat string with place holders
 	 * @return string after replacing the place holders
@@ -1066,19 +1068,19 @@ public abstract class SteamAbstractBase {
 
 			if (StringUtils.isNotBlank(xmldata)) {
 				Matcher matcher = Pattern.compile(XML_REQUEST_PLACEHOLDER_MATCHER_PATTERN).matcher(xmldata);
-				
+
 				while (matcher.find()) {
 					// What to replace
 					toReplace = matcher.group(1);
 					// System.out.println("to Replace XML PlaceHolder=" + toReplace);
 					String target = "NO_DATA_FOUND";
-					
+
 					if (bodyParams.containsKey(toReplace)) {
 						// Replace single specific char $ with \\$ to avoid exception while replace
 						target = bodyParams.get(toReplace).replaceAll(Pattern.quote("$"),
 								Matcher.quoteReplacement("\\$"));
 					}
-					
+
 					// logger.debug("to Replace XML PlaceHolder::"+toReplace+" with Target::"+target);
 					// Append replaced match.
 					matcher.appendReplacement(sb, target);
@@ -1100,6 +1102,5 @@ public abstract class SteamAbstractBase {
 	public void afterSuite() {
 		reporter.close();
 	}
-
 
 }

@@ -8,10 +8,20 @@ import java.util.TimeZone;
 import com.relevantcodes.extentreports.DisplayOrder;
 import com.relevantcodes.extentreports.ExtentReports;
 
+/**
+ * The {@code ReportFactory} class to initialize the ExtentReports objects which was used to generate reports.
+ *
+ * @author Avinash P
+ * 
+ */
 public class ReportFactory {
 
 	private static ExtentReports reporter;
 
+	/**
+	 * The {@code getReporter} method to initialize the ExtentReports objects which was used to generate reports.
+	 *
+	 */
 	public static synchronized ExtentReports getReporter() {
 		if (reporter == null) {
 			Date today = new Date();
@@ -27,6 +37,10 @@ public class ReportFactory {
 		return reporter;
 	}
 
+	/**
+	 * The {@code closeReporter} method to destroy the ExtentReports objects which was used to generate reports.
+	 *
+	 */
 	public static synchronized void closeReporter() {
 		reporter.flush();
 		reporter.close();

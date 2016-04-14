@@ -10,9 +10,23 @@ import com.thomsonreuters.automation.common.AbstractBase;
 import com.thomsonreuters.automation.common.RowData;
 
 /**
- * Test the Follow APIs
+ * The {@code FollowTest} class to test for the Follow API's.
+ *
+ * @author Avinash P
+ * 
  */
+
 public class FollowTest extends AbstractBase {
+
+	/**
+	 * {@code followTest} method is the entry point to test 1PFOLLOW API's.<BR>
+	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
+	 * FollowTestData.xlsx file.</BR>
+	 * 
+	 * @throws Exception On Executing the 1PFOLLOW tests
+	 * @see Exception
+	 * 
+	 */
 
 	@Test
 	public void followTest() throws Exception {
@@ -22,6 +36,15 @@ public class FollowTest extends AbstractBase {
 	}
 
 	// Follow a user and Check Followers count got increased or not
+	/**
+	 * {@code checkFallowersCount} method is to test followers count. This meted have dependency with current followers
+	 * count which was running in {@code followTest} method
+	 * 
+	 * @throws Exception On Executing the 1PFOLLOW tests
+	 * @see Exception
+	 * 
+	 */
+
 	@Test(priority = 1)
 	public void checkFallowersCount() throws Exception {
 		logger.info("Entered 1PFOLLOW checkFallowersCount method...");
@@ -34,18 +57,25 @@ public class FollowTest extends AbstractBase {
 		rowData.setMethod("GET");
 		rowData.setQueryString("");
 		testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
-		ExecuteTest(rowData);
+		executeTest(rowData);
 		reporter.endTest(testReporter);
 		rowData.setTestName("OPQA-462_1");
 		rowData.setHost("1PFOLLOW");
 		rowData.setDescription("Verify that Stop following a user");
 		rowData.setApiPath("/follow/user/(SYS_USER2)/following/(SYS_USER1)");
 		rowData.setMethod("DELETE");
-		ExecuteTest(rowData);
+		executeTest(rowData);
 		logger.info("Ending 1PFOLLOW checkFallowersCount method...");
 	}
 
-	private void ExecuteTest(RowData rowData) throws Exception {
+	/**
+	 * {@code executeTest} method executes specified test case, validates the response, stores the response and update
+	 * the test status.
+	 * 
+	 * @throws Exception
+	 * 
+	 */
+	private void executeTest(RowData rowData) throws Exception {
 		Response response = null;
 		String sheetName = "Follow";
 		String responseJson = null;
