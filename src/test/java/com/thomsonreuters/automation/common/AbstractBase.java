@@ -638,7 +638,7 @@ public abstract class AbstractBase {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: "
+								testReporter.log(LogStatus.INFO, " Actual value: " + actualValue + " for key: "
 										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
@@ -652,7 +652,7 @@ public abstract class AbstractBase {
 							if (actualValue == null) {
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.ERROR, " Actual value: " + actualValue + " for key: "
+								testReporter.log(LogStatus.INFO, " Actual value: " + actualValue + " for key: "
 										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
@@ -694,7 +694,7 @@ public abstract class AbstractBase {
 								} else {
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is not matching expected value:" + expectedValue);
-									testReporter.log(LogStatus.ERROR, "Actual value: " + actualValue + " for key: "
+									testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
 											+ jsonNameKey + " is not matching expected value:" + expectedValue);
 									success = false;
 									break;
@@ -703,7 +703,7 @@ public abstract class AbstractBase {
 								System.out.println("Expected value:" + expectedValue);
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.ERROR, "Actual value: " + actualValue + " for key: "
+								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
 										+ jsonNameKey + " is not matching expected value:" + expectedValue);
 								success = false;
 								break;
@@ -712,7 +712,7 @@ public abstract class AbstractBase {
 					} else {// Added by Janardhan for Empty string in the expected value
 						logger.info("Expected value is empty !! Please provide input for " + jsonNameKey
 								+ ". For Empty string check, provide \"\" and for null check, provide null ");
-						testReporter.log(LogStatus.ERROR,
+						testReporter.log(LogStatus.INFO,
 								"Expected value is empty !! Please provide input for " + jsonNameKey
 										+ ". For Empty string check, provide \"\" and for null check, provide null ");
 						success = false;
