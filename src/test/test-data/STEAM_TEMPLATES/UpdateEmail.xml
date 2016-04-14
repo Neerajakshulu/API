@@ -24,6 +24,12 @@
 								<val name="obj_type">UNP_Username</val>
 								<val name="value">{{UNP_Username}}</val>
 							</map>
+							<map>
+								<val name="obj_type">UNP_PASSWORD_OPTIONS</val>
+								<map name="value">
+									<val name="PASSWORD">{{UNP_Password}}</val>
+								</map>
+							</map>
 						</list>
 					</map>
 				</list>
@@ -36,6 +42,15 @@
 						<map>
 							<val name="obj_type">USER_ID</val>
 							<val name="ret_name">userID</val>
+						</map>
+						<map>
+							<val name="obj_type">USER_UsernamePasswordCredential</val>
+							<list name="attributes">
+								<map>
+									<val name="obj_type">UNP_Username</val>
+									<val name="ret_name">userName</val>					
+								</map>
+							</list>
 						</map>
 					</list>
 				</map>
