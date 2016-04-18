@@ -173,7 +173,7 @@ public abstract class SteamAbstractBase {
 		logger.info("envSuffix = " + envSuffix);
 		logger.info("Local = " + local);
 		logger.info("Users = " + dataStore);
-		getAllAppHostsForGivenEnv(eurekaURL, envSuffix, local);
+		// getAllAppHostsForGivenEnv(eurekaURL, envSuffix, local);
 		// Get Admin SID
 		SID = AdminLogin.login();
 		logger.info("Admin SID = " + SID);
@@ -364,8 +364,8 @@ public abstract class SteamAbstractBase {
 					if (StringUtils.isNotBlank(rowData.getTestName())) {
 						logger.debug("row data=" + rowData.toString());
 
-						if (appHosts.get(rowData.getHost()) != null) {
-							logger.debug("Real host=" + appHosts.get(rowData.getHost()));
+						if (SID != "") {
+							logger.debug("Real host=" + steamURL);
 
 							try {
 								process(row, sheetName);
