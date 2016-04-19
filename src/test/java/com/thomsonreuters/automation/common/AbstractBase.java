@@ -245,6 +245,13 @@ public abstract class AbstractBase {
 
 		String url = appHosts.get(rowData.getHost()) + apiPath + queryString;
 		logger.debug("URL=" + url);
+		testReporter.log(LogStatus.INFO, "Request Method - " + rowData.getMethod());
+		if (StringUtils.isNotBlank(headers))
+			testReporter.log(LogStatus.INFO, "Request Headers - " + headers);
+		if (StringUtils.isNotBlank(bodyString))
+			testReporter.log(LogStatus.INFO, "Request Body - " + bodyString);
+		testReporter.log(LogStatus.INFO, "Request URL - " + url);
+
 		RequestSpecification reqSpec = given();
 
 		// Get and set headers to request
@@ -614,14 +621,28 @@ public abstract class AbstractBase {
 				StringTokenizer validationTokenizer = new StringTokenizer(validationsToken, TOKENIZER_EQUALTO);
 				while (validationTokenizer.hasMoreTokens()) {
 					jsonNameKey = validationTokenizer.nextToken();
-
 					// Get next token to get value
 					if (validationTokenizer.hasMoreTokens()) {
 						expectedValue = validationTokenizer.nextToken();
 
+						Integer output = 0;
+						if (expectedValue.contains("eval$")) {
+							expectedValue = expectedValue.replace("eval$", "");
+							String[] s1 = null;
+							if (expectedValue.contains("+")) {
+								s1 = expectedValue.split("\\+");
+								output = Integer.parseInt(s1[0]) + Integer.parseInt(s1[1]);
+							} else if (expectedValue.contains("-")) {
+								s1 = expectedValue.split("\\-");
+								output = Integer.parseInt(s1[0]) - Integer.parseInt(s1[1]);
+							}
+							expectedValue = String.valueOf(output);
+						}
+
 						if (jsonNameKey.equalsIgnoreCase(STATUS)) {
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equals(statusCode)) {
-								if(statusCode=="500" && (rowData.getApiPath().equals("/comments")||rowData.getApiPath().equals("/posts/"))){
+								if (statusCode == "500" && (rowData.getApiPath().equals("/comments")
+										|| rowData.getApiPath().equals("/posts/"))) {
 									Thread.sleep(60000);
 								}
 								logger.info("Actual status code: " + statusCode
