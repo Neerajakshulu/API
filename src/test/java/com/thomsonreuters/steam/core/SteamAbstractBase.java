@@ -364,7 +364,7 @@ public abstract class SteamAbstractBase {
 					if (StringUtils.isNotBlank(rowData.getTestName())) {
 						logger.debug("row data=" + rowData.toString());
 
-						if (SID != "") {
+						if (!SID.contains("Exception")) {
 							logger.debug("Real host=" + steamURL);
 
 							try {
@@ -381,12 +381,12 @@ public abstract class SteamAbstractBase {
 						} else {
 							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
 									.assignCategory(appName);
-							testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
+							testReporter.log(LogStatus.FAIL, "Testcase failed due to "+SID);
 							reporter.endTest(testReporter);
 							isTestFail = true;
-							isTestFailDescroption = "Testcase failed due to service unavailable";
+							isTestFailDescroption = "Testcase failed due to "+SID;
 							updateTestStatus(rowData.getTestName(), row, FAIL);
-							logger.info("Testcase failed due to service unavailable");
+							logger.info("Testcase failed due to "+SID);
 							logger.info("-----------------------------------------------------------------------");
 						}
 

@@ -54,6 +54,7 @@ public class AdminLogin extends SteamAbstractBase {
 			}
 		} catch (Exception ex) {
 			logger.info("====== Exception in getting SID ===== " + ex.getMessage());
+			SID = "Exception occured while getting Admin SID: "+ex.getMessage();
 			ex.printStackTrace();
 		}
 		return SID;
