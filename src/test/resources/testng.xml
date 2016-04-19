@@ -13,7 +13,13 @@
 			<class name="com.thomsonreuters.automation.typeahead.TypeAheadTest" />
 		</classes>
 	</test>
-
+	
+	<test name="Experiment">
+		<classes>
+			<class name="com.thomsonreuters.automation.exp.ExperimentTest" />
+		</classes>
+	</test>
+	
 	<test name="Notify">
 		<classes>
 			<class name="com.thomsonreuters.automation.notify.NotifyTest" />
