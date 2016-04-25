@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<request xmlns="http://www.isinet.com/xrpc41" src="app.id = Customer Care">
+	<fn name="STEAMAdminAPI.loadAdminSession">
+		<list>
+			<val name="SID">{{SID}}</val>
+			<map name="clientInfo">
+				<val name="COMPONENT">CustomerCare</val>
+				<val name="VERSION">3.6</val>
+				<val name="ENVIRONMENT">CC</val>
+			</map>
+		</list>
+	</fn>
+	<fn name="STEAMCoreAPI_v2.action">
+    <list>
+      <val name="type">UNLOCK_NEON_USER</val>
+      <map>
+        <val name="type">SIMPLIFIED</val>
+        <map name="USER_UNLOCK_NEON_USER_PARAMS">
+          <val name="USER_ID">(OPQA-1410_user.userID)</val>
+		 <!--  <val name="EMAIL_ID">(OPQA-1415_USER_UsernamePasswordCredential.userName)</val> -->
+        </map>
+      </map>
+      <map name="CONTEXT">
+        <val name="Application">NEON</val>
+   	  </map>
+      <list>
+        <map>
+          <val name="EXCLUSIVITY_POLICY">FIRST_SUCCESS</val>
+          <val name="REJECTION_POLICY">BYPASS</val>
+          <val name="obj_type">DATA_TRANSACTION</val>
+          <val name="ret_name">TRANSACTION</val>
+          <list name="attributes">
+            <map>
+              <val name="obj_type">DATA_TRANSACTION_STATUS</val>
+              <val name="ret_name">STATUS</val>
+            </map>
+            <map>
+              <val name="obj_type">DATA_TRANSACTION_MESSAGE</val>
+              <val name="ret_name">MESSAGE</val>
+            </map>
+          </list>
+        </map>
+        <map>
+          <val name="obj_type">DATA_ERROR</val>
+          <val name="ret_name">ERROR</val>
+          <list name="attributes">
+            <map>
+              <val name="obj_type">DATA_ERROR_ID</val>
+              <val name="ret_name">ID</val>
+            </map>
+            <map>
+              <val name="obj_type">DATA_ERROR_ERROR_MESSAGE</val>
+              <val name="ret_name">MESSAGE</val>
+            </map>
+          </list>
+        </map>
+      </list>
+    </list>
+  </fn>
+</request>
