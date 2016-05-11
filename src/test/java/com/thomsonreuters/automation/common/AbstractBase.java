@@ -641,9 +641,9 @@ public abstract class AbstractBase {
 
 						if (jsonNameKey.equalsIgnoreCase(STATUS)) {
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equals(statusCode)) {
-								if (statusCode == "500" && (rowData.getApiPath().equals("/comments")
+								if (statusCode.equals("500") && (rowData.getApiPath().equals("/comments")
 										|| rowData.getApiPath().equals("/posts/"))) {
-									Thread.sleep(65000);
+									Thread.sleep(61000);
 								}
 								logger.info("Actual status code: " + statusCode
 										+ "is not matching expected status code value: " + expectedValue);
