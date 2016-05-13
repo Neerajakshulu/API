@@ -10,7 +10,7 @@
 			</map>
 		</list>
 	</fn>
-	<fn name="STEAMCoreAPI.updateObject">
+	<fn name="STEAMCoreAPI_v2.updateObject">
 		<list>
 			<val name="type">USER</val>
 			<val name="UserId">(OPQA-1410_user.userID)</val>
@@ -33,6 +33,9 @@
 						</list>
 					</map>
 				</list>
+			</map>
+			<map name="CONTEXT">
+				<val name="Operation">EMAIL_UPDATE</val>
 			</map>
 			<list name="List">
 				<map>

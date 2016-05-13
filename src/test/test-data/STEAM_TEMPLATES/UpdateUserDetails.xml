@@ -10,7 +10,7 @@
 			</map>
 		</list>
 	</fn>
-	<fn name="STEAMCoreAPI.updateObject">
+	<fn name="STEAMCoreAPI_v2.updateObject">
 		<list>
 			<val name="type">USER</val>
 			<val name="UserId">(OPQA-1410_user.userID)</val>
@@ -40,7 +40,9 @@
 				</list>
 				<val name="obj_type">USER</val>
 			</map>
-
+			<map name="CONTEXT">
+				<val name="Application">NEON</val>
+			</map>
 			<list name="List">
 				<map>
 					<list name="attributes">
