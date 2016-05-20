@@ -643,7 +643,7 @@ public abstract class AbstractBase {
 							if (StringUtils.isBlank(expectedValue) || !expectedValue.equals(statusCode)) {
 								if (statusCode.equals("500") && (rowData.getApiPath().equals("/comments")
 										|| rowData.getApiPath().equals("/posts/"))) {
-									Thread.sleep(61000);
+									Thread.sleep(1000);
 								}
 								logger.info("Actual status code: " + statusCode
 										+ "is not matching expected status code value: " + expectedValue);
