@@ -26,10 +26,18 @@ public class AdminLogin extends SteamAbstractBase {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static String login() {
-		// baseURI = "http://10.226.32.121:5000/esti/xrpc";
-		baseURI = "http://10.205.140.204:5000/esti/xrpc";
+		// CI Environemt URL 	
+		baseURI = "http://10.205.140.204:5000/esti/xrpc";		
 		String UserName = "Neon_Test_Admin@tr.com";
 		String Password = "1234qwer$";
+		
+		/**
+		//Spring (Stable) environemt URL 
+		baseURI = "http://10.204.33.120:8003/esti/xrpc";
+
+		String UserName = "Janardhan.reddyelluru@thomsonreuters.com";
+		String Password = "Pickle32@";
+		*/
 		String response;
 		String myEnvelope = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>"
 				+ " <request xmlns=\"http://www.isinet.com/xrpc40\">" + " <fn name=\"STEAMAdminAPI.loginAdmin\">"

@@ -121,7 +121,10 @@ public abstract class SteamAbstractBase {
 	protected RowData rowData = null;
 	protected boolean isTestFail = false;
 	protected String isTestFailDescroption = null;
-	// For STEAM
+	
+	// For STEAM Spring env
+	//private static String steamURL = "http://10.204.33.120:8003/esti/xrpc";
+	// For STEAM CI env
 	private static String steamURL = "http://10.205.140.204:5000/esti/xrpc";
 	protected static String SID = "";
 	protected String templatePath = null;

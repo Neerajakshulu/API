@@ -13,7 +13,7 @@
 	<fn name="STEAMCoreAPI.deleteObject">
 		<list>
 			<val name="type">USER</val>
-			<val name="UserId">(OPQA-1410_user.userID)</val>
+			<val name="UserId">{{userID}}</val>
 		</list>
 	</fn>
 </request>
