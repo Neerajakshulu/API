@@ -13,7 +13,7 @@ import com.thomsonreuters.automation.common.AbstractBase;
 public class IamTest extends AbstractBase {
 
 	/**
-	 * {@code iamTest} method is the entry point to test 1PGROPUPS API's.<BR>
+	 * {@code iamTest} method is the entry point to test 1PAUTH API's.<BR>
 	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
 	 * IAMTestData.xlsx file.</BR>
 	 * 
