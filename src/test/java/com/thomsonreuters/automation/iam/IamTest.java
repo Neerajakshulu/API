@@ -23,6 +23,7 @@ public class IamTest extends AbstractBase {
 	 */
 	@Test
 	public void iamTest() throws Exception {
+		dataStore.put(TESTOUTPUT_FOLDER_DATEFORMAT,strDateTime);
 		testDataExcelPath = "src/test/test-data/IAMTestData.xlsx";
 		appName = "1PAUTH";
 		runTests();
