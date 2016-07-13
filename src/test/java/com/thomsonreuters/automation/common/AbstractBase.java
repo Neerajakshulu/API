@@ -96,7 +96,7 @@ public abstract class AbstractBase {
 	protected Map<String, String> dataStore = new HashMap<String, String>();
 	private Map<String, String> testStatus = new HashMap<String, String>();
 	protected static final String TESTOUTPUT_FOLDER_DATEFORMAT = "ddMMMyyyy_HHmmss";
-	protected String strDateTime = null;
+	protected static String strDateTime = null;
 	protected String testDataExcelPath = null;
 	protected String appName = null;
 	protected RowData rowData = null;
