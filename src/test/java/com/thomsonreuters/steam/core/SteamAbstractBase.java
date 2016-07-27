@@ -121,9 +121,9 @@ public abstract class SteamAbstractBase {
 	protected RowData rowData = null;
 	protected boolean isTestFail = false;
 	protected String isTestFailDescroption = null;
-	
+
 	// For STEAM Spring env
-	//private static String steamURL = "http://10.204.33.120:8003/esti/xrpc";
+	// private static String steamURL = "http://10.204.33.120:8003/esti/xrpc";
 	// For STEAM CI env
 	private static String steamURL = "http://10.205.140.204:5000/esti/xrpc";
 	protected static String SID = "";
@@ -161,6 +161,7 @@ public abstract class SteamAbstractBase {
 	 * @see Exception
 	 * 
 	 */
+	@SuppressWarnings("unused")
 	@BeforeClass
 	public void beforeClass() throws Exception {
 		logger.info("@BeforeSuite - any initialization / activity to perform before starting your test suite");
@@ -384,12 +385,12 @@ public abstract class SteamAbstractBase {
 						} else {
 							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
 									.assignCategory(appName);
-							testReporter.log(LogStatus.FAIL, "Testcase failed due to "+SID);
+							testReporter.log(LogStatus.FAIL, "Testcase failed due to " + SID);
 							reporter.endTest(testReporter);
 							isTestFail = true;
-							isTestFailDescroption = "Testcase failed due to "+SID;
+							isTestFailDescroption = "Testcase failed due to " + SID;
 							updateTestStatus(rowData.getTestName(), row, FAIL);
-							logger.info("Testcase failed due to "+SID);
+							logger.info("Testcase failed due to " + SID);
 							logger.info("-----------------------------------------------------------------------");
 						}
 
@@ -398,6 +399,92 @@ public abstract class SteamAbstractBase {
 				logger.info("End executing tests from sheet " + (currentSheet + 1));
 				logger.info("========================================================================");
 			}
+
+		} catch (Exception e) {
+			logger.error("Exception while executing the tests:" + e);
+			e.printStackTrace();
+		} finally {
+			inputStream.close();
+		}
+	}
+
+	/**
+	 * This method executes all the test cases defined in the excel file and update the test status about exceptions
+	 * 
+	 * @throws Exception
+	 * @return Nothing
+	 */
+	protected void runTests(String sheetName) throws Exception {
+		logger.info("Entered the process method...");
+
+		XSSFWorkbook workBook = null;
+		FileInputStream inputStream = null;
+
+		try {
+			int sheetRowCount;
+			XSSFSheet sheet = null;
+			XSSFRow row = null;
+			// String sheetName = null;
+
+			// Read Excel file
+			File myxl = new File(testDataExcelPath);
+			inputStream = new FileInputStream(myxl);
+			workBook = new XSSFWorkbook(inputStream);
+			//int totalSheets = workBook.getNumberOfSheets();
+			// Loop through each sheet in the Excel
+			// for (int currentSheet = 0; currentSheet < totalSheets; currentSheet++) {
+
+			logger.info("========================================================================");
+			// logger.info("Started executing tests from sheet " + (currentSheet + 1));
+
+			// Get current sheet information
+			sheet = workBook.getSheet(sheetName);
+			// sheetName = workBook.getSheetName(currentSheet);
+			sheetRowCount = sheet.getLastRowNum();
+
+			logger.debug("total number of rows:" + sheetRowCount);
+
+			// Loop through all test case records of current sheet, start
+			// with 1 to leave header.
+			for (int i = 1; i <= sheetRowCount; i++) {
+
+				// Get current row information
+				row = sheet.getRow(i);
+				rowData = getRowData(row);
+				if (StringUtils.isNotBlank(rowData.getTestName())) {
+					logger.debug("row data=" + rowData.toString());
+
+					if (!SID.contains("Exception")) {
+						logger.debug("Real host=" + steamURL);
+
+						try {
+							process(row, sheetName);
+						} catch (Exception e) {
+							logger.error("Exception while executing the test: " + rowData.getTestName() + e);
+							e.printStackTrace();
+							testReporter.log(LogStatus.ERROR, e.toString());
+							testReporter.log(LogStatus.FAIL, "Testcase Failed due to " + e.toString());
+							reporter.endTest(testReporter);
+							isTestFail = true;
+							isTestFailDescroption = "Testcase Failed due to " + e.toString();
+						}
+					} else {
+						testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
+								.assignCategory(appName);
+						testReporter.log(LogStatus.FAIL, "Testcase failed due to " + SID);
+						reporter.endTest(testReporter);
+						isTestFail = true;
+						isTestFailDescroption = "Testcase failed due to " + SID;
+						updateTestStatus(rowData.getTestName(), row, FAIL);
+						logger.info("Testcase failed due to " + SID);
+						logger.info("-----------------------------------------------------------------------");
+					}
+
+				}
+			}
+			// logger.info("End executing tests from sheet " + (currentSheet + 1));
+			logger.info("========================================================================");
+			// }
 
 		} catch (Exception e) {
 			logger.error("Exception while executing the tests:" + e);

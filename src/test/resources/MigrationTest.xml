@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="API Automation">
+	<test name="Steam">
+		<classes>
+			<class name="com.thomsonreuters.automation.migration.SteamUsercreation" />
+		</classes>
+	</test>
+	
+	<test name="IAM">
+		<classes>
+			<class name="com.thomsonreuters.automation.migration.MigrateUserTest" />
+		</classes>
+	</test>
+	
+	<test name="Steam1">
+		<classes>
+			<class name="com.thomsonreuters.automation.migration.SteamUserDeleteTest" />
+		</classes>
+	</test>
+
+</suite>
