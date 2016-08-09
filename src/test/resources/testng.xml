@@ -43,6 +43,12 @@
 			<class name="com.thomsonreuters.automation.groups.GroupsTest" />
 		</classes>
 	</test>
+	
+	<test name="APPBRIDGE">
+		<classes>
+			<class name="com.thomsonreuters.automation.appbridge.AppBridgeTest" />
+		</classes>
+	</test>
 
 	<test name="Profile">
 		<classes>
