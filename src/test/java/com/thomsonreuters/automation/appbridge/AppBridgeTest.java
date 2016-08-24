@@ -28,7 +28,7 @@ public class AppBridgeTest extends AbstractBase {
 	 */
 
 	@Test
-	public void experimentTest() throws Exception {
+	public void appBridgeTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/AppBridgeTestData.xlsx";
 		appName = "1PAPPBRIDGE";
 		runTests("APPBRIDGE");

@@ -10,7 +10,7 @@ import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * The {@code AppBridgeTest} class to test for the Appbridge API's.
+ * The {@code AppBridgeMaintenanceTest} class to test for the Appbridge API's When APPBRIDGE Service is under maintenance.
  *
  * @author Avinash P
  * 
@@ -18,7 +18,7 @@ import com.thomsonreuters.automation.common.AbstractBase;
 public class AppBridgeMaintenanceTest extends AbstractBase {
 
 	/**
-	 * {@code AppBridgeTest} method is the entry point to test 1PAPPBRIDGE API's.<BR>
+	 * {@code appBridgeMaintenanceTest} method is the entry point to test 1PAPPBRIDGE API's.<BR>
 	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
 	 * AppBridgeTestData.xlsx file.</BR>
 	 * 
@@ -28,7 +28,7 @@ public class AppBridgeMaintenanceTest extends AbstractBase {
 	 */
 
 	@Test
-	public void experimentTest() throws Exception {
+	public void appBridgeMaintenanceTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/AppBridgeTestData.xlsx";
 		appName = "1PAPPBRIDGE";
 		runTests("ENDNOTE_MAINTENANCE");
