@@ -29,7 +29,7 @@ public class EntitlementTest extends AbstractBase {
 
 	@Test
 	public void entitlementTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/EntitlementTestData.xlsx";
+		testDataExcelPath = "src/test/test-data/EntitlementsTestData.xlsx";
 		appName = "1PENTITLEMENT";
 		runTests();
 	}
