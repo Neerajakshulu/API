@@ -55,6 +55,12 @@
 			<class name="com.thomsonreuters.automation.oauth.OauthTest" />
 		</classes>
 	</test>
+	
+		<test name="ENTITLEMENT">
+		<classes>
+			<class name="com.thomsonreuters.automation.entitlemets.EntitlementTest" />
+		</classes>
+	</test>
 
 	<test name="Profile">
 		<classes>
