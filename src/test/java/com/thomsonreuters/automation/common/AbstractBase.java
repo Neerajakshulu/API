@@ -71,8 +71,8 @@ public abstract class AbstractBase {
 	protected static final String PUT = "PUT";
 	protected static final String DELETE = "DELETE";
 	private static final String PASS = "PASS";
-	private static final String FAIL = "FAIL";
-	private static final String DEPENDENCY_FAIL = "DEPFAIL";
+	protected static final String FAIL = "FAIL";
+	protected static final String DEPENDENCY_FAIL = "DEPFAIL";
 	private static final String EMPTY_STRING = "";
 	protected static final String TOKENIZER_DOUBLE_BACK_SLACH = "//";
 	protected static final String TOKENIZER_DOUBLE_PIPE = "||";
@@ -102,7 +102,9 @@ public abstract class AbstractBase {
 	protected RowData rowData = null;
 	protected boolean isTestFail = false;
 	protected String isTestFailDescroption = null;
-
+	
+	protected String testName= null ;
+	
 	public void setUp() throws Exception {
 	}
 
@@ -168,7 +170,7 @@ public abstract class AbstractBase {
 		 */
 		if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 				&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
-			testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription()).assignCategory(appName);
+			testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
 			if (isDependencyTestsPassed(rowData.getDependencyTests())) {
 				validationString = replaceDynamicPlaceHolders(rowData.getValidations());
 				response = getAPIResponce();
@@ -332,6 +334,7 @@ public abstract class AbstractBase {
 					// Get current row information
 					row = sheet.getRow(i);
 					rowData = getRowData(row);
+					testName= "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/"+rowData.getTestName()+"\" target=\"_blank\">"+rowData.getTestName()+"</a>" ;
 					if (StringUtils.isNotBlank(rowData.getTestName())) {
 						logger.debug("row data=" + rowData.toString());
 
@@ -352,8 +355,7 @@ public abstract class AbstractBase {
 								isTestFailDescroption = "Testcase Failed due to " + e.toString();
 							}
 						} else {
-							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
-									.assignCategory(appName);
+							testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
 							testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
 							reporter.endTest(testReporter);
 							isTestFail = true;
@@ -426,6 +428,7 @@ public abstract class AbstractBase {
 					// Get current row information
 					row = sheet.getRow(i);
 					rowData = getRowData(row);
+					testName=  "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/"+rowData.getTestName()+"\" target=\"_blank\">"+rowData.getTestName()+"</a>" ;
 					if (StringUtils.isNotBlank(rowData.getTestName())) {
 						logger.debug("row data=" + rowData.toString());
 
@@ -446,8 +449,7 @@ public abstract class AbstractBase {
 								isTestFailDescroption = "Testcase Failed due to " + e.toString();
 							}
 						} else {
-							testReporter = reporter.startTest(rowData.getTestName(), rowData.getDescription())
-									.assignCategory(appName);
+							testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
 							testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
 							reporter.endTest(testReporter);
 							isTestFail = true;
