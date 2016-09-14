@@ -102,9 +102,9 @@ public abstract class AbstractBase {
 	protected RowData rowData = null;
 	protected boolean isTestFail = false;
 	protected String isTestFailDescroption = null;
-	
-	protected String testName= null ;
-	
+
+	protected String testName = null;
+
 	public void setUp() throws Exception {
 	}
 
@@ -292,6 +292,17 @@ public abstract class AbstractBase {
 		return response;
 	}
 
+	public void getTestName() {
+		String[] testid = StringUtils.split(rowData.getTestName(), "_");
+		if (testid.length > 1) {
+			testName = "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/" + testid[0] + "\" target=\"_blank\">"
+					+ rowData.getTestName() + "</a>";
+		} else {
+			testName = "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/" + rowData.getTestName()
+					+ "\" target=\"_blank\">" + rowData.getTestName() + "</a>";
+		}
+	}
+
 	/**
 	 * Execute all the test cases defined in the excel file.
 	 * 
@@ -334,7 +345,7 @@ public abstract class AbstractBase {
 					// Get current row information
 					row = sheet.getRow(i);
 					rowData = getRowData(row);
-					testName= "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/"+rowData.getTestName()+"\" target=\"_blank\">"+rowData.getTestName()+"</a>" ;
+					getTestName();
 					if (StringUtils.isNotBlank(rowData.getTestName())) {
 						logger.debug("row data=" + rowData.toString());
 
@@ -355,7 +366,8 @@ public abstract class AbstractBase {
 								isTestFailDescroption = "Testcase Failed due to " + e.toString();
 							}
 						} else {
-							testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
+							testReporter = reporter.startTest(testName, rowData.getDescription())
+									.assignCategory(appName);
 							testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
 							reporter.endTest(testReporter);
 							isTestFail = true;
@@ -386,8 +398,7 @@ public abstract class AbstractBase {
 		Assert.assertFalse(isTestFail, "One or more tests in " + appName + " failed");
 		logger.info("End of processs method...");
 	}
-	
-	
+
 	/**
 	 * Execute all the test cases defined in the excel sheet.
 	 * 
@@ -409,61 +420,62 @@ public abstract class AbstractBase {
 			inputStream = new FileInputStream(myxl);
 			workBook = new XSSFWorkbook(inputStream);
 			// Loop through each sheet in the Excel
-//			for (int currentSheet = 0; currentSheet < totalSheets; currentSheet++) {
+			// for (int currentSheet = 0; currentSheet < totalSheets; currentSheet++) {
 
-				logger.info("========================================================================");
-//				logger.info("Started executing tests from sheet " + (currentSheet + 1));
+			logger.info("========================================================================");
+			// logger.info("Started executing tests from sheet " + (currentSheet + 1));
 
-				// Get current sheet information
-				sheet = workBook.getSheet(sheetName);
-//				sheetName = workBook.getSheetName(currentSheet);
-				sheetRowCount = sheet.getLastRowNum();
+			// Get current sheet information
+			sheet = workBook.getSheet(sheetName);
+			// sheetName = workBook.getSheetName(currentSheet);
+			sheetRowCount = sheet.getLastRowNum();
 
-				logger.debug("total number of rows:" + sheetRowCount);
+			logger.debug("total number of rows:" + sheetRowCount);
 
-				// Loop through all test case records of current sheet, start
-				// with 1 to leave header.
-				for (int i = 1; i <= sheetRowCount; i++) {
+			// Loop through all test case records of current sheet, start
+			// with 1 to leave header.
+			for (int i = 1; i <= sheetRowCount; i++) {
 
-					// Get current row information
-					row = sheet.getRow(i);
-					rowData = getRowData(row);
-					testName=  "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/"+rowData.getTestName()+"\" target=\"_blank\">"+rowData.getTestName()+"</a>" ;
-					if (StringUtils.isNotBlank(rowData.getTestName())) {
-						logger.debug("row data=" + rowData.toString());
+				// Get current row information
+				row = sheet.getRow(i);
+				rowData = getRowData(row);
+				getTestName();
+				if (StringUtils.isNotBlank(rowData.getTestName())) {
+					logger.debug("row data=" + rowData.toString());
 
-						if (appHosts.get(rowData.getHost()) != null) {
-							logger.debug("Real host=" + appHosts.get(rowData.getHost()));
-							if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())||"/authorize".equals(rowData.getApiPath())) {
-								//Thread.sleep(25000);
-							}
-							try {
-								process(row, sheetName);
-							} catch (Exception e) {
-								logger.error("Exception while executing the test: " + rowData.getTestName() + e);
-								e.printStackTrace();
-								testReporter.log(LogStatus.ERROR, e.toString());
-								testReporter.log(LogStatus.FAIL, "Testcase Failed due to " + e.toString());
-								reporter.endTest(testReporter);
-								isTestFail = true;
-								isTestFailDescroption = "Testcase Failed due to " + e.toString();
-							}
-						} else {
-							testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
-							testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
+					if (appHosts.get(rowData.getHost()) != null) {
+						logger.debug("Real host=" + appHosts.get(rowData.getHost()));
+						if ("1PNOTIFY".equalsIgnoreCase(rowData.getHost())
+								|| "/authorize".equals(rowData.getApiPath())) {
+							// Thread.sleep(25000);
+						}
+						try {
+							process(row, sheetName);
+						} catch (Exception e) {
+							logger.error("Exception while executing the test: " + rowData.getTestName() + e);
+							e.printStackTrace();
+							testReporter.log(LogStatus.ERROR, e.toString());
+							testReporter.log(LogStatus.FAIL, "Testcase Failed due to " + e.toString());
 							reporter.endTest(testReporter);
 							isTestFail = true;
-							isTestFailDescroption = "Testcase failed due to service unavailable";
-							updateTestStatus(rowData.getTestName(), row, FAIL);
-							logger.info("Testcase failed due to service unavailable");
-							logger.info("-----------------------------------------------------------------------");
+							isTestFailDescroption = "Testcase Failed due to " + e.toString();
 						}
-
+					} else {
+						testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
+						testReporter.log(LogStatus.FAIL, "Testcase failed due to service unavailable");
+						reporter.endTest(testReporter);
+						isTestFail = true;
+						isTestFailDescroption = "Testcase failed due to service unavailable";
+						updateTestStatus(rowData.getTestName(), row, FAIL);
+						logger.info("Testcase failed due to service unavailable");
+						logger.info("-----------------------------------------------------------------------");
 					}
+
 				}
-//				logger.info("End executing tests from sheet " + (currentSheet + 1));
-				logger.info("========================================================================");
-//			}
+			}
+			// logger.info("End executing tests from sheet " + (currentSheet + 1));
+			logger.info("========================================================================");
+			// }
 
 		} catch (Exception e) {
 			logger.error("Exception while executing the tests:" + e);
@@ -480,7 +492,6 @@ public abstract class AbstractBase {
 		Assert.assertFalse(isTestFail, "One or more tests in " + appName + " failed");
 		logger.info("End of processs method...");
 	}
-	
 
 	/**
 	 * Checks whether current test dependency tests passed or not.
