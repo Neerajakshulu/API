@@ -5,6 +5,8 @@
  ******************************************************************************/
 package com.thomsonreuters.automation.oauth;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import org.testng.annotations.Test;
@@ -31,11 +33,11 @@ public class OauthTest extends AbstractBase {
 
 	@Test
 	public void oauthTest() throws Exception {
+		strDateTime = new SimpleDateFormat(TESTOUTPUT_FOLDER_DATEFORMAT).format(new Date());
 		dataStore.put(TESTOUTPUT_FOLDER_DATEFORMAT,strDateTime);
 		dataStore.put("UUID",UUID.randomUUID().toString());
 		testDataExcelPath = "src/test/test-data/OauthTestData.xlsx";
 		appName = "1POAUTH";
 		runTests("OAUTH");
 	}
-
 }
