@@ -185,25 +185,28 @@ public abstract class AbstractBase {
 						logger.info("Response:" + responseJson);
 					}
 
-					// Update the excel file with Test PASS / FAIL status
-					updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
-
 					// Save API response to file
 					saveAPIResponse(responseJson, sheetName, rowData.getTestName());
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
+				try {
 
 				if (testSuccess) {
 					// Store the data which is required for subsequent test cases.
 					storeDependentTestsData(responseJson, rowData.getStore(), rowData.getTestName());
+					// Update the excel file with Test PASS / FAIL status
+					updateTestStatus(rowData.getTestName(), row, getStatus(testSuccess));
 					// Report status
 					testReporter.log(LogStatus.PASS, "PASS");
 				} else {
 					isTestFail = true;
 					// Report status
 					testReporter.log(LogStatus.FAIL, "FAIL");
+				} 
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
 
 				logger.info("End execution of test:" + rowData.getTestName());
