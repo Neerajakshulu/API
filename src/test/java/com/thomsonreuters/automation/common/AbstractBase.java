@@ -759,8 +759,10 @@ public abstract class AbstractBase {
 								logger.info("Actual status code: " + statusCode
 										+ "is not matching expected status code value: " + expectedValue);
 
-								testReporter.log(LogStatus.ERROR, "Actual status code: " + statusCode
-										+ "is not matching expected status code value: " + expectedValue);
+								testReporter.log(LogStatus.ERROR,
+										"<font color=\"red\">Actual status code: " + statusCode
+												+ "is not matching expected status code value: " + expectedValue
+												+ "</font>");
 								success = false;
 								break;
 							}
@@ -772,8 +774,9 @@ public abstract class AbstractBase {
 
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.INFO, " Actual value: " + actualValue + " for key: "
-										+ jsonNameKey + " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO,
+										"<font color=\"red\">Actual value: " + actualValue + " for key: " + jsonNameKey
+												+ " is not matching expected value:" + expectedValue + "</font>");
 								success = false;
 								break;
 							}
@@ -786,8 +789,9 @@ public abstract class AbstractBase {
 							if (actualValue == null) {
 								logger.info(" Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.INFO, " Actual value: " + actualValue + " for key: "
-										+ jsonNameKey + " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO,
+										"<font color=\"red\">Actual value: " + actualValue + " for key: " + jsonNameKey
+												+ " is not matching expected value:" + expectedValue + "</font>");
 								success = false;
 								break;
 							} else if (actualValue.startsWith("[")
@@ -828,8 +832,10 @@ public abstract class AbstractBase {
 								} else {
 									logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 											+ " is not matching expected value:" + expectedValue);
-									testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
-											+ jsonNameKey + " is not matching expected value:" + expectedValue);
+									testReporter.log(LogStatus.INFO,
+											"<font color=\"red\">Actual value: " + actualValue + " for key: "
+													+ jsonNameKey + " is not matching expected value:" + expectedValue
+													+ "</font>");
 									success = false;
 									break;
 								}
@@ -837,8 +843,9 @@ public abstract class AbstractBase {
 								System.out.println("Expected value:" + expectedValue);
 								logger.info("Actual value: " + actualValue + " for key: " + jsonNameKey
 										+ " is not matching expected value:" + expectedValue);
-								testReporter.log(LogStatus.INFO, "Actual value: " + actualValue + " for key: "
-										+ jsonNameKey + " is not matching expected value:" + expectedValue);
+								testReporter.log(LogStatus.INFO,
+										"<font color=\"red\">Actual value: " + actualValue + " for key: " + jsonNameKey
+												+ " is not matching expected value:" + expectedValue + "</font>");
 								success = false;
 								break;
 							}
@@ -847,8 +854,9 @@ public abstract class AbstractBase {
 						logger.info("Expected value is empty !! Please provide input for " + jsonNameKey
 								+ ". For Empty string check, provide \"\" and for null check, provide null ");
 						testReporter.log(LogStatus.INFO,
-								"Expected value is empty !! Please provide input for " + jsonNameKey
-										+ ". For Empty string check, provide \"\" and for null check, provide null ");
+								"<font color=\"red\">Expected value is empty !! Please provide input for " + jsonNameKey
+										+ ". For Empty string check, provide \"\" and for null check, provide null "
+										+ "</font>");
 						success = false;
 						break;
 					}

@@ -1,5 +1,6 @@
 package com.thomsonreuters.automation.report;
 
+import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -30,9 +31,19 @@ public class ReportFactory {
 			String date_time = df.format(today);
 			reporter = new ExtentReports("Reports/1P-API-AUTOMATION-TEST-REPORT_" + date_time + ".html", true,
 					DisplayOrder.OLDEST_FIRST);
-			reporter.config().documentTitle("1P-API-AUTOMATION-TEST-REPORT").reportName("Regression")
-					.reportHeadline("1P-API-AUTOMATION-TEST-REPORT");
-			reporter.addSystemInfo("Rest Assured", "2.4.1").addSystemInfo("Environment", "Dev-Stable");
+			
+			reporter.loadConfig(new File("src/test/resources/extent.xml"));
+			//loadConfig(
+//			config().documentTitle("1P-API-AUTOMATION-TEST-REPORT").reportName("Regression")
+//				.reportHeadline("1P-API-AUTOMATION-TEST-REPORT");
+			reporter.addSystemInfo("Rest Assured", "2.4.1");
+			String env = System.getProperty("envSuffix");
+			if(env.contains("stable")){
+				reporter.addSystemInfo("Environment", "Dev-Stable");
+			}else{
+				reporter.addSystemInfo("Environment", "Dev-Snapshot");
+			}
+			
 		}
 		return reporter;
 	}

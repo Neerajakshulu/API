@@ -7,7 +7,7 @@ import com.thomsonreuters.automation.common.AbstractBase;
 /**
  * The {@code NotifyTest} class to test for the Notify API's.
  *
- * @author Mohana Yalamarthi
+ * @author Avinash P
  * 
  */
 public class NotifyTest extends AbstractBase {
