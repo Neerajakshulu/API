@@ -73,13 +73,15 @@
 			<class name="com.thomsonreuters.automation.follow.FollowTest" />
 		</classes>
 	</test>
-
+	
+	<!-- 
 	<test name="WatchlistRA">
 		<classes>
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistRATest" />
 		</classes>
 	</test>
-
+	 -->
+	 
 	<test name="Authoring">
 		<classes>
 			<class name="com.thomsonreuters.automation.authoring.AuthoringTest" />
