@@ -74,13 +74,13 @@
 		</classes>
 	</test>
 	
-	<!-- 
-	<test name="WatchlistRA">
+	
+	<test name="Watchlist">
 		<classes>
-			<class name="com.thomsonreuters.automation.watchlist.WatchlistRATest" />
+			<class name="com.thomsonreuters.automation.watchlist.WatchlistTest" />
 		</classes>
 	</test>
-	 -->
+	 
 	 
 	<test name="Authoring">
 		<classes>

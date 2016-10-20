@@ -11,7 +11,7 @@ import com.thomsonreuters.automation.common.AbstractBase;
  * @version 1.0
  * @since 2015-08-31
  */
-public class WatchlistRATest extends AbstractBase {
+public class WatchlistTest extends AbstractBase {
 
 	/**
 	 * This method is entry point for testing. Initializes excel file path and app name. Calls runTests method for
@@ -23,8 +23,8 @@ public class WatchlistRATest extends AbstractBase {
 	 */
 	@Test
 	public void wathclistTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/WatchlistRATestData.xlsx";
-		appName = "1PWATCHLISTRA";
+		testDataExcelPath = "src/test/test-data/WatchlistContainerTest.xlsx";
+		appName = "1PCONTAINER";
 		runTests();
 	}
 }
