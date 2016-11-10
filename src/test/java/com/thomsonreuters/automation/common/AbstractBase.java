@@ -579,15 +579,38 @@ public abstract class AbstractBase {
 	protected void storeDependentTestsData(String json,
 			String jsonNameKeys,
 			String testName) {
+		if (testName.equals("OPQA-4135")) {
 		if (StringUtils.isNotBlank(jsonNameKeys)) {
 			StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
 			JsonPath jsonPath = new JsonPath(json);
 			String jsonNameKey = null;
+			System.out.println("The jsonNameKeys values are: "+jsonNameKey);
 
 			while (jsonNameKeysTokenizer.hasMoreTokens()) {
 				jsonNameKey = jsonNameKeysTokenizer.nextToken();
-				String value = jsonPath.getString(jsonNameKey).replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
-				dataStore.put(testName + UNDERSCORE + jsonNameKey, value);
+				System.out.println("The jsonNameKeys values are after while loop : "+jsonNameKey);			
+				String value = jsonPath.getString("private.desc").replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
+				System.out.println("The json response values is: "+value);
+				String[] test = value.replaceAll("::", ":").split(":");
+				for(int i=0;i<test.length;i=i+2) {
+					dataStore.put(testName + UNDERSCORE + test[i].trim(), test[i+1].trim());
+					
+				}
+				System.out.println("The datastore is: "+dataStore);
+				//dataStore.put(testName + UNDERSCORE + jsonNameKey, value);
+			}
+		}
+		} else {
+			if (StringUtils.isNotBlank(jsonNameKeys)) {
+				StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
+				JsonPath jsonPath = new JsonPath(json);
+				String jsonNameKey = null;
+
+				while (jsonNameKeysTokenizer.hasMoreTokens()) {
+					jsonNameKey = jsonNameKeysTokenizer.nextToken();
+					String value = jsonPath.getString(jsonNameKey).replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
+					dataStore.put(testName + UNDERSCORE + jsonNameKey, value);
+				}
 			}
 		}
 		logger.debug("DataStore:" + dataStore);
