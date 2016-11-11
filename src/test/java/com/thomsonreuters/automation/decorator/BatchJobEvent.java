@@ -5,9 +5,9 @@ import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * The {@code NotifyTest} class to create events for the Decorator notification API's.
+ * The {@code BatchJobEvent} class to create events for the Decorator notification API's.
  *
- * @author Avinash P
+ * @author Ramesh Lalam
  * 
  */
 public class BatchJobEvent extends AbstractBase  {
@@ -24,7 +24,7 @@ public class BatchJobEvent extends AbstractBase  {
 	@Test
 	public void notifyTest1() throws Exception {
 		testDataExcelPath = "src/test/test-data/DecoratorBatchJobTest.xlsx";
-		appName = "1PNOTIFY";
+		appName = "1PDECORATOR";
 		runTests("Event Generation");
 		
 		

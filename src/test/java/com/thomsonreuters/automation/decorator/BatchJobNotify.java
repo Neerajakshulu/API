@@ -24,7 +24,7 @@ public class BatchJobNotify extends AbstractBase {
 	@Test
 	public void notifyTest2() throws Exception {
 		testDataExcelPath = "src/test/test-data/DecoratorBatchJobTest_HPA.xlsx";
-		appName = "1PNOTIFY";
+		appName = "1PDECORATOR";
 		runTests("Notification Test");
 		
 	}
