@@ -588,15 +588,12 @@ public abstract class AbstractBase {
 
 			while (jsonNameKeysTokenizer.hasMoreTokens()) {
 				jsonNameKey = jsonNameKeysTokenizer.nextToken();
-				System.out.println("The jsonNameKeys values are after while loop : "+jsonNameKey);			
 				String value = jsonPath.getString("private.desc").replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
-				System.out.println("The json response values is: "+value);
 				String[] test = value.replaceAll("::", ":").split(":");
 				for(int i=0;i<test.length;i=i+2) {
 					dataStore.put(testName + UNDERSCORE + test[i].trim(), test[i+1].trim());
 					
 				}
-				System.out.println("The datastore is: "+dataStore);
 				//dataStore.put(testName + UNDERSCORE + jsonNameKey, value);
 			}
 		}

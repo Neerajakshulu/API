@@ -27,7 +27,8 @@ public class BatchJobEvent extends AbstractBase  {
 	 */
 	@Test
 	public void notifyTest1() throws Exception {
-		testDataExcelPath = "src/test/test-data/DecoratorBatchJobTest.xlsx";
+		dataStore.put(TESTOUTPUT_FOLDER_DATEFORMAT, strDateTime);
+		testDataExcelPath = "src/test/test-data/DecoratorBatchJobTest_HPA.xlsx";
 		appName = "1PNOTIFY";
 		runTests("Event Generation");
 		

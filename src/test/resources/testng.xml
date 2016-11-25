@@ -7,6 +7,12 @@
 			<class name="com.thomsonreuters.automation.search.SearchTest" />
 		</classes>
 	</test>
+	
+	<test name="Search">
+		<classes>
+			<class name="com.thomsonreuters.automation.search.SearchTestV4" />
+		</classes>
+	</test>
 
 	<test name="TypeAhead">
 		<classes>
