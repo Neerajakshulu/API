@@ -17,16 +17,16 @@ import com.thomsonreuters.automation.common.AbstractBase;
 public class SearchTestV4 extends AbstractBase {
 
 	/**
-	 * {@code searchTest} method is the entry point to test 1PSEARCH API's.<BR>
+	 * {@code searchTestV4} method is the entry point to test 1PSEARCHV4 API's.<BR>
 	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
 	 * SearchTestData.xlsx file.</BR>
 	 * 
-	 * @throws Exception On Executing the 1PSEARCH tests
+	 * @throws Exception On Executing the 1PSEARCHV4 tests
 	 * @see Exception
 	 * 
 	 */
 	@Test
-	public void searchTest() throws Exception {
+	public void searchTestV4() throws Exception {
 		testDataExcelPath = "src/test/test-data/SearchTestData_V4.xlsx";
 		appName = "1PSEARCHV4";
 		runTests();

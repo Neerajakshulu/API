@@ -17,11 +17,11 @@ import com.thomsonreuters.automation.common.AbstractBase;
 public class BatchJobEvent extends AbstractBase  {
 	
 	/**
-	 * This {@code notifyTest} method is entry point to test 1PNOTIFY API's.<BR>
+	 * This {@code notifyTest1} method is entry point to create events for 1PDECORATOR API's.<BR>
 	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
-	 * NotifyTestData.xlsx file.</BR>
+	 * DecoratorBatchJobTest_HPA.xlsx file.</BR>
 	 * 
-	 * @throws Exception On Executing the 1PNOTIFY tests
+	 * @throws Exception On Executing the 1PDECORATOR tests
 	 * @see Exception
 	 * 
 	 */
@@ -29,7 +29,7 @@ public class BatchJobEvent extends AbstractBase  {
 	public void notifyTest1() throws Exception {
 		dataStore.put(TESTOUTPUT_FOLDER_DATEFORMAT, strDateTime);
 		testDataExcelPath = "src/test/test-data/DecoratorBatchJobTest_HPA.xlsx";
-		appName = "1PNOTIFY";
+		appName = "1PDECORATOR";
 		runTests("Event Generation");
 		
 		

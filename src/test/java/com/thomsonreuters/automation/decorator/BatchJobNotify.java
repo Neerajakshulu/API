@@ -17,11 +17,11 @@ import com.thomsonreuters.automation.common.AbstractBase;
 public class BatchJobNotify extends AbstractBase {
 	
 	/**
-	 * This {@code notifyTest} method is entry point to test 1PDECORATOR API's.<BR>
+	 * This {@code notifyTest2} method is entry point to test 1PDECORATOR API's.<BR>
 	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
 	 * DecoratorBatchJobTest_HPA.xlsx file.</BR>
 	 * 
-	 * @throws Exception On Executing the 1PNOTIFY tests
+	 * @throws Exception On Executing the 1PDECORATOR tests
 	 * @see Exception
 	 * 
 	 */
