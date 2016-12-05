@@ -2,11 +2,6 @@
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
 <suite name="API Automation">
-	<test name="Search">
-		<classes>
-			<class name="com.thomsonreuters.automation.search.SearchTest" />
-		</classes>
-	</test>
 	
 	<test name="SearchV4">
 		<classes>
