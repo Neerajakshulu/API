@@ -106,4 +106,9 @@
 		</classes>
 	</test>
 
+	<test name="IPA">
+		<classes>
+			<class name="com.thomsonreuters.automation.ipa.IPATest" />
+		</classes>
+	</test>
 </suite>
