@@ -106,4 +106,15 @@
 		</classes>
 	</test>
 
+	<test name="IPA">
+		<classes>
+			<class name="com.thomsonreuters.automation.ipa.IPATest" />
+		</classes>
+	</test>
+	
+	<test name="IPAContainer">
+		<classes>
+			<class name="com.thomsonreuters.automation.ipa.IPAContainerTest" />
+		</classes>
+	</test>
 </suite>
