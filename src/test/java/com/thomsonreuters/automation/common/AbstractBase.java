@@ -589,7 +589,7 @@ public abstract class AbstractBase {
 			while (jsonNameKeysTokenizer.hasMoreTokens()) {
 				jsonNameKey = jsonNameKeysTokenizer.nextToken();
 				String value = jsonPath.getString("private.desc").replaceAll(REPLACE_SQURE_BRACKETS, EMPTY_STRING);
-				String[] test = value.replaceAll("::", ":").split(":");
+				String[] test = value.replaceAll(",", ":").split(":");
 				for(int i=0;i<test.length;i=i+2) {
 					dataStore.put(testName + UNDERSCORE + test[i].trim(), test[i+1].trim());
 					
