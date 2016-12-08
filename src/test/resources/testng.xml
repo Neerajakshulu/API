@@ -117,4 +117,10 @@
 			<class name="com.thomsonreuters.automation.ipa.IPAContainerTest" />
 		</classes>
 	</test>
+	
+	<test name="DRAContainer">
+		<classes>
+			<class name="com.thomsonreuters.automation.dra.DRAContainerTest" />
+		</classes>
+	</test>
 </suite>
