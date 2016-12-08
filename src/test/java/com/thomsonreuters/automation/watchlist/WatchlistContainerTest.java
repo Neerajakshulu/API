@@ -23,7 +23,7 @@ public class WatchlistContainerTest extends AbstractBase {
 	 */
 	@Test
 	public void WatchlistContainerTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/WatchlistContainerTest.xlsx";
+		testDataExcelPath = "src/test/test-data/WatchlistContainerTestData.xlsx";
 		appName = "1PCONTAINER";
 		runTests();
 	}

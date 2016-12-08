@@ -1,17 +1,17 @@
-package com.thomsonreuters.automation.project;
+package com.thomsonreuters.automation.dra;
 
 import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * The ProjectContainerTest program is an entry point for running Container API for Project type test cases. This class initializes app
+ * The DRAContainerTest program is an entry point for running Container API for DRA Saved Search type test cases. This class initializes app
  * name, excel file path which are utilized by AbstractBase class.
  *
  * @author Janardhan
  * @version 1.0
- * @since 2016-10-23
+ * @since 2016-12-08
  */
-public class ProjectContainerTest extends AbstractBase {
+public class DRAContainerTest extends AbstractBase {
 
 	/**
 	 * This method is entry point for testing. Initializes excel file path and app name. Calls runTests method for
@@ -22,8 +22,8 @@ public class ProjectContainerTest extends AbstractBase {
 	 * 
 	 */
 	@Test
-	public void ProjectContainerTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/ProjectContainerTestData.xlsx";
+	public void DRAContainerTest() throws Exception {
+		testDataExcelPath = "src/test/test-data/DRAContainerTestData.xlsx";
 		appName = "1PCONTAINER";
 		runTests();
 	}

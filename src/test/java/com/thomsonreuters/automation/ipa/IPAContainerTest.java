@@ -4,7 +4,7 @@ import org.testng.annotations.Test;
 import com.thomsonreuters.automation.common.AbstractBase;
 
 /**
- * The ProjectContainerTest program is an entry point for running Container API for Project type test cases. This class initializes app
+ * The IPAContainerTest program is an entry point for running Container API for IPA Saved search type test cases. This class initializes app
  * name, excel file path which are utilized by AbstractBase class.
  *
  * @author Janardhan
@@ -22,8 +22,8 @@ public class IPAContainerTest extends AbstractBase {
 	 * 
 	 */
 	@Test
-	public void ProjectContainerTest() throws Exception {
-		testDataExcelPath = "src/test/test-data/IPAContainerTest.xlsx";
+	public void IPAContainerTest() throws Exception {
+		testDataExcelPath = "src/test/test-data/IPAContainerTestData.xlsx";
 		appName = "1PCONTAINER";
 		runTests();
 	}
