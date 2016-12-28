@@ -75,7 +75,7 @@ public class BatchJobNotify extends AbstractBase {
 								if (testSuccess) {
 									break;
 								} else {
-									String body = "{\"queryRef\":\"notifyQrRef_V2\",\"params\":{\"size\":[\"20\"],\"byscore\":[\"true\"],\"before\":\"("
+									String body = "{\"queryRef\":\"notifyQrRef_V2\",\"params\":{\"size\":[\"20\"],\"byscore\":\"true\",\"before\":\"("
 											+ rowData.getTestName() + "_notify.pitoId[19])\"}}";
 									rowData.setBody(body);
 								}

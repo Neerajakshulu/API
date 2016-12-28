@@ -59,6 +59,13 @@ public class DecoratorTest extends AbstractBase {
 		 * If mandatory information like test case name, host, api path and valid http method are not provided then skip
 		 * those tests and update the status as fail.
 		 */
+		if (rowData.getTestName().equals("OPQA-1431") || rowData.getTestName().equals("OPQA-385_1")) {
+			try {
+				Thread.sleep(60000);
+			}catch (InterruptedException ie) {
+				ie.printStackTrace();
+			}
+		}
 		if (rowData.getHost().equals("1PDECORATOR")) {
 			if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 					&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
