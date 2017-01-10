@@ -69,25 +69,25 @@
 		</classes>
 	</test>
 
-	<!-- 
+	
 	<test name="Watchlist">
 		<classes>
 			<class name="com.thomsonreuters.automation.watchlist.WatchlistContainerTest" />
 		</classes>
 	</test>
-	 -->
+	
 	<test name="Groups">
 		<classes>
 			<class name="com.thomsonreuters.automation.groups.GroupsTest" />
 		</classes>
 	</test>
-	 <!-- 
+	 
 	<test name="Projects">
 		<classes>
 			<class name="com.thomsonreuters.automation.project.ProjectContainerTest" />
 		</classes>
 	</test>
- 	-->
+ 	
 	<test name="Authoring">
 		<classes>
 			<class name="com.thomsonreuters.automation.authoring.AuthoringTest" />
@@ -105,7 +105,7 @@
 			<class name="com.thomsonreuters.automation.steam.SteamTest" />
 		</classes>
 	</test>
-	<!-- 
+	
 	<test name="IPA">
 		<classes>
 			<class name="com.thomsonreuters.automation.ipa.IPATest" />
@@ -123,5 +123,5 @@
 			<class name="com.thomsonreuters.automation.dra.DRAContainerTest" />
 		</classes>
 	</test>
-	 -->
+	
 </suite>
