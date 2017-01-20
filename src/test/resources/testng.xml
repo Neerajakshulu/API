@@ -63,6 +63,12 @@
 		</classes>
 	</test>
 
+	<test name="Media">
+		<classes>
+			<class name="com.thomsonreuters.automation.media.MediaTest" />
+		</classes>
+	</test>
+	
 	<test name="Follow">
 		<classes>
 			<class name="com.thomsonreuters.automation.follow.FollowTest" />
