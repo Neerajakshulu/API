@@ -25,7 +25,7 @@ public class NotifyTest extends AbstractBase {
 	public void notifyTest() throws Exception {
 		dataStore.put(TESTOUTPUT_FOLDER_DATEFORMAT, strDateTime);
 		testDataExcelPath = "src/test/test-data/NotifyTestData.xlsx";
-		appName = "1PNOTIFY";
+		appName = "1PNOTIFYV1";
 		runTests();
 	}
 	
