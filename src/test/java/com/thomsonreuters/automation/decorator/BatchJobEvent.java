@@ -56,7 +56,7 @@ public class BatchJobEvent extends AbstractBase  {
 		if (StringUtils.isNotBlank(rowData.getTestName()) && StringUtils.isNotBlank(rowData.getHost())
 				&& StringUtils.isNotBlank(rowData.getApiPath()) && isSupportedMethod(rowData.getMethod())) {
 			testReporter = reporter.startTest(testName, rowData.getDescription()).assignCategory(appName);
-			if (rowData.getTestName().equals("OPQA-1431") || rowData.getTestName().equals("OPQA-236")) {
+			if (rowData.getTestName().equals("OPQA-1431")  || rowData.getTestName().equals("OPQA-1431_1")) {
 				try {
 					Thread.sleep(60000);
 				}catch (InterruptedException ie) {

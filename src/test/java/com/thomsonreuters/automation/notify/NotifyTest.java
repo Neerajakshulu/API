@@ -28,4 +28,5 @@ public class NotifyTest extends AbstractBase {
 		appName = "1PNOTIFY";
 		runTests();
 	}
+	
 }

@@ -29,7 +29,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.util.SystemOutLogger;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -63,7 +62,6 @@ public abstract class AbstractBase {
 	private static final String EUREKA_APP_NAME = "name";
 	private static final String EUREKA_HOST_NAME = "hostName";
 	private static final String EUREKA_IP_ADDRESS = "ipAddr";
-	private static final String EUREKA_SERVICE_STATUS = "status";
 	private static final String EUREKA_HOST_PORT = "port";
 	private static final String EUREKA_VIP_ADDRESS = "vipAddress";
 	private static final String EUREKA_DC_NAME = "Amazon";
@@ -585,8 +583,8 @@ public abstract class AbstractBase {
 		if (StringUtils.isNotBlank(jsonNameKeys)) {
 			StringTokenizer jsonNameKeysTokenizer = new StringTokenizer(jsonNameKeys, TOKENIZER_DOUBLE_PIPE);
 			JsonPath jsonPath = new JsonPath(json);
+			@SuppressWarnings("unused")
 			String jsonNameKey = null;
-			System.out.println("The jsonNameKeys values are: "+jsonNameKey);
 
 			while (jsonNameKeysTokenizer.hasMoreTokens()) {
 				jsonNameKey = jsonNameKeysTokenizer.nextToken();
@@ -971,7 +969,6 @@ public abstract class AbstractBase {
 		String appName = null;
 		String hostName = null;
 		String port = null;
-		boolean status = false; 
 
 		URL url = new URL(eurekaURL);
 		URLConnection conn = url.openConnection();
@@ -1003,12 +1000,6 @@ public abstract class AbstractBase {
 					event = eventReader.nextEvent();
 					hostName = event.asCharacters().getData();
 				}
-				
-				// Get service status
-				if (startElement.getName().getLocalPart().equals(EUREKA_SERVICE_STATUS)) {
-					event = eventReader.nextEvent();
-					status = ((event.asCharacters().getData().equalsIgnoreCase("up"))?true:false);
-				}
 
 				// Get port
 				if (startElement.getName().getLocalPart().equals(EUREKA_HOST_PORT)) {
@@ -1019,10 +1010,8 @@ public abstract class AbstractBase {
 				// Get vip address
 				if (startElement.getName().getLocalPart().equals(EUREKA_VIP_ADDRESS)) {
 					event = eventReader.nextEvent();
-					if (event.asCharacters().getData().endsWith(env) && (status == true)){
+					if (event.asCharacters().getData().endsWith(env))
 						appHosts.put(appName, HTTP + hostName + COLON + port);
-						logger.debug("APPNAME:"+appName+" HOSTNAME:"+hostName+" STATUS:"+status);
-					}
 				}
 
 			}

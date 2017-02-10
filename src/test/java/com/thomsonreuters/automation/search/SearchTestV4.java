@@ -96,16 +96,16 @@ public class SearchTestV4 extends AbstractBase {
 						List<Object> actualValue = null;
 						if (rowData.getDescription().contains("times cited")) {
 							if (rowData.getDescription().contains("patents")) {
-								actualValue = jsonPath.getList("hits.hits.sort");
+								actualValue = jsonPath.getList("hits.sort");
 							} else {
-								actualValue = jsonPath.getList("hits.hits.fields.citingsrcslocalcount");
+								actualValue = jsonPath.getList("hits.fields.citingsrcslocalcount");
 							}
 							status = verifySortorder(actualValue, rowData.getDescription());
 						} else if (rowData.getDescription().contains("relevance")) {
-							actualValue = jsonPath.getList("hits.hits._score");
+							actualValue = jsonPath.getList("hits._score");
 							status = verifySortorder(actualValue, rowData.getDescription());
 						} else if (rowData.getDescription().contains("pub date")) {
-							actualValue = jsonPath.getList("hits.hits.fields.sortdate");
+							actualValue = jsonPath.getList("hits.fields.sortdate");
 							status = verifySortorder(actualValue, rowData.getDescription());
 						}
 					}
