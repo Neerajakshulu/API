@@ -56,6 +56,12 @@
 			<class name="com.thomsonreuters.automation.entitlemets.EntitlementTest" />
 		</classes>
 	</test>
+	
+	<test name="ENTITLEMENT">
+		<classes>
+			<class name="com.thomsonreuters.automation.decorator.DecoratorTest" />
+		</classes>
+	</test>
 
 	<test name="Profile">
 		<classes>
