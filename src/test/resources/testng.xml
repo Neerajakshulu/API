@@ -57,7 +57,7 @@
 		</classes>
 	</test>
 	
-	<test name="ENTITLEMENT">
+	<test name="DECORATOR">
 		<classes>
 			<class name="com.thomsonreuters.automation.decorator.DecoratorTest" />
 		</classes>
