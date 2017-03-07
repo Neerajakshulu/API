@@ -1,0 +1,17 @@
+{
+    "truid": "(SYS_USER1)",
+    "firstName": "Project",
+	"middleName": "",
+	"lastName": "Neon1",
+	"title": "Project Neon1",
+	"role": "QA",
+	"primaryInstitution": "Thomson Reuters",
+	"location": "India",
+	"interest": [
+		"API AUTOMATION",
+		"computers",
+		"science"
+	],
+	"summary": "I am test user for API Automation",
+	"imageType" : "image/jpeg"
+}
