@@ -132,11 +132,9 @@
 		</classes>
 	</test>
 	
-	<!-- 
 	<test name="Support">
 		<classes>
 			<class name="com.thomsonreuters.automation.support.SupportTest" />
 		</classes>
 	</test>
-	 -->
 </suite>
