@@ -137,4 +137,12 @@
 			<class name="com.thomsonreuters.automation.support.SupportTest" />
 		</classes>
 	</test>
+	
+	<!-- 
+	<test name="HealthCheck">
+		<classes>
+			<class name="com.thomsonreuters.automation.healthcheck.HealthCheckTest" />
+		</classes>
+	</test>
+	 -->
 </suite>
