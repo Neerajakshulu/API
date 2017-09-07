@@ -303,7 +303,7 @@ public abstract class AbstractBase {
 			testName = "<a href=\"http://ent.jira.int.thomsonreuters.com/browse/" + testid[0] + "\" target=\"_blank\">"
 					+ rowData.getTestName() + "</a>";
 		} else {
-			testName = "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/" + rowData.getTestName()
+			testName = "<a href=\"http://ent.jira.int.thomsonreuters.com/browse/" + rowData.getTestName()
 					+ "\" target=\"_blank\">" + rowData.getTestName() + "</a>";
 		}
 	}
