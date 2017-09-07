@@ -300,7 +300,7 @@ public abstract class AbstractBase {
 	public void getTestName() {
 		String[] testid = StringUtils.split(rowData.getTestName(), "_");
 		if (testid.length > 1) {
-			testName = "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/" + testid[0] + "\" target=\"_blank\">"
+			testName = "<a href=\"http://ent.jira.int.thomsonreuters.com/browse/" + testid[0] + "\" target=\"_blank\">"
 					+ rowData.getTestName() + "</a>";
 		} else {
 			testName = "<a href=\"http://jira.bjz.apac.ime.reuters.com/browse/" + rowData.getTestName()
