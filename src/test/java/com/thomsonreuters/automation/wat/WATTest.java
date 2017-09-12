@@ -14,9 +14,9 @@ import com.thomsonreuters.automation.common.AbstractBase;
 public class WATTest extends AbstractBase {
 
 	/**
-	 * {@code followTest} method is the entry point to test 1PRecommend(WAT) API's.<BR>
+	 * {@code followTest} method is the entry point to test WOSAUTHORRECOMMEND(WAT) API's.<BR>
 	 * Initializes excel file path and app name. Calls runTests method for executing test cases specified in the
-	 * FollowTestData.xlsx file.</BR>
+	 * WATTestData.xlsx file.</BR>
 	 * 
 	 * @throws Exception On Executing the WAT  tests
 	 * @see Exception
