@@ -26,7 +26,7 @@ public class WATTest extends AbstractBase {
 	@Test
 	public void wosAuthTransTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/WATTestData.xlsx";
-		appName = "1PRECOMMEND";
+		appName = "WOSAUTHORRECOMMEND";
 		runTests();
 	}
 }
