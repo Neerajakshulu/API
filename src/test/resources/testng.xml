@@ -133,6 +133,7 @@
 			<class name="com.thomsonreuters.automation.dra.DRAContainerTest" />
 		</classes>
 	</test>
+	
 	<!-- 
 	<test name="Support">
 		<classes>
