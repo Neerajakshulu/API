@@ -141,6 +141,13 @@
 		</classes>
 	</test>
 	
+	<test name="DRA-SSO">
+		<classes>
+			<class name="com.thomsonreuters.automation.SSO.SSODRATests" />
+		</classes>
+	</test>
+	
+	
  <!--
 	<test name="HealthCheck">
 		<classes>

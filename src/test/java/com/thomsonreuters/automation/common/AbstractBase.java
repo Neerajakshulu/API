@@ -14,6 +14,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -34,6 +35,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.json.JSONObject;
 import org.testng.Assert;
 import org.testng.annotations.AfterSuite;
 import org.testng.annotations.BeforeClass;
@@ -258,15 +260,39 @@ public abstract class AbstractBase {
 		if (StringUtils.isNotBlank(bodyString))
 			testReporter.log(LogStatus.INFO, "Request Body - " + bodyString);
 		testReporter.log(LogStatus.INFO, "Request URL - " + url);
-
+		
+	
+		
 		RequestSpecification reqSpec = given();
+		/* for urlEncoding */
+		 
+		if(headers.trim().equals("content-type=application/x-www-form-urlencoded"))
+		{
+			 
+			if (StringUtils.isNotBlank(bodyString))
+				System.out.println("BodyString is ==>>"+bodyString);
+			
+			JSONObject jsonString = new JSONObject(bodyString.trim());
+			Iterator<?> keys = jsonString.keys();
 
+			while( keys.hasNext() ) {
+			    String key = (String)keys.next();
+			    String value=jsonString.get(key).toString();
+			    
+			    reqSpec.formParam(key, value);
+				
+
+			    }
+
+		}
+		
+		 /* for urlEncoding */
 		// Get and set headers to request
 		if (StringUtils.isNotBlank(rowData.getHeaders())) {
 			Map<String, String> headersMap = getHeaders(headers);
 			reqSpec.headers(headersMap);
 		}
-		if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString)) {
+		if (!rowData.getMethod().equalsIgnoreCase(GET) && StringUtils.isNotBlank(bodyString) && !headers.trim().equals("content-type=application/x-www-form-urlencoded")) {
 			reqSpec.body(bodyString);
 		}
 
