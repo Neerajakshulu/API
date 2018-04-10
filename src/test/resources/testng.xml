@@ -141,9 +141,14 @@
 		</classes>
 	</test>
 	
-	<test name="DRA-SSO">
+	<!-- <test name="DRA-SSO">
 		<classes>
 			<class name="com.thomsonreuters.automation.SSO.SSODRATests" />
+		</classes>
+	</test> -->
+	<test name="DRA-SSO_LOGIN">
+		<classes>
+			<class name="com.thomsonreuters.automation.draSSOLogin.SsoLoginTest" />
 		</classes>
 	</test>
 	
