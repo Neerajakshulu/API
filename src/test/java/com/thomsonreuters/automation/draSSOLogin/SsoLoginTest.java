@@ -1,11 +1,11 @@
-package com.thomsonreuters.automation.ssologin;
+package com.thomsonreuters.automation.draSSOLogin;
 
 import org.testng.annotations.Test;
 
 import com.thomsonreuters.automation.common.AbstractBase;
 
 
-public class SsoLogin extends AbstractBase{
+public class SsoLoginTest extends AbstractBase{
 	@Test
 	public void ssologinTest() throws Exception {
 		testDataExcelPath = "src/test/test-data/SsoLoginTestData.xlsx";
