@@ -125,7 +125,7 @@ public abstract class SteamAbstractBase {
 	// For STEAM Spring env
 	// private static String steamURL = "http://10.204.33.120:8003/esti/xrpc";
 	// For STEAM CI env
-	private static String steamURL = "http://10.205.147.234:5000/esti/xrpc";
+	private static String steamURL = "http://steam-stablea.dev-shared.com:8361/esti/xrpc";
 	protected static String SID = "";
 	protected String templatePath = null;
 	private static final String XMLFILE_EXT = ".xml";
