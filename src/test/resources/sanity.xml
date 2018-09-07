@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+
+<suite name="API Automation">
+	<test name="IAM">
+		<classes>
+			<class name="com.thomsonreuters.automation.iam.IamTest" />
+		</classes>
+	</test>
+
+	<test name="APPBRIDGE">
+		<classes>
+			<class name="com.thomsonreuters.automation.appbridge.AppBridgeTest" />
+		</classes>
+	</test>
+
+	<test name="OAUTH">
+		<classes>
+			<class name="com.thomsonreuters.automation.oauth.OauthTest" />
+		</classes>
+	</test>
+	<test name="ENTITLEMENT">
+		<classes>
+			<class name="com.thomsonreuters.automation.entitlemets.EntitlementTest" />
+		</classes>
+	</test>
+	<test name="Steam">
+		<classes>
+			<class name="com.thomsonreuters.automation.steam.SteamTest" />
+		</classes>
+	</test>
+	<test name="Groups">
+		<classes>
+			<class name="com.thomsonreuters.automation.groups.GroupsTest" />
+		</classes>
+	</test>
+	<test name="Profile">
+		<classes>
+			<class name="com.thomsonreuters.automation.profile.ProfileTest" />
+		</classes>
+	</test>
+	<test name="Experiment">
+		<classes>
+			<class name="com.thomsonreuters.automation.exp.ExperimentTest" />
+		</classes>
+	</test>
+	
+	<test name="IPAContainer">
+		<classes>
+			<class name="com.thomsonreuters.automation.ipa.IPAContainerTest" />
+		</classes>
+	</test>
+
+	<test name="DRAContainer">
+		<classes>
+			<class name="com.thomsonreuters.automation.dra.DRAContainerTest" />
+		</classes>
+	</test>
+	<test name="Watchlist">
+		<classes>
+			<class
+				name="com.thomsonreuters.automation.watchlist.WatchlistContainerTest" />
+		</classes>
+	</test>
+	<test name="DRA-SSO_LOGIN">
+		<classes>
+			<class name="com.thomsonreuters.automation.draSSOLogin.SsoLoginTest" />
+		</classes>
+	</test>
+</suite>
