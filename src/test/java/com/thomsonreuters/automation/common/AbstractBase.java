@@ -326,10 +326,10 @@ public abstract class AbstractBase {
 	public void getTestName() {
 		String[] testid = StringUtils.split(rowData.getTestName(), "_");
 		if (testid.length > 1) {
-			testName = "<a href=\"http://ent.jira.int.thomsonreuters.com/browse/" + testid[0] + "\" target=\"_blank\">"
+			testName = "<a href=\"https://jira.clarivate.io/browse/" + testid[0] + "\" target=\"_blank\">"
 					+ rowData.getTestName() + "</a>";
 		} else {
-			testName = "<a href=\"http://ent.jira.int.thomsonreuters.com/browse/" + rowData.getTestName()
+			testName = "<a href=\"https://jira.clarivate.io/browse/" + rowData.getTestName()
 					+ "\" target=\"_blank\">" + rowData.getTestName() + "</a>";
 		}
 	}
@@ -721,7 +721,7 @@ public abstract class AbstractBase {
 		FileOutputStream fos = new FileOutputStream(new File(testDataExcelPath));
 		workBook.write(fos);
 		fos.close();
-		workBook.close();
+		//workBook.close();
 	}
 
 	/**
