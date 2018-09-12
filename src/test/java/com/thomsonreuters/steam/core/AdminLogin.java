@@ -27,9 +27,9 @@ public class AdminLogin extends SteamAbstractBase {
 	@SuppressWarnings("rawtypes")
 	public static String login() {
 		// CI Environemt URL 	
-		baseURI = "http://steam-stablea.dev-shared.com:8361/esti/xrpc";		
+		baseURI = "http://steam-snapshot.dev-shared.com:8361/esti/xrpc";		
 		String UserName = "mahesh.morsu@thomsonreuters.com";
-		String Password = "Neon@123";
+		String Password = "Neon@1231";
 		
 		/**
 		//Spring (Stable) environemt URL 
