@@ -133,6 +133,11 @@
 			<class name="com.thomsonreuters.automation.draSSOLogin.SsoLoginTest" />
 		</classes>
 	</test>
+	<test name="Email">
+		<classes>
+			<class name="com.thomsonreuters.automation.email.EmailService" />
+		</classes>
+	</test>
 
 
 	<!-- <test name="HealthCheck"> <classes> <class name="com.thomsonreuters.automation.healthcheck.HealthCheckTest" 
